@@ -1,0 +1,6 @@
+export { getX as getX } from './dataUtils'
+export { getY as getY } from './dataUtils'
+export { extractY as extractY } from './dataUtils'
+export { extractX as extractX } from './dataUtils'
+export { extractLabels as extractLabels } from './dataUtils'
+export { createScalarData as createScalarData } from './dataUtils'
