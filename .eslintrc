@@ -1,0 +1,129 @@
+/*
+    Useful Commands:
+    `eslint` -runs the cli for eslint
+    `eslint --fix --ext .js src/[your directory]` runs the command line
+      for your directory and fixes errors than can be autofixed
+*/
+{
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "arrowFunctions": true,
+      "binaryLiterals": true,
+      "blockBindings": true,
+      "classes": true,
+      "defaultParams": true,
+      "destructuring": true,
+      "experimentalObjectRestSpread": true,
+      "restParams": true,
+      "forOf": true,
+      "generators": true,
+      "modules": false,
+      "objectLiteralComputedProperties": true,
+      "objectLiteralDuplicateProperties": true,
+      "objectLiteralShorthandMethods": true,
+      "objectLiteralShorthandProperties": true,
+      "octalLiterals": true,
+      "regexUFlag": true,
+      "regexYFlag": true,
+      "spread": true,
+      "superInFunctions": true,
+      "templateStrings": true,
+      "unicodeCodePointEscapes": true,
+      "globalReturn": true,
+      "jsx": true
+    }
+  },
+  "env": {
+    "es6": true,
+    "browser": true,
+    "commonjs": true,
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+  ],
+  "rules": {
+    // first argument: 0 - silent, 1 - warning, 2 - error
+    "strict": [
+      2,
+      "safe"
+    ],
+    "no-debugger": 2,
+    "prefer-spread": 1,
+    "brace-style": [
+      2,
+      "stroustrup",
+      {
+        "allowSingleLine": true
+      }
+    ],
+    "no-trailing-spaces": 2,
+    "keyword-spacing": 2,
+    "space-before-function-paren": [
+      2,
+      "never"
+    ],
+    "spaced-comment": [
+      2,
+      "always"
+    ],
+    "vars-on-top": 2,
+    "no-undef": 1,
+    "no-undefined": 1,
+    "comma-dangle": [
+      2,
+      "never"
+    ],
+    "quotes": [
+      2,
+      "single"
+    ],
+    "semi": [
+      2,
+      "never"
+    ],
+    "guard-for-in": 2,
+    "no-eval": 2,
+    "no-with": 2,
+    "valid-typeof": 2,
+    "no-unused-vars": 2,
+    "no-continue": 1,
+    "no-case-declarations": 0,
+    "no-extra-semi": 1,
+    "no-unreachable": 1,
+    "no-unused-expressions": 0,
+    "no-magic-numbers": 0,
+    "max-len": [
+      1,
+      140,
+      4
+    ],
+    "react/prefer-es6-class": 1,
+    "react/prop-types": 0,
+    "prefer-const": 2,
+    "no-console": 1,
+    "indent": [
+      "error",
+      2
+    ],
+    "object-curly-spacing": [
+      2,
+      "always"
+    ],
+    "key-spacing": [
+      "error",
+      {
+        "beforeColon": false,
+        "afterColon": true,
+        "mode": "strict"
+      }
+    ],
+    "eol-last": [
+      2,
+      "always"
+    ]
+  }
+}

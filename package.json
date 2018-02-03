@@ -1,0 +1,57 @@
+{
+  "name": "viiksetjs",
+  "version": "0.0.1",
+  "description": "Javascript graphing utility based on SVG",
+  "main": "lib/index.js",
+  "repository": "https://github.com/jamestthompson3/viiksetjs.git",
+  "author": "Taylor Thompson <taylor@easyanticheat.net>",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "build": "babel src --out-dir lib",
+    "watch": "babel --watch src --out-dir lib"
+  },
+  "babel": {
+    "presets": [
+      "react",
+      [
+        "es2015",
+        {
+          "modules": false
+        }
+      ],
+      "stage-2"
+    ],
+    "plugins": [
+      "transform-flow-strip-types"
+    ],
+    "env": {
+      "test": {
+        "presets": [
+          "react",
+          "es2015",
+          "stage-2"
+        ],
+        "plugins": [
+          "dynamic-import-node"
+        ]
+      }
+    }
+  },
+  "dependencies": {
+    "d3": "^4.12.0",
+    "element-resize-detector": "^1.1.12"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.0.3",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "eslint": "^4.12.1",
+    "eslint-plugin-react": "^7.5.1",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "styled-components": "^2.2.4"
+  }
+}
