@@ -25,12 +25,8 @@ const BarChart = ({
   const barHeight = d => inheritedScale(d[dataKey]) - margin.top
   return (
     <Fragment>
-      <LinearGradient
-        from={rgba(color, 0.35)}
-        to={rgba(color, 0.05)}
-        id={`gradient${xKey}`}
-      />
-      {data.map((d, i) =>
+      <LinearGradient from={rgba(color, 0.35)} to={rgba(color, 0.05)} id={`gradient${xKey}`} />
+      {data.map((d, i) => (
         <Bar
           width={xScale.bandwidth()}
           key={i}
@@ -43,7 +39,7 @@ const BarChart = ({
           stroke={color}
           strokeWidth={1}
         />
-      )}
+      ))}
     </Fragment>
   )
 }
