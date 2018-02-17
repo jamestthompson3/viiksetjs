@@ -1,6 +1,5 @@
 import { timeFormat } from 'd3-time-format'
 
-
 /**
  * Takes a data point and formats it to the following time
  * Mon Jan 19 (ddd mmm DD)
@@ -21,7 +20,7 @@ export const tooltipTime = timeFormat('%a %b %d %H:%M')
  * Takes a data point and divides by 1000 and adds 'k' if greater than 1000
  * @param {Integer}
  */
-export const formatTicks = d => d >= 1000 ? `${(d / 1000)}k` : d
+export const formatTicks = d => (d >= 1000 ? `${d / 1000}k` : d)
 
 /**
  * Takes a data point and determines how it should be formatted
@@ -30,8 +29,7 @@ export const formatTicks = d => d >= 1000 ? `${(d / 1000)}k` : d
 export const formatXTicks = d => {
   if (d.getTime() != null) {
     return formatTime(d)
-  }
-  else {
+  } else {
     return d
   }
 }
