@@ -1,14 +1,88 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import styled from 'styled-components'
-import { zip } from 'lodash'
+import { Line } from '@vx/shape'
+import { LinearGradient } from '@vx/gradient'
+import { PatternLines } from '@vx/pattern'
+import { curveMonotoneX } from '@vx/curve'
+import { GridRows } from '@vx/grid'
+import { AreaClosed, LinePath } from '@vx/shape'
+import { AxisBottom, AxisLeft } from '@vx/axis'
+import { rgba } from 'polished'
 
-import { extractY, parseObject } from 'common/vx/utils/dataUtils'
+const findStroke = p => p.theme[p.stroke] || p.stroke || p.theme.primaryColor
+const findColor = p => p.theme[p.color] || p.color || p.theme.primaryColor
+const findFill = p => p.fill
+? p.gradient
+?`url(#gradient${dataKey})`
+
+export const StyledGridRows = styled(GridRows).attrs({
+  pointerEvents: 'none',
+  width: p => p.width,
+  stroke: p => findStroke(p)
+})``
+export const StyledLeftAxis = styled(AxisLeft).attrs({
+  strokeWidth: 2,
+  numTicks: 4,
+  stroke: p => findColor(p),
+  tickLabelProps: p => () => ({ fill: findColor(p), dx: '-2em' })
+})``
+export const StyledBottomAxis = styled(AxisBottom).attrs({
+  top: p => p.height,
+  numTicks: 6,
+  stroke: p => findColor(p),
+  tickLabelProps: p => () => ({ fill: findColor(p), dy: '-0.25rem', fontWeight: '900', textAnchor: 'left', fontSize: 11 })
+})``
+export const StyledGradient = styled(LinearGradient).attrs({
+  from: p => rgba(findColor(p), 0.35),
+  to: p => rgba(findColor(p), 0.05),
+  id: p => `gradient${p.dataKey}`
+})``
+export const StyledPatternLines = styled(PatternLines).attrs({
+  stroke: p => rgba(findColor(p), 0.15),
+  strokeWidth: 1,
+  width: 6,
+  height: 6,
+  orientation: ['diagonal'],
+  id: p => `dlines${p.dataKey}`
+})``
+export const StyledLinePath = styled(LinePath).attrs({
+  data: p => p.data,
+  xScale: p => () => p.xScale,
+  yScale: p => () => p.axisId == null ? p.inheritedScale : p.yScale,
+  x: p => p.xPoints,
+  y: p => p.yPoints,
+  curve: p => () => curveMonotoneX,
+  stroke: p => findColor(p),
+  strokeWidth: '1.5px'
+})``
+export const StyledAreaClosed = styled(AreaClosed).attrs({
+  data: p => p.data,
+   xScale: p => () => p.xScale,
+  yScale: p => () => p.axisId == null ? p.inheritedScale : p.yScale,
+  curve: p => () => curveMonotoneX,
+  fill: p => p.fill && p.gradient && `url(#gradient${dataKey})`, // TODO MAKE FOR PATTERN
+  stroke: p => findColor(p),
+  strokeWidth: 1
+})``
+
+<AreaClosed
+                  data={data}
+                  xScale={xScale}
+                  yScale={yScale}
+                  x={xPoints}
+                  y={yPoints}
+                  curve={curveMonotoneX}
+                  fill={fill ? `url(#gradient${dataKey})` : null}
+                  stroke={color}
+                  strokeWidth={1}
+                />
 
 const TooltipWrapper = styled.div`
   display: block;
   border: 2px solid ${p => p.theme[p.color] || p.color || p.theme.primaryColor};
   border-radius: 5px;
   background: #1a2e3c;
+  color: #fff;
   padding: 8px;
   > * {
     margin: 0;
@@ -30,8 +104,9 @@ const Corner = styled.div`
 const TooltipContainer = styled.div`
   display: flex;
   position: absolute;
-  top: 0;
-  left: ${p => `${p.left - 8.25}px`};
+  top: 5rem;
+  width: 125px;
+  left: ${p => `${p.x + 160}px`};
   pointer-events: none;
   z-index: 1000;
   flex-direction: column;
@@ -39,16 +114,32 @@ const TooltipContainer = styled.div`
   align-items: center;
 `
 
-export const TooltipComponent = ({ tooltipData, color, left }) => {
-  const values = extractY(tooltipData)
-  const labels = parseObject(tooltipData, 'string')
-  const displayValues = zip([values, labels])
+export const TooltipComponent = ({ tooltipData, color, x }) => {
   return (
-    <TooltipContainer left={left}>
+    <TooltipContainer {...{ x }}>
       <TooltipWrapper color={color}>
-        {displayValues.map(([value, label]) => <p key={value}>{`${label}: ${value}`}</p>)}
+        {Object.entries(tooltipData).map((entry, i) => <p key={i}>{`${entry[0]}: ${entry[1]}`}</p>)}
       </TooltipWrapper>
-      <Corner color={color} left={left} />
+      <Corner color={color} />
     </TooltipContainer>
   )
 }
+
+export const Indicator = ({ yCoords, x, stroke, color }) => (
+  <Fragment>
+    <Line from={{ x: x, y: 0 }} to={{ x: x, y: Math.max(...yCoords) }} stroke={stroke} strokeWidth={1} strokeOpacity={0.5} style={{ pointerEvents: 'none' }} />
+    {yCoords.map((coord, i) => (
+      <circle
+        key={i}
+        cx={x}
+        cy={coord}
+        fill="rgb(28, 42, 44)"
+        stroke={color}
+        strokeWidth={1}
+        style={{ pointerEvents: 'none' }}
+        fillOpacity={1}
+        r={4}
+      />
+    ))}
+  </Fragment>
+)
