@@ -1,13 +1,14 @@
 import React, { Fragment, Component } from 'react'
-import { LinearGradient } from '@vx/gradient'
+
 import { scaleLinear } from 'd3-scale'
-import { AreaClosed, LinePath } from '@vx/shape'
-import { PatternLines } from '@vx/pattern'
-import { curveMonotoneX } from '@vx/curve'
+
+
+
 import moment from 'moment'
 import PropTypes from 'prop-types'
-import { rgba } from 'polished'
 import { flatten } from 'lodash'
+
+import { StyledGradient, StyledPatternLines, StyledLinePath } from '../styledComponents'
 
 class LineChart extends Component {
   shouldComponentUpdate(prevProps) {
@@ -53,44 +54,11 @@ class LineChart extends Component {
       <Fragment>
         {pattern && (
           <Fragment>
-            <LinearGradient
-              from={rgba(color, 0.35)}
-              to={rgba(color, 0.05)}
-              id={`gradient${dataKey}`}
-            />
-            <PatternLines
-              id={`dlines${dataKey}`}
-              height={6}
-              width={6}
-              stroke={rgba(color, 0.15)}
-              strokeWidth={1}
-              orientation={['diagonal']}
-            />
+            <StyledGradient {...{ color, dataKey }} />
+            <StyledPatternLines {...{ color, dataKey }} />
           </Fragment>
         )}
-        {axisId !== undefined ? (
-          <LinePath
-            data={data}
-            xScale={xScale}
-            yScale={yScale}
-            x={xPoints}
-            y={yPoints}
-            curve={curveMonotoneX}
-            stroke={color}
-            strokeWidth={'1.5px'}
-          />
-        ) : (
-          <LinePath
-            data={data}
-            xScale={xScale}
-            yScale={inheritedScale}
-            x={xPoints}
-            y={yPoints}
-            curve={curveMonotoneX}
-            stroke={color}
-            strokeWidth={'1.5px'}
-          />
-        )}
+        <StyledLinePath {...{ data, xScale, yScale, inheritedScale, xPoints, yPoints, color, axisId }} />
         {fill && (
           <Fragment>
             {axisId !== undefined ? (

@@ -2,9 +2,8 @@ import React, { Children, cloneElement, Fragment, Component } from 'react'
 import PropTypes from 'prop-types'
 import { withParentSize } from '@vx/responsive'
 import { Group } from '@vx/group'
-import { AxisBottom, AxisLeft } from '@vx/axis'
-import { Bar, Line } from '@vx/shape'
-import { GridRows } from '@vx/grid'
+
+import { Bar } from '@vx/shape'
 import { scaleLinear } from 'd3-scale'
 import { bisect } from 'd3-array'
 import moment from 'moment'
@@ -17,11 +16,11 @@ import {
   extractX,
   extractY,
   createScalarData
-} from 'common/vx/utils/dataUtils'
-import { formatTicks, formatXTicks } from 'common/vx/utils/formatUtils'
+} from '../../utils/dataUtils'
+import { formatTicks, formatXTicks } from '../../utils/formatUtils'
 import { determineScale, biaxial, localPoint, determineViewBox } from '../../utils/chartUtils'
 import withTooltip from '../Tooltip/withTooltip'
-import { TooltipComponent } from '../styledComponents/index'
+import { TooltipComponent, Indicator, StyledGridRows, StyledLeftAxis, StyledBottomAxis } from '../styledComponents/index'
 
 const margin = { top: 18, right: 15, bottom: 0, left: 30 }
 
@@ -31,7 +30,13 @@ class ChartArea extends Component {
   }
   componentDidMount() {
     this.calculateData()
+    document.addEventListener('resize', this.calculateData)
   }
+
+  componentWillUnmount() {
+    document.removeEventListener('resize',this.calculateData)
+  }
+
 
   componentDidUpdate(prevProps) {
     if (prevProps.data !== this.props.data) {
@@ -94,124 +99,38 @@ class ChartArea extends Component {
   mouseLeave = () => this.props.updateTooltip({ calculatedData: null, x: null, yCoords: null })
   render() {
     const { width, height, xScale, yScale, biaxialChildren, chartData, yPoints } = this.state
-    const {
-      parentHeight,
-      parentWidth,
-      children,
-      viewBox,
-      data,
-      xKey,
-      formatter,
-      stroke,
-      color,
-      yCoords,
-      calculatedData,
-      tooltip: Tooltip,
-      x
-    } = this.props
-    return (
-      chartData && (
-        <Fragment>
-          <svg
-            width={parentWidth}
-            height={parentHeight}
-            preserveAspectRatio="none"
-            viewBox={
-              viewBox
-                ? viewBox
-                : determineViewBox({ biaxialChildren, margin, parentWidth, parentHeight })
-            }
-            ref={svg => (this.chart = svg)}
-          >
-            {Children.map(children, child =>
-              cloneElement(child, {
-                data,
-                xScale,
-                margin,
-                height,
-                chartData,
-                yPoints,
-                width,
-                xKey,
-                inheritedScale: yScale,
-                formatter
-              })
-            )}
-            <Group left={margin.left}>
-              <Bar
-                width={width - margin.left}
-                height={height}
-                fill="transparent"
-                onMouseMove={() => event => {
-                  // event.persist()
-                  // event.stopPropagation()
-                  this.mouseMove({ event })
-                }}
-                onMouseLeave={() => this.mouseLeave}
-              />
-              <GridRows
-                lineStyle={{ pointerEvents: 'none' }}
-                scale={yScale}
-                width={width - margin.left}
-                stroke={stroke}
-              />
-              {biaxialChildren || (
-                <AxisLeft
-                  scale={yScale}
-                  numTicks={4}
-                  stroke={color}
-                  strokeWidth={2}
-                  hideTicks
-                  tickLabelProps={() => ({ fill: color, dx: '-2em' })}
-                  tickFormat={formatter}
-                />
-              )}
-            </Group>
-            <AxisBottom
-              scale={xScale}
-              stroke={color}
-              top={height}
-              numTicks={6}
-              tickLabelProps={() => ({
-                fill: color,
-                dy: '-0.25rem',
-                fontWeight: '900',
-                textAnchor: 'left',
-                fontSize: 11
-              })}
-              hideTicks
-              tickFormat={val => formatXTicks(val)}
-            />
-            {x && (
-              <Fragment>
-                <Line
-                  from={{ x: x, y: 0 }}
-                  to={{ x: x, y: Math.max(...yCoords) }}
-                  stroke="#fff"
-                  strokeWidth={1}
-                  strokeOpacity={0.5}
-                  style={{ pointerEvents: 'none' }}
-                />
-                {yCoords.map((coord, i) => (
-                  <circle
-                    key={i}
-                    cx={x}
-                    cy={coord}
-                    fill="rgb(28, 42, 44)"
-                    stroke={color}
-                    strokeWidth={1}
-                    style={{ pointerEvents: 'none' }}
-                    fillOpacity={1}
-                    r={4}
-                  />
-                ))}
-              </Fragment>
-            )}
-          </svg>
-          {x && <Tooltip tooltipData={calculatedData} left={x} color={color} />}
-        </Fragment>
-      )
-    )
+    const { parentHeight, parentWidth, children, viewBox, data, xKey, formatY, formatX, stroke, color, yCoords, calculatedData, tooltip: Tooltip, indicator: Indicator, x } = this.props
+    return chartData && <Fragment>
+      <svg width={parentWidth} height={parentHeight} preserveAspectRatio="none" viewBox={viewBox ? viewBox : determineViewBox(
+        { biaxialChildren, margin, parentWidth, parentHeight }
+      )} ref={svg => (this.chart = svg)}>
+        {Children.map(children, child =>
+          cloneElement(child, {
+            data,
+            xScale,
+            margin,
+            height,
+            chartData,
+            yPoints,
+            width,
+            xKey,
+            inheritedScale: yScale,
+            formatY,
+            formatX
+          })
+        )}
+        <Group left={margin.left}>
+          <Bar width={width - margin.left} height={height} fill="transparent" onMouseMove={() => event => {
+            this.mouseMove({ event })
+          }} onMouseLeave={() => this.mouseLeave} />
+          <StyledGridRows scale={yScale} {...{ stroke }} width={width - margin.left} />
+          {biaxialChildren || <StyledLeftAxis scale={yScale} color={color} hideTicks tickFormat={formatY} />}
+        </Group>
+        <StyledBottomAxis scale={xScale} {...{ color, height }} hideTicks tickFormat={formatX} />
+        {x && <Indicator {...{ yCoords, x, stroke, color }} />}
+      </svg>
+      {x && <Tooltip tooltipData={calculatedData} x={x} color={color} />}
+    </Fragment>
   }
 }
 
@@ -234,9 +153,17 @@ ChartArea.propTypes = {
    */
   tooltip: PropTypes.func,
   /**
-   * A function which formats the axes
+   * A React component made with SVG to indicate the tooltip position
    */
-  formatter: PropTypes.func,
+  indicator: PropTypes.func,
+  /**
+   * A function which formats the yAxis
+   */
+  formatY: PropTypes.func,
+  /**
+   * A function which formats the xAxis
+   */
+  formatX: PropTypes.func,
   /**
    * An optional string for the chart viewbox
    */
@@ -252,7 +179,9 @@ ChartArea.defaultProps = {
   color: '#000',
   stroke: '#000',
   tooltip: TooltipComponent,
-  formatter: formatTicks,
+  indicator: Indicator,
+  formatY: formatTicks,
+  formatX: formatXTicks,
   margin: margin
 }
 

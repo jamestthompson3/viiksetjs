@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { extractY } from 'common/vx/utils/dataUtils'
 
 export const withTooltipPropTypes = {
   tooltipData: PropTypes.object,

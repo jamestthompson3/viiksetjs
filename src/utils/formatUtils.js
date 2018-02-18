@@ -29,7 +29,8 @@ export const formatTicks = d => (d >= 1000 ? `${d / 1000}k` : d)
 export const formatXTicks = d => {
   if (d.getTime() != null) {
     return formatTime(d)
-  } else {
+  }
+  else {
     return d
   }
 }
