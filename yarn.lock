@@ -79,6 +79,12 @@
     classnames "^2.2.5"
     prop-types "^15.6.0"
 
+"@vx/bounds@^0.0.153":
+  version "0.0.153"
+  resolved "https://registry.yarnpkg.com/@vx/bounds/-/bounds-0.0.153.tgz#2fc2118fdd3dbb1a3fb897dceabab3d5eb617617"
+  dependencies:
+    prop-types "^15.5.10"
+
 "@vx/curve@0.0.153", "@vx/curve@^0.0.153":
   version "0.0.153"
   resolved "https://registry.yarnpkg.com/@vx/curve/-/curve-0.0.153.tgz#6829c3454f9ec16b7e6925aecbad5a1e3c8b3169"

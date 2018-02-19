@@ -1,14 +1,16 @@
 import React, { Fragment, Component } from 'react'
-
 import { scaleLinear } from 'd3-scale'
-
-
-
+import { curveMonotoneX } from '@vx/curve'
 import moment from 'moment'
 import PropTypes from 'prop-types'
 import { flatten } from 'lodash'
 
-import { StyledGradient, StyledPatternLines, StyledLinePath } from '../styledComponents'
+import {
+  StyledGradient,
+  StyledPatternLines,
+  StyledLinePath,
+  StyledAreaClosed
+} from '../styledComponents'
 
 class LineChart extends Component {
   shouldComponentUpdate(prevProps) {
@@ -20,10 +22,10 @@ class LineChart extends Component {
       color,
       dataKey,
       xScale,
-      fill,
+      nofill,
       height,
       margin,
-      pattern,
+      nopattern,
       inheritedScale,
       axisId,
       ...rest
@@ -50,68 +52,49 @@ class LineChart extends Component {
     const yScale = scaleLinear()
       .domain([0, Math.max(...dataPoints)])
       .range([height, margin.top + margin.top])
+    const getAxis = () => (axisId == null ? inheritedScale : yScale)
+    const findFill = gradient => {
+      if (nofill) {
+        return
+      }
+      return gradient ? `url(#gradient${dataKey})` : `url(#dlines${dataKey})`
+    }
     return (
       <Fragment>
-        {pattern && (
+        {!nopattern && (
           <Fragment>
-            <StyledGradient {...{ color, dataKey }} />
-            <StyledPatternLines {...{ color, dataKey }} />
+            <StyledGradient {...{ color }} id={`gradient${dataKey}`} />
+            <StyledPatternLines {...{ color }} id={`dlines${dataKey}`} />
           </Fragment>
         )}
-        <StyledLinePath {...{ data, xScale, yScale, inheritedScale, xPoints, yPoints, color, axisId }} />
-        {fill && (
+        <StyledLinePath
+          {...{ data, color }}
+          y={yPoints}
+          x={xPoints}
+          yScale={getAxis()}
+          xScale={xScale}
+          curve={curveMonotoneX}
+        />
+        {!nofill && (
           <Fragment>
-            {axisId !== undefined ? (
-              <Fragment>
-                <AreaClosed
-                  data={data}
-                  xScale={xScale}
-                  yScale={yScale}
-                  x={xPoints}
-                  y={yPoints}
-                  curve={curveMonotoneX}
-                  fill={fill ? `url(#gradient${dataKey})` : null}
-                  stroke={color}
-                  strokeWidth={1}
-                />
-                <AreaClosed
-                  data={data}
-                  xScale={xScale}
-                  yScale={yScale}
-                  x={xPoints}
-                  y={yPoints}
-                  curve={curveMonotoneX}
-                  fill={fill ? `url(#dlines${dataKey})` : null}
-                  stroke={color}
-                  strokeWidth={1}
-                />
-              </Fragment>
-            ) : (
-              <Fragment>
-                <AreaClosed
-                  data={data}
-                  xScale={xScale}
-                  yScale={inheritedScale}
-                  x={xPoints}
-                  y={yPoints}
-                  curve={curveMonotoneX}
-                  fill={fill ? `url(#gradient${dataKey})` : null}
-                  stroke={color}
-                  strokeWidth={1}
-                />
-                <AreaClosed
-                  data={data}
-                  xScale={xScale}
-                  yScale={inheritedScale}
-                  x={xPoints}
-                  y={yPoints}
-                  curve={curveMonotoneX}
-                  fill={fill ? `url(#dlines${dataKey})` : null}
-                  stroke={color}
-                  strokeWidth={1}
-                />
-              </Fragment>
-            )}
+            <StyledAreaClosed
+              {...{ data, color }}
+              y={yPoints}
+              x={xPoints}
+              fill={findFill('gradient')}
+              yScale={getAxis()}
+              xScale={xScale}
+              curve={curveMonotoneX}
+            />
+            <StyledAreaClosed
+              {...{ data, color }}
+              y={yPoints}
+              yScale={getAxis()}
+              xScale={xScale}
+              fill={findFill()}
+              x={xPoints}
+              curve={curveMonotoneX}
+            />
           </Fragment>
         )}
       </Fragment>
@@ -129,18 +112,18 @@ LineChart.propTypes = {
    **/
   color: PropTypes.string,
   /**
-   * Determines whether or not there should be a fill
+   * If true, there will be no fill on the line chart.
    **/
-  fill: PropTypes.bool,
+  nofill: PropTypes.bool,
   /**
-   * Determines whether or not pattern lines should be present
+   * If true, there will be no patter on the line chart.
    */
-  pattern: PropTypes.bool
+  nopattern: PropTypes.bool
 }
 
 LineChart.defaultProps = {
   color: 'rgb(0, 157, 253)',
-  fill: true,
-  pattern: true
+  nofill: false,
+  nopattern: false
 }
 export default LineChart

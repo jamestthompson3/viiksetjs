@@ -20,7 +20,13 @@ import {
 import { formatTicks, formatXTicks } from '../../utils/formatUtils'
 import { determineScale, biaxial, localPoint, determineViewBox } from '../../utils/chartUtils'
 import withTooltip from '../Tooltip/withTooltip'
-import { TooltipComponent, Indicator, StyledGridRows, StyledLeftAxis, StyledBottomAxis } from '../styledComponents/index'
+import {
+  TooltipComponent,
+  Indicator,
+  StyledGridRows,
+  StyledLeftAxis,
+  StyledBottomAxis
+} from '../styledComponents/index'
 
 const margin = { top: 18, right: 15, bottom: 0, left: 30 }
 
@@ -34,9 +40,8 @@ class ChartArea extends Component {
   }
 
   componentWillUnmount() {
-    document.removeEventListener('resize',this.calculateData)
+    document.removeEventListener('resize', this.calculateData)
   }
-
 
   componentDidUpdate(prevProps) {
     if (prevProps.data !== this.props.data) {
@@ -99,38 +104,79 @@ class ChartArea extends Component {
   mouseLeave = () => this.props.updateTooltip({ calculatedData: null, x: null, yCoords: null })
   render() {
     const { width, height, xScale, yScale, biaxialChildren, chartData, yPoints } = this.state
-    const { parentHeight, parentWidth, children, viewBox, data, xKey, formatY, formatX, stroke, color, yCoords, calculatedData, tooltip: Tooltip, indicator: Indicator, x } = this.props
-    return chartData && <Fragment>
-      <svg width={parentWidth} height={parentHeight} preserveAspectRatio="none" viewBox={viewBox ? viewBox : determineViewBox(
-        { biaxialChildren, margin, parentWidth, parentHeight }
-      )} ref={svg => (this.chart = svg)}>
-        {Children.map(children, child =>
-          cloneElement(child, {
-            data,
-            xScale,
-            margin,
-            height,
-            chartData,
-            yPoints,
-            width,
-            xKey,
-            inheritedScale: yScale,
-            formatY,
-            formatX
-          })
-        )}
-        <Group left={margin.left}>
-          <Bar width={width - margin.left} height={height} fill="transparent" onMouseMove={() => event => {
-            this.mouseMove({ event })
-          }} onMouseLeave={() => this.mouseLeave} />
-          <StyledGridRows scale={yScale} {...{ stroke }} width={width - margin.left} />
-          {biaxialChildren || <StyledLeftAxis scale={yScale} color={color} hideTicks tickFormat={formatY} />}
-        </Group>
-        <StyledBottomAxis scale={xScale} {...{ color, height }} hideTicks tickFormat={formatX} />
-        {x && <Indicator {...{ yCoords, x, stroke, color }} />}
-      </svg>
-      {x && <Tooltip tooltipData={calculatedData} x={x} color={color} />}
-    </Fragment>
+    const {
+      parentHeight,
+      parentWidth,
+      children,
+      viewBox,
+      data,
+      xKey,
+      formatY,
+      formatX,
+      stroke,
+      color,
+      yCoords,
+      calculatedData,
+      tooltip: Tooltip,
+      indicator: Indicator,
+      x
+    } = this.props
+    return (
+      chartData && (
+        <Fragment>
+          <svg
+            width={parentWidth}
+            height={parentHeight}
+            preserveAspectRatio="none"
+            viewBox={
+              viewBox
+                ? viewBox
+                : determineViewBox({ biaxialChildren, margin, parentWidth, parentHeight })
+            }
+            ref={svg => (this.chart = svg)}
+          >
+            {Children.map(children, child =>
+              cloneElement(child, {
+                data,
+                xScale,
+                margin,
+                height,
+                chartData,
+                yPoints,
+                width,
+                xKey,
+                inheritedScale: yScale,
+                formatY,
+                formatX
+              })
+            )}
+            <Group left={margin.left}>
+              <Bar
+                width={width - margin.left}
+                height={height}
+                fill="transparent"
+                onMouseMove={() => event => {
+                  this.mouseMove({ event })
+                }}
+                onMouseLeave={() => this.mouseLeave}
+              />
+              <StyledGridRows scale={yScale} {...{ stroke }} width={width - margin.left} />
+              {biaxialChildren || (
+                <StyledLeftAxis scale={yScale} color={color} hideTicks tickFormat={formatY} />
+              )}
+            </Group>
+            <StyledBottomAxis
+              scale={xScale}
+              {...{ color, height }}
+              hideTicks
+              tickFormat={formatX}
+            />
+            {x && <Indicator {...{ yCoords, x, stroke, color }} />}
+          </svg>
+          {x && <Tooltip tooltipData={calculatedData} x={x} color={color} />}
+        </Fragment>
+      )
+    )
   }
 }
 

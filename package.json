@@ -44,6 +44,7 @@
   },
   "devDependencies": {
     "@vx/axis": "^0.0.158",
+    "@vx/bounds": "^0.0.153",
     "@vx/curve": "^0.0.153",
     "@vx/gradient": "^0.0.153",
     "@vx/grid": "^0.0.158",
