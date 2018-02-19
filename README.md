@@ -1,4 +1,6 @@
 # viiksetjs
+<img src="./viiksetjs.jpg" />
+
 A lightweight Javascript graphing library for React based on d3
 
 ## About
@@ -44,7 +46,9 @@ The `ChartArea` component will construct a grid and axes on which it will render
 | stroke | #000    | String | color applied to the gridlines and to the default indicator line |
 |xKey | '' | String | Optional key delimiting the xValues|
 |tooltip | found in src styled components| Function | React component that gets passed the following props: `tooltipData, color, x`. `tooltipData` contains the calculated data object for current mouse position. `color` is the color passed from `ChartArea`.  `x` is the position of the mouse.|
-|indicator | found in src/styledComponents | Function | React component that gets passed the following props: `yCoords, x, stroke, color`. `yCoords` are the calculated yCoordinates for all datapoints in the chart at the given mouse position. x` is the calculated xValue at the given mouse position.  `stroke` and `color` are inherited from `ChartArea`.|
+|indicator | found in src/styledComponents | Function | React component that gets passed the following props: `yCoords, x, stroke, color`. `yCoords` are the calculated yCoordinates for all datapoints in the chart at the given mouse position. `x` is the calculated xValue at the given mouse position.  `stroke` and `color` are inherited from `ChartArea`.|
+|nogrid| false | Boolean | If `true`, then no gridlines will be shown on `ChartArea`|
+|notool| false | Boolean | If `true` then no tooltip will be shown|
 |formatY | *see example below | Function | A function for formatting the yAxis passed the argument `d` which represents the data point|
 |formatX | *see example below| Function | A function for formatting the xAxis passed the argument `d` which represents the data point|
 | viewBox | String | | SVG viewBox for the chart area|

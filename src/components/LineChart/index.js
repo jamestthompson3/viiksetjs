@@ -61,12 +61,12 @@ class LineChart extends Component {
     }
     return (
       <Fragment>
-        {!nopattern && (
-          <Fragment>
-            <StyledGradient {...{ color }} id={`gradient${dataKey}`} />
-            <StyledPatternLines {...{ color }} id={`dlines${dataKey}`} />
-          </Fragment>
-        )}
+          {!nofill && (
+            <Fragment>
+              <StyledGradient {...{ color }} id={`gradient${dataKey}`} />
+              <StyledPatternLines {...{ color }} id={`dlines${dataKey}`} />
+            </Fragment>
+          )}
         <StyledLinePath
           {...{ data, color }}
           y={yPoints}
@@ -75,8 +75,7 @@ class LineChart extends Component {
           xScale={xScale}
           curve={curveMonotoneX}
         />
-        {!nofill && (
-          <Fragment>
+        {!nofill &&
             <StyledAreaClosed
               {...{ data, color }}
               y={yPoints}
@@ -86,7 +85,8 @@ class LineChart extends Component {
               xScale={xScale}
               curve={curveMonotoneX}
             />
-            <StyledAreaClosed
+          }
+            {!nopattern || !nofill && <StyledAreaClosed
               {...{ data, color }}
               y={yPoints}
               yScale={getAxis()}
@@ -95,8 +95,7 @@ class LineChart extends Component {
               x={xPoints}
               curve={curveMonotoneX}
             />
-          </Fragment>
-        )}
+          }
       </Fragment>
     )
   }

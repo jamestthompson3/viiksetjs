@@ -36,15 +36,15 @@ class ChartArea extends Component {
   }
   componentDidMount() {
     this.calculateData()
-    document.addEventListener('resize', this.calculateData)
+    document.addEventListener('resize', this.calculateData())
   }
 
   componentWillUnmount() {
-    document.removeEventListener('resize', this.calculateData)
+    document.removeEventListener('resize', this.calculateData())
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.data !== this.props.data) {
+    if (prevProps.data !== this.props.data || prevProps.parentWidth !== this.props.parentWidth || prevProps.parentHeight !== this.props.parentHeight) {
       return this.calculateData()
     }
   }
@@ -114,6 +114,8 @@ class ChartArea extends Component {
       formatY,
       formatX,
       stroke,
+      nogrid,
+      notool,
       color,
       yCoords,
       calculatedData,
@@ -156,11 +158,11 @@ class ChartArea extends Component {
                 height={height}
                 fill="transparent"
                 onMouseMove={() => event => {
-                  this.mouseMove({ event })
+                  notool || this.mouseMove({ event })
                 }}
                 onMouseLeave={() => this.mouseLeave}
               />
-              <StyledGridRows scale={yScale} {...{ stroke }} width={width - margin.left} />
+              {!nogrid && <StyledGridRows scale={yScale} {...{ stroke }} width={width - margin.left} />}
               {biaxialChildren || (
                 <StyledLeftAxis scale={yScale} color={color} hideTicks tickFormat={formatY} />
               )}
@@ -214,6 +216,14 @@ ChartArea.propTypes = {
    * An optional string for the chart viewbox
    */
   viewBox: PropTypes.string,
+   /**
+   * If true, no gridlines will be shown.
+   */
+  nogrid: PropTypes.bool,
+   /**
+   * If true, no tooltip will be shown.
+   */
+  notool: PropTypes.bool,
   /**
    * An optional prop for chart margins
    */
@@ -225,6 +235,7 @@ ChartArea.defaultProps = {
   color: '#000',
   stroke: '#000',
   tooltip: TooltipComponent,
+  nogrid: false,
   indicator: Indicator,
   formatY: formatTicks,
   formatX: formatXTicks,
