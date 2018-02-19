@@ -27,7 +27,7 @@ const GraphContainer = styled.div`
 `
 
 const Header = styled.div`
-  background: red;
+  background: #2189C8;
   display: flex;
   width: 100%;
   flex-direction: column;
@@ -41,8 +41,8 @@ const IndexPage = () => (
     </Header>
     <h2>Time Series</h2>
     <GraphContainer>
-      <ChartArea data={timeSeries.data} color="red" stroke='grey'>
-        <LineChart dataKey="messages" color="red" />
+      <ChartArea data={timeSeries.data} color="#2189C8" stroke='grey'>
+        <LineChart dataKey="messages" color="#2189C8" />
       </ChartArea>
     </GraphContainer>
   </PageWrapper>
