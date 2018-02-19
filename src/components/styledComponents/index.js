@@ -1,9 +1,9 @@
 import React, { Fragment } from 'react'
 import styled from 'styled-components'
 import { Line } from '@vx/shape'
+import { withBoundingRects } from '@vx/bounds'
 import { LinearGradient } from '@vx/gradient'
 import { PatternLines } from '@vx/pattern'
-import { curveMonotoneX } from '@vx/curve'
 import { GridRows } from '@vx/grid'
 import { AreaClosed, LinePath } from '@vx/shape'
 import { AxisBottom, AxisLeft } from '@vx/axis'
@@ -11,9 +11,6 @@ import { rgba } from 'polished'
 
 const findStroke = p => p.theme[p.stroke] || p.stroke || p.theme.primaryColor
 const findColor = p => p.theme[p.color] || p.color || p.theme.primaryColor
-const findFill = p => p.fill
-? p.gradient
-?`url(#gradient${dataKey})`
 
 export const StyledGridRows = styled(GridRows).attrs({
   pointerEvents: 'none',
@@ -30,104 +27,135 @@ export const StyledBottomAxis = styled(AxisBottom).attrs({
   top: p => p.height,
   numTicks: 6,
   stroke: p => findColor(p),
-  tickLabelProps: p => () => ({ fill: findColor(p), dy: '-0.25rem', fontWeight: '900', textAnchor: 'left', fontSize: 11 })
+  tickLabelProps: p => () => ({
+    fill: findColor(p),
+    dy: '-0.25rem',
+    fontWeight: '900',
+    textAnchor: 'left',
+    fontSize: 11
+  })
 })``
 export const StyledGradient = styled(LinearGradient).attrs({
   from: p => rgba(findColor(p), 0.35),
-  to: p => rgba(findColor(p), 0.05),
-  id: p => `gradient${p.dataKey}`
+  to: p => rgba(findColor(p), 0.05)
 })``
 export const StyledPatternLines = styled(PatternLines).attrs({
   stroke: p => rgba(findColor(p), 0.15),
   strokeWidth: 1,
   width: 6,
   height: 6,
-  orientation: ['diagonal'],
-  id: p => `dlines${p.dataKey}`
+  orientation: ['diagonal']
 })``
 export const StyledLinePath = styled(LinePath).attrs({
   data: p => p.data,
-  xScale: p => () => p.xScale,
-  yScale: p => () => p.axisId == null ? p.inheritedScale : p.yScale,
-  x: p => p.xPoints,
-  y: p => p.yPoints,
-  curve: p => () => curveMonotoneX,
   stroke: p => findColor(p),
   strokeWidth: '1.5px'
 })``
 export const StyledAreaClosed = styled(AreaClosed).attrs({
   data: p => p.data,
-   xScale: p => () => p.xScale,
-  yScale: p => () => p.axisId == null ? p.inheritedScale : p.yScale,
-  curve: p => () => curveMonotoneX,
-  fill: p => p.fill && p.gradient && `url(#gradient${dataKey})`, // TODO MAKE FOR PATTERN
   stroke: p => findColor(p),
   strokeWidth: 1
 })``
 
-<AreaClosed
-                  data={data}
-                  xScale={xScale}
-                  yScale={yScale}
-                  x={xPoints}
-                  y={yPoints}
-                  curve={curveMonotoneX}
-                  fill={fill ? `url(#gradient${dataKey})` : null}
-                  stroke={color}
-                  strokeWidth={1}
-                />
-
-const TooltipWrapper = styled.div`
+export const TooltipWrapper = styled.div`
   display: block;
-  border: 2px solid ${p => p.theme[p.color] || p.color || p.theme.primaryColor};
+  color: #fff;
+  width: 125px;
+  border: 2px solid ${p => (p.color ? p.color : p.theme.primaryColor)};
   border-radius: 5px;
   background: #1a2e3c;
-  color: #fff;
+  box-shadow: 6px 6px 27px -12px rgba(0, 0, 0, 0.75);
   padding: 8px;
   > * {
     margin: 0;
+    font-size: 12px;
   }
 `
-
-const Corner = styled.div`
+export const Corner = styled.div`
   height: 16px;
   width: 16px;
   margin-top: -0.625rem;
   z-index: 110;
-  border-right: 2px solid ${p => p.theme[p.color] || p.color || p.theme.primaryColor};
-  border-bottom: 2px solid ${p => p.theme[p.color] || p.color || p.theme.primaryColor};
+  border-right: 2px solid ${p => (p.color ? p.color : p.theme.primaryColor)};
+  border-bottom: 2px solid ${p => (p.color ? p.color : p.theme.primaryColor)};
   border-right-bottom-radius: 5px;
   background: #1a2e3c;
-  transform: rotate(45deg);
+  transform: ${p =>
+    p.bounds.transform ? 'translate(4.4rem, -2rem) rotate(317deg)' : 'rotate(45deg)'};
 `
-
-const TooltipContainer = styled.div`
+export const TooltipContainer = styled.div.attrs({
+  style: ({ bounds }) => ({
+    left: `${bounds.left}px`,
+    transform: bounds.transform && `translate(0, ${bounds.top}rem)`
+  })
+})`
   display: flex;
-  position: absolute;
-  top: 5rem;
   width: 125px;
-  left: ${p => `${p.x + 160}px`};
+  top: 5rem;
+  position: absolute;
   pointer-events: none;
-  z-index: 1000;
+  z-index: 10000;
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
 `
 
+const DEFAULT_TOOLTIP_ALIGN = 32
+
+const boundsSetter = ({ left, rect, parentRect }) => {
+  if (left + rect.width > parentRect.width) {
+    return left + (rect.width - 42)
+  } else {
+    return left + rect.width + DEFAULT_TOOLTIP_ALIGN // default case
+  }
+  // TODO: MAKE BETTER CALCS starting with rect.left - parentRect.left < 0 for left bounds
+}
+const TooltipBucket = ({ children, getRects, color, left }) => {
+  const { rect, parentRect } = getRects()
+  const getBounds = () => {
+    if (rect && parentRect) {
+      return {
+        left: boundsSetter({ left, rect, parentRect }),
+        top: rect.height > 75 ? 2 : 3,
+        transform: left + rect.width > parentRect.width || rect.top > parentRect.top ? true : false
+      }
+    }
+    return {
+      left: left - DEFAULT_TOOLTIP_ALIGN,
+      top: 0,
+      transform: false
+    }
+  }
+  return (
+    <TooltipContainer bounds={getBounds()}>
+      {children}
+      <Corner color={color} bounds={getBounds()} />
+    </TooltipContainer>
+  )
+}
+
+const BoundedTooltip = withBoundingRects(TooltipBucket)
+
 export const TooltipComponent = ({ tooltipData, color, x }) => {
   return (
-    <TooltipContainer {...{ x }}>
+    <BoundedTooltip left={x} color={color}>
       <TooltipWrapper color={color}>
         {Object.entries(tooltipData).map((entry, i) => <p key={i}>{`${entry[0]}: ${entry[1]}`}</p>)}
       </TooltipWrapper>
-      <Corner color={color} />
-    </TooltipContainer>
+    </BoundedTooltip>
   )
 }
 
 export const Indicator = ({ yCoords, x, stroke, color }) => (
   <Fragment>
-    <Line from={{ x: x, y: 0 }} to={{ x: x, y: Math.max(...yCoords) }} stroke={stroke} strokeWidth={1} strokeOpacity={0.5} style={{ pointerEvents: 'none' }} />
+    <Line
+      from={{ x: x, y: 0 }}
+      to={{ x: x, y: Math.max(...yCoords) }}
+      stroke={stroke}
+      strokeWidth={1}
+      strokeOpacity={0.5}
+      style={{ pointerEvents: 'none' }}
+    />
     {yCoords.map((coord, i) => (
       <circle
         key={i}
