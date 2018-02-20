@@ -7,7 +7,7 @@ import { Bar } from '@vx/shape'
 import { scaleLinear } from 'd3-scale'
 import { bisect } from 'd3-array'
 import moment from 'moment'
-import { flow, uniq, head } from 'lodash'
+import { flow, uniq, head, isEmpty } from 'lodash'
 
 import {
   getX,
@@ -44,7 +44,11 @@ class ChartArea extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.data !== this.props.data || prevProps.parentWidth !== this.props.parentWidth || prevProps.parentHeight !== this.props.parentHeight) {
+    if (
+      prevProps.data !== this.props.data ||
+      prevProps.parentWidth !== this.props.parentWidth ||
+      prevProps.parentHeight !== this.props.parentHeight
+    ) {
       return this.calculateData()
     }
   }
@@ -52,6 +56,10 @@ class ChartArea extends Component {
   calculateData = () => {
     this.setState({ chartData: false })
     const { data, children, parentHeight, parentWidth, xKey, yKey, type, margin } = this.props
+    if (isEmpty(data)) {
+      console.error('Data is empty, cannot calculate chart')
+      return null
+    }
     const biaxialChildren = biaxial(children)
     const dataKeys = extractLabels(data[0])
     const width = parentWidth - margin.left - margin.right
@@ -162,7 +170,9 @@ class ChartArea extends Component {
                 }}
                 onMouseLeave={() => this.mouseLeave}
               />
-              {!nogrid && <StyledGridRows scale={yScale} {...{ stroke }} width={width - margin.left} />}
+              {!nogrid && (
+                <StyledGridRows scale={yScale} {...{ stroke }} width={width - margin.left} />
+              )}
               {biaxialChildren || (
                 <StyledLeftAxis scale={yScale} color={color} hideTicks tickFormat={formatY} />
               )}
@@ -173,9 +183,9 @@ class ChartArea extends Component {
               hideTicks
               tickFormat={formatX}
             />
-            {x && <Indicator {...{ yCoords, x, stroke, color }} />}
+            {x && <Indicator {...{ yCoords, x, stroke, color, height }} />}
           </svg>
-          {x && <Tooltip tooltipData={calculatedData} x={x} color={color} />}
+          {x && <Tooltip tooltipData={calculatedData} {...{ x, color, yCoords }} />}
         </Fragment>
       )
     )
@@ -192,6 +202,10 @@ ChartArea.propTypes = {
    * Optional prop to apply color gridlines
    */
   stroke: PropTypes.string,
+  /**
+   * A string indicating the type of scale the type should have, defaults to timeseries
+   */
+  type: PropTypes.oneOf(['ordinal', 'linear']),
   /**
    * A string indicating which data values should be used to create the x-axis
    */
@@ -216,11 +230,11 @@ ChartArea.propTypes = {
    * An optional string for the chart viewbox
    */
   viewBox: PropTypes.string,
-   /**
+  /**
    * If true, no gridlines will be shown.
    */
   nogrid: PropTypes.bool,
-   /**
+  /**
    * If true, no tooltip will be shown.
    */
   notool: PropTypes.bool,

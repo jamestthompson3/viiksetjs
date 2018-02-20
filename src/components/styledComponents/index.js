@@ -86,12 +86,11 @@ export const Corner = styled.div`
 export const TooltipContainer = styled.div.attrs({
   style: ({ bounds }) => ({
     left: `${bounds.left}px`,
-    transform: bounds.transform && `translate(0, ${bounds.top}rem)`
+    top: `${bounds.top}px`
   })
 })`
   display: flex;
   width: 125px;
-  top: 5rem;
   position: absolute;
   pointer-events: none;
   z-index: 10000;
@@ -100,41 +99,34 @@ export const TooltipContainer = styled.div.attrs({
   align-items: center;
 `
 
-const DEFAULT_TOOLTIP_ALIGN = 32
+const DEFAULT_TOOLTIP_ALIGN = 42
 
-const boundsSetter = ({ left, rect, parentRect }) => {
-  if (left + rect.width > parentRect.width) {
-    return left + (rect.width - 42)
-  } else {
-    return left + rect.width + DEFAULT_TOOLTIP_ALIGN // default case
-  }
-  // TODO: MAKE BETTER CALCS starting with rect.left - parentRect.left < 0 for left bounds
-}
+// const boundsSetter = ({ left, rect, parentRect }) => {
+//   if (left + rect.width > parentRect.width) {
+//     return parentRect.width < 800 ? left - DEFAULT_TOOLTIP_ALIGN : left
+//   } else {
+//     return window.innerWidth - parentRect.width - parentRect.left + (left - rect.width / 4)
+//   }
+//   // TODO: MAKE BETTER CALCS starting with rect.left - parentRect.left < 0 for left bounds
+// }
 const TooltipBucket = ({ children, getRects, color, left }) => {
   const { rect, parentRect } = getRects()
   const getBounds = () => {
     if (rect && parentRect) {
       return {
-        left: boundsSetter({ left, rect, parentRect }),
-        top: rect.height > 75 ? 2 : 3,
-        transform: left + rect.width > parentRect.width || rect.top > parentRect.top ? true : false
+        left: window.innerWidth - parentRect.width - parentRect.left + (left - rect.width / 4),
+        top: parentRect.top - rect.height
       }
     }
     return {
       left: left - DEFAULT_TOOLTIP_ALIGN,
-      top: 0,
-      transform: false
+      top: 0
     }
   }
-  return (
-    <TooltipContainer bounds={getBounds()}>
-      {children}
-      <Corner color={color} bounds={getBounds()} />
-    </TooltipContainer>
-  )
+  return <TooltipContainer bounds={getBounds()}>{children}</TooltipContainer>
 }
 
-const BoundedTooltip = withBoundingRects(TooltipBucket)
+export const BoundedTooltip = withBoundingRects(TooltipBucket)
 
 export const TooltipComponent = ({ tooltipData, color, x }) => {
   return (
