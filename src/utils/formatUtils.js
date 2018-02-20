@@ -1,5 +1,5 @@
 import { timeFormat } from 'd3-time-format'
-
+import moment from 'moment'
 /**
  * Takes a data point and formats it to the following time
  * Mon Jan 19 (ddd mmm DD)
@@ -27,10 +27,9 @@ export const formatTicks = d => (d >= 1000 ? `${d / 1000}k` : d)
  * @param {Any}
  */
 export const formatXTicks = d => {
-  if (d.getTime() != null) {
+  if (moment(d).isValid()) {
     return formatTime(d)
-  }
-  else {
+  } else {
     return d
   }
 }

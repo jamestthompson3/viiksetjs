@@ -17,12 +17,11 @@ const BarChart = ({
   ...rest
 }) => {
   if (data.map(item => item[dataKey]).includes(undefined)) {
-    new ReferenceError(`LineChart: No data found with dataKey ${dataKey}`)
+    new ReferenceError(`BarChart: No data found with dataKey ${dataKey}`)
     return null
   }
   const xPoint = d => xScale(d[xKey])
-  const yMax = height - margin.bottom
-  const barHeight = d => inheritedScale(d[dataKey]) - margin.top
+  const barHeight = d => inheritedScale(d[dataKey])
   return (
     <Fragment>
       <LinearGradient from={rgba(color, 0.35)} to={rgba(color, 0.05)} id={`gradient${xKey}`} />
@@ -32,7 +31,7 @@ const BarChart = ({
           key={i}
           height={barHeight(d)}
           x={xPoint(d)}
-          y={yMax - barHeight(d)}
+          y={height - barHeight(d)}
           rx={5}
           ry={0}
           fill={fill && `url(#gradient${xKey})`}

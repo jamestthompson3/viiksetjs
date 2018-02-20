@@ -39,9 +39,10 @@ The `ChartArea` component will construct a grid and axes on which it will render
 `ChartArea` takes the size of the its parent component and is responsive by default.
 
 ### Props
-| Prop          | Default       | Type | Desc  |
-| :------------- |:-------------:| :-----| :----|
-| data     | [] | Array | An array containing data objects.
+| Prop          | Default            | Type        | Desc                |
+| :------------ |:------------------:| :-----------| :-------------------|
+| data     | [] | Array | An array containing data objects.|
+| type | '' | `oneOf(['ordinal', 'linear', ''])` | A string indicating the type of scale the type should have, defaults to timeseries|
 | color     | #000      | String |   color applied to the axes |
 | stroke | #000    | String | color applied to the gridlines and to the default indicator line |
 |xKey | '' | String | Optional key delimiting the xValues|

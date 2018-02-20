@@ -10,9 +10,10 @@
   "scripts": {
     "build": "babel src --out-dir lib",
     "watch": "babel --watch src --out-dir lib",
+    "precommit": "lint-staged"
   },
   "lint-staged": {
-    "*.{js,json,css}": ["prettier --write", "git add"]
+    "*.{js}": ["prettier --write", "git add"]
   },
   "babel": {
     "presets": [
