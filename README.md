@@ -40,13 +40,13 @@ The `ChartArea` component will construct a grid and axes on which it will render
 
 ### Props
 | Prop          | Default       | Type | Desc  |
-| ------------- |:-------------:| -----:| ----:|
+| :------------- |:-------------:| :-----| :----|
 | data     | [] | Array | An array containing data objects.
 | color     | #000      | String |   color applied to the axes |
 | stroke | #000    | String | color applied to the gridlines and to the default indicator line |
 |xKey | '' | String | Optional key delimiting the xValues|
-|tooltip | found in src styled components| Function | React component that gets passed the following props: `tooltipData, color, x`. `tooltipData` contains the calculated data object for current mouse position. `color` is the color passed from `ChartArea`.  `x` is the position of the mouse.|
-|indicator | found in src/styledComponents | Function | React component that gets passed the following props: `yCoords, x, stroke, color`. `yCoords` are the calculated yCoordinates for all datapoints in the chart at the given mouse position. `x` is the calculated xValue at the given mouse position.  `stroke` and `color` are inherited from `ChartArea`.|
+|tooltip | found in src styled components| Function | React component that gets passed the following props: `tooltipData, color, x, yCoords`. `tooltipData` contains the calculated data object for current mouse position. `color` is the color passed from `ChartArea`.  `x` is the position of the mouse. `yCoords` is the calculated yCoordinates for the data point at mouse position `x`.|
+|indicator | found in src/styledComponents | Function | React component that gets passed the following props: `yCoords, x, stroke, color, height`. `yCoords` are the calculated yCoordinates for all datapoints in the chart at the given mouse position. `x` is the calculated xValue at the given mouse position. `height` is the height of the `ChartArea`.  `stroke` and `color` are inherited from `ChartArea`.|
 |nogrid| false | Boolean | If `true`, then no gridlines will be shown on `ChartArea`|
 |notool| false | Boolean | If `true` then no tooltip will be shown|
 |formatY | *see example below | Function | A function for formatting the yAxis passed the argument `d` which represents the data point|
@@ -72,8 +72,16 @@ d => {
 ```
 
 ## LineChart
+`LineChart` component inherits the data from the `ChartArea` which wraps it. Using this data, it scales itself accordingly. A data-key must be provided in order for the component to know which data points it should render.
+
 ```js
     <LineChart dataKey='count_bans' color='rgb(0, 157, 253)'/>
 ```
 
-`LineChart` component inherits the data from the `ChartArea` which wraps it. Using this data, it scales itself accordingly. A data-key must be provided in order for the component to know which data points it should render.
+### Props
+| Prop          | Default       | Type | Desc  |
+| :------------- |:-------------:| :-----| :----|
+| dataKey | '' | String | Key for data to be graphed |
+| color     | #000 | String | Color string. Supports colors from styled-components' `themeProvider`.|
+| nofill | false | Boolean | If true, the LineChart will have no fill|
+| nopattern | false | Boolean | If true, the LineChart will have no pattern |
