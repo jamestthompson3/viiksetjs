@@ -12,7 +12,7 @@
     "watch": "babel --watch src --out-dir lib",
   },
   "lint-staged": {
-    "*.{js,json,css,md}": ["prettier --write", "git add"]
+    "*.{js,json,css}": ["prettier --write", "git add"]
   },
   "babel": {
     "presets": [
