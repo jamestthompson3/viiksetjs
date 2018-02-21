@@ -83,7 +83,7 @@ export const Corner = styled.div`
   transform: ${p =>
     p.bounds.transform ? 'translate(4.4rem, -2rem) rotate(317deg)' : 'rotate(45deg)'};
 `
-export const TooltipContainer = styled.div.attrs({
+const TooltipContainer = styled.div.attrs({
   style: ({ bounds }) => ({
     left: `${bounds.left}px`,
     top: `${bounds.top}px`
@@ -99,27 +99,26 @@ export const TooltipContainer = styled.div.attrs({
   align-items: center;
 `
 
-const DEFAULT_TOOLTIP_ALIGN = 42
+const DEFAULT_TOOLTIP_ALIGN = 32
 
-// const boundsSetter = ({ left, rect, parentRect }) => {
-//   if (left + rect.width > parentRect.width) {
-//     return parentRect.width < 800 ? left - DEFAULT_TOOLTIP_ALIGN : left
-//   } else {
-//     return window.innerWidth - parentRect.width - parentRect.left + (left - rect.width / 4)
-//   }
-//   // TODO: MAKE BETTER CALCS starting with rect.left - parentRect.left < 0 for left bounds
-// }
-const TooltipBucket = ({ children, getRects, color, left }) => {
+const boundsSetter = ({ left, rect, parentRect }) => {
+  if (left + rect.width > parentRect.width) {
+    return parentRect.left + left - rect.width
+  } else {
+    return parentRect.left + left - DEFAULT_TOOLTIP_ALIGN // default case
+  }
+}
+const TooltipBucket = ({ children, getRects, left }) => {
   const { rect, parentRect } = getRects()
   const getBounds = () => {
     if (rect && parentRect) {
       return {
-        left: window.innerWidth - parentRect.width - parentRect.left + (left - rect.width / 4),
+        left: boundsSetter({ left, rect, parentRect }),
         top: parentRect.top - rect.height
       }
     }
     return {
-      left: left - DEFAULT_TOOLTIP_ALIGN,
+      left: left,
       top: 0
     }
   }
@@ -128,9 +127,9 @@ const TooltipBucket = ({ children, getRects, color, left }) => {
 
 export const BoundedTooltip = withBoundingRects(TooltipBucket)
 
-export const TooltipComponent = ({ tooltipData, color, x }) => {
+export const TooltipComponent = ({ tooltipData, color, mouseX, x}) => {
   return (
-    <BoundedTooltip left={x} color={color}>
+    <BoundedTooltip left={x}>
       <TooltipWrapper color={color}>
         {Object.entries(tooltipData).map((entry, i) => <p key={i}>{`${entry[0]}: ${entry[1]}`}</p>)}
       </TooltipWrapper>
