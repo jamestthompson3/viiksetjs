@@ -104,7 +104,7 @@ class ChartArea extends Component {
         const yCoords = yScales
           ? dataKeys.map(key => yScales[key](calculatedData[key]))
           : extractY(calculatedData).map(item => yScale(item))
-        return updateTooltip({ calculatedData, x, yCoords })
+        return updateTooltip({ calculatedData, x, mouseX: svgPoint, yCoords })
       }
     )(xValue)
   }
@@ -121,6 +121,10 @@ class ChartArea extends Component {
       xKey,
       formatY,
       formatX,
+      labelY,
+      labelYProps,
+      labelX,
+      labelXProps,
       stroke,
       nogrid,
       notool,
@@ -129,6 +133,7 @@ class ChartArea extends Component {
       calculatedData,
       tooltip: Tooltip,
       indicator: Indicator,
+      mouseX,
       x
     } = this.props
     return (
@@ -174,7 +179,14 @@ class ChartArea extends Component {
                 <StyledGridRows scale={yScale} {...{ stroke }} width={width - margin.left} />
               )}
               {biaxialChildren || (
-                <StyledLeftAxis scale={yScale} color={color} hideTicks tickFormat={formatY} />
+                <StyledLeftAxis
+                  scale={yScale}
+                  color={color}
+                  hideTicks
+                  tickFormat={formatY}
+                  label={labelY || ''}
+                  labelProps={labelYProps}
+                />
               )}
             </Group>
             <StyledBottomAxis
@@ -182,10 +194,12 @@ class ChartArea extends Component {
               {...{ color, height }}
               hideTicks
               tickFormat={formatX}
+              label={labelX || ''}
+              labelProps={labelXProps}
             />
-            {x && <Indicator {...{ yCoords, x, stroke, color, height }} />}
+            {x && <Indicator {...{ yCoords, x, stroke, color, height, mouseX }} />}
           </svg>
-          {x && <Tooltip tooltipData={calculatedData} {...{ x, color, yCoords }} />}
+          {x && <Tooltip tooltipData={calculatedData} {...{ x, color, yCoords, mouseX}} />}
         </Fragment>
       )
     )
@@ -223,6 +237,22 @@ ChartArea.propTypes = {
    */
   formatY: PropTypes.func,
   /**
+   * A label for the yAxis
+   */
+  labelY: PropTypes.string,
+  /**
+   * Label props object for yLabel
+   */
+  labelYProps: PropTypes.object,
+  /**
+   * A label for the xAxis
+   */
+  labelX: PropTypes.string,
+  /**
+   * Label props object for xLabel
+   */
+  labelXProps: PropTypes.object,
+  /**
    * A function which formats the xAxis
    */
   formatX: PropTypes.func,
@@ -252,6 +282,10 @@ ChartArea.defaultProps = {
   nogrid: false,
   indicator: Indicator,
   formatY: formatTicks,
+  labelY: '',
+  labelX: '',
+  labelYProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' },
+  labelXProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' },
   formatX: formatXTicks,
   margin: margin
 }

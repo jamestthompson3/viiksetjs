@@ -46,10 +46,14 @@ The `ChartArea` component will construct a grid and axes on which it will render
 | color     | #000      | String |   color applied to the axes |
 | stroke | #000    | String | color applied to the gridlines and to the default indicator line |
 |xKey | '' | String | Optional key delimiting the xValues|
-|tooltip | found in src styled components| Function | React component that gets passed the following props: `tooltipData, color, x, yCoords`. `tooltipData` contains the calculated data object for current mouse position. `color` is the color passed from `ChartArea`.  `x` is the position of the mouse. `yCoords` is the calculated yCoordinates for the data point at mouse position `x`.|
-|indicator | found in src/styledComponents | Function | React component that gets passed the following props: `yCoords, x, stroke, color, height`. `yCoords` are the calculated yCoordinates for all datapoints in the chart at the given mouse position. `x` is the calculated xValue at the given mouse position. `height` is the height of the `ChartArea`.  `stroke` and `color` are inherited from `ChartArea`.|
+|tooltip | found in src styled components| Function | React component that gets passed the following props: `tooltipData, color, x, mouseX, yCoords`. `tooltipData` contains the calculated data object for current mouse position. `color` is the color passed from `ChartArea`.  `x` is the x coordinate of the closest estimated data point to the current mouse position. `mouseX` is the current position of the mouse. `yCoords` is the calculated yCoordinates for the data point at mouse position `x`.|
+|indicator | found in src/styledComponents | Function | React component that gets passed the following props: `yCoords, x, stroke, color, height`. `yCoords` are the calculated yCoordinates for all datapoints in the chart at the given mouse position. is the x coordinate of the closest estimated data point to the current mouse position.`mouseX` is the current position of the mouse. `height` is the height of the `ChartArea`.  `stroke` and `color` are inherited from `ChartArea`.|
 |nogrid| false | Boolean | If `true`, then no gridlines will be shown on `ChartArea`|
 |notool| false | Boolean | If `true` then no tooltip will be shown|
+|labelX| ''| String | Label for xAxis|
+|labelXProps| `{ fontSize: 12, textAnchor: 'middle', fill: 'black' }` | Object | Lablel Props for labelX|
+|labelYProps| `{ fontSize: 12, textAnchor: 'middle', fill: 'black' }` | Object | Lablel Props for labelY|
+|labelY| ''| String | Label for yAxis|
 |formatY | *see example below | Function | A function for formatting the yAxis passed the argument `d` which represents the data point|
 |formatX | *see example below| Function | A function for formatting the xAxis passed the argument `d` which represents the data point|
 | viewBox | String | | SVG viewBox for the chart area|
