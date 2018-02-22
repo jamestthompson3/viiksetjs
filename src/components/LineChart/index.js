@@ -14,7 +14,7 @@ import {
 
 class LineChart extends Component {
   shouldComponentUpdate(prevProps) {
-    return !(this.props.yPoints === prevProps.yPoints)
+    return !(this.props.yPoints === prevProps.yPoints) || !(prevProps.dataKey === this.props.dataKey)
   }
   render() {
     const {
@@ -27,8 +27,7 @@ class LineChart extends Component {
       margin,
       nopattern,
       inheritedScale,
-      axisId,
-      ...rest
+      axisId
     } = this.props
     // Check if data exists
     if (data.map(item => item[dataKey]).includes(undefined)) {

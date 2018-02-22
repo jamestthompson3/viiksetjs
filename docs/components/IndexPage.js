@@ -53,7 +53,6 @@ const IndexPage = () => (
         xKey="company"
         stroke="grey"
         nogrid
-        notool
         labelY='Culinary Score'
       >
         <BarChart dataKey="score" xKey="company" color="#dc7d5b" />

@@ -90,7 +90,6 @@ const TooltipContainer = styled.div.attrs({
   })
 })`
   display: flex;
-  width: 125px;
   position: absolute;
   pointer-events: none;
   z-index: 10000;
@@ -99,13 +98,15 @@ const TooltipContainer = styled.div.attrs({
   align-items: center;
 `
 
-const DEFAULT_TOOLTIP_ALIGN = 32
+const DEFAULT_TOOLTIP_ALIGN = 12
 
 const boundsSetter = ({ left, rect, parentRect }) => {
   if (left + rect.width > parentRect.width) {
     return parentRect.left + left - rect.width
+  } else if (left + rect.width < parentRect.left) {
+    return parentRect.left + left + (rect.width / 3)
   } else {
-    return parentRect.left + left - DEFAULT_TOOLTIP_ALIGN // default case
+    return parentRect.left + left - (rect.width / 4) // default case
   }
 }
 const TooltipBucket = ({ children, getRects, left }) => {
@@ -125,9 +126,11 @@ const TooltipBucket = ({ children, getRects, left }) => {
   return <TooltipContainer bounds={getBounds()}>{children}</TooltipContainer>
 }
 
-export const BoundedTooltip = withBoundingRects(TooltipBucket)
+const BoundedTooltip = withBoundingRects(TooltipBucket)
 
-export const TooltipComponent = ({ tooltipData, color, mouseX, x}) => {
+export const withBounds = component => withBoundingRects(component)
+
+export const TooltipComponent = ({ tooltipData, color, x }) => {
   return (
     <BoundedTooltip left={x}>
       <TooltipWrapper color={color}>

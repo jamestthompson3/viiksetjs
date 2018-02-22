@@ -2,7 +2,7 @@ import { Children } from 'react'
 import { Point } from '@vx/point'
 import { scaleLinear, scaleTime, scaleBand } from 'd3-scale'
 
-export const determineScale = ({ type, xPoints, width, margin }) => {
+export const determineXScale = ({ type, xPoints, width, margin }) => {
   const range = [margin.left, width]
   switch (type) {
   case 'ordinal':
@@ -18,6 +18,19 @@ export const determineScale = ({ type, xPoints, width, margin }) => {
     return scaleTime()
       .domain([xPoints[0], xPoints[xPoints.length - 1]])
       .range(range)
+  }
+}
+
+export const determineYScale = ({ type, yPoints, height, margin }) => {
+  switch (type) {
+    case 'ordinal':
+      return scaleLinear()
+      .domain([Math.max(...yPoints), 0])
+      .range([height, margin.top])
+    default:
+      return scaleLinear()
+      .domain([0, Math.max(...yPoints)])
+      .range([height, margin.top])
   }
 }
 
@@ -42,6 +55,12 @@ export const determineViewBox = ({ biaxialChildren, margin, parentWidth, parentH
 export const biaxial = children =>
   Children.map(children, child => child.props.hasOwnProperty('axisId')).includes(true)
 
+/**
+ * Takes React Chilren and returns true or false if BarChart element is found
+ * @param {Object} Children - React Children through which it maps
+ */
+export const barChart = children =>
+  Children.map(children, child => child.type.name === 'BarChart').includes(true)
 /**
  * Own implementation of localPoint from VX. Makes it work on Firefox
  * @param {event} event - Event from which to extract svg canvas points
