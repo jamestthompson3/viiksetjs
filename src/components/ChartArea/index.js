@@ -18,7 +18,14 @@ import {
   createScalarData
 } from '../../utils/dataUtils'
 import { formatTicks, formatXTicks } from '../../utils/formatUtils'
-import { determineScale, biaxial, localPoint, determineViewBox } from '../../utils/chartUtils'
+import {
+  determineXScale,
+  biaxial,
+  localPoint,
+  determineViewBox,
+  determineYScale,
+  barChart
+} from '../../utils/chartUtils'
 import withTooltip from '../Tooltip/withTooltip'
 import {
   TooltipComponent,
@@ -68,11 +75,9 @@ class ChartArea extends Component {
       datum => (moment(datum).isValid() ? moment(datum).toDate() : datum)
     )
     const yPoints = getY(data, yKey)
-    const yScale = scaleLinear()
-      .domain([0, Math.max(...yPoints)])
-      .range([height, margin.top])
+    const yScale = determineYScale({ type, yPoints, height, margin })
     const yScales = biaxialChildren ? createScalarData(data, dataKeys, height, margin) : null
-    const xScale = determineScale({ type, width, xPoints, margin })
+    const xScale = determineXScale({ type, width, xPoints, margin })
     return this.setState({
       width,
       height,
@@ -86,10 +91,13 @@ class ChartArea extends Component {
       chartData: true
     })
   }
-  mouseMove = ({ event }) => {
+  mouseMove = ({ event, datum }) => {
     const { xPoints, xScale, yScale, yScales, dataKeys } = this.state
     const { data, updateTooltip } = this.props
     const svgPoint = localPoint(this.chart, event).x
+    if (datum) {
+      return updateTooltip({ calculatedData: datum, x: svgPoint, mouseX: svgPoint })
+    }
     const xValue = xScale.invert(svgPoint)
     flow(
       xValue => bisect(xPoints, xValue),
@@ -159,6 +167,9 @@ class ChartArea extends Component {
                 chartData,
                 yPoints,
                 width,
+                notool,
+                mouseMove: this.mouseMove,
+                mouseLeave: this.mouseLeave,
                 xKey,
                 inheritedScale: yScale,
                 formatY,
@@ -166,21 +177,23 @@ class ChartArea extends Component {
               })
             )}
             <Group left={margin.left}>
-              <Bar
-                width={width - margin.left}
-                height={height}
-                fill="transparent"
-                onMouseMove={() => event => {
-                  notool || this.mouseMove({ event })
-                }}
-                onMouseLeave={() => this.mouseLeave}
-              />
+              {barChart(children) || (
+                <Bar
+                  width={width - margin.left}
+                  height={height}
+                  fill="transparent"
+                  onMouseMove={() => event => {
+                    notool || this.mouseMove({ event })
+                  }}
+                  onMouseLeave={() => this.mouseLeave}
+                />
+              )}
               {!nogrid && (
                 <StyledGridRows scale={yScale} {...{ stroke }} width={width - margin.left} />
               )}
               {biaxialChildren || (
                 <StyledLeftAxis
-                  scale={yScale}
+                  scale={determineYScale({type: null, yPoints, height, margin})}
                   color={color}
                   hideTicks
                   tickFormat={formatY}
@@ -197,9 +210,12 @@ class ChartArea extends Component {
               label={labelX || ''}
               labelProps={labelXProps}
             />
-            {x && <Indicator {...{ yCoords, x, stroke, color, height, mouseX }} />}
+            {x &&
+              !barChart(children) && (
+                <Indicator {...{ yCoords, x, stroke, color, height, mouseX }} />
+              )}
           </svg>
-          {x && <Tooltip tooltipData={calculatedData} {...{ x, color, yCoords, mouseX}} />}
+          {x && <Tooltip tooltipData={calculatedData} {...{ x, color, yCoords, mouseX }} />}
         </Fragment>
       )
     )
