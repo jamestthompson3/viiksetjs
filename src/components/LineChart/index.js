@@ -22,6 +22,7 @@ class LineChart extends Component {
       color,
       dataKey,
       xScale,
+      xKey,
       nofill,
       height,
       margin,
@@ -39,7 +40,7 @@ class LineChart extends Component {
       return null
     }
     const yPoints = d => d[dataKey]
-    const xPoints = d =>
+    const xPoints = d => xKey ? d[xKey] :
       flatten(
         Object.values(d).map(value => {
           if (typeof value === 'string') {

@@ -27,7 +27,7 @@ export const formatTicks = d => (d >= 1000 ? `${d / 1000}k` : d)
  * @param {Any}
  */
 export const formatXTicks = d => {
-  if (moment(d).isValid()) {
+  if (typeof d === 'object' && moment(d).isValid()) {
     return formatTime(d)
   } else {
     return d
