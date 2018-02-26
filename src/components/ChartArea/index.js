@@ -4,7 +4,6 @@ import { withParentSize } from '@vx/responsive'
 import { Group } from '@vx/group'
 
 import { Bar } from '@vx/shape'
-import { scaleLinear } from 'd3-scale'
 import { bisect } from 'd3-array'
 import moment from 'moment'
 import { flow, uniq, head, isEmpty } from 'lodash'
@@ -35,7 +34,7 @@ import {
   StyledBottomAxis
 } from '../styledComponents/index'
 
-const margin = { top: 18, right: 15, bottom: 0, left: 30 }
+const margin = { top: 18, right: 15, bottom: 15, left: 30 }
 
 class ChartArea extends Component {
   state = {
@@ -72,7 +71,8 @@ class ChartArea extends Component {
     const width = parentWidth - margin.left - margin.right
     const height = parentHeight - margin.top - margin.bottom
     const xPoints = uniq(getX(data, xKey)).map(
-      datum => (moment(datum).isValid() ? moment(datum).toDate() : datum)
+      datum =>
+        typeof datum === 'string' && moment(datum).isValid() ? moment(datum).toDate() : datum
     )
     const yPoints = getY(data, yKey)
     const yScale = determineYScale({ type, yPoints, height, margin })
@@ -133,6 +133,8 @@ class ChartArea extends Component {
       labelYProps,
       labelX,
       labelXProps,
+      numXTicks,
+      numYTicks,
       stroke,
       nogrid,
       notool,
@@ -173,6 +175,7 @@ class ChartArea extends Component {
                 xKey,
                 inheritedScale: yScale,
                 formatY,
+                numYTicks,
                 formatX
               })
             )}
@@ -193,8 +196,9 @@ class ChartArea extends Component {
               )}
               {biaxialChildren || (
                 <StyledLeftAxis
-                  scale={determineYScale({type: null, yPoints, height, margin})}
+                  scale={determineYScale({ type: null, yPoints, height, margin })}
                   color={color}
+                  numTicks={numYTicks}
                   hideTicks
                   tickFormat={formatY}
                   label={labelY || ''}
@@ -204,7 +208,7 @@ class ChartArea extends Component {
             </Group>
             <StyledBottomAxis
               scale={xScale}
-              {...{ color, height }}
+              {...{ color, height, margin, numTicks: numXTicks }}
               hideTicks
               tickFormat={formatX}
               label={labelX || ''}
@@ -254,11 +258,9 @@ ChartArea.propTypes = {
   formatY: PropTypes.func,
   /**
    * A label for the yAxis
-   */
   labelY: PropTypes.string,
   /**
    * Label props object for yLabel
-   */
   labelYProps: PropTypes.object,
   /**
    * A label for the xAxis
@@ -268,6 +270,14 @@ ChartArea.propTypes = {
    * Label props object for xLabel
    */
   labelXProps: PropTypes.object,
+  /**
+   * Number of ticks for xAxis
+   */
+  numXTicks: PropTypes.number,
+  /**
+   * Number of ticks for yAxis
+   */
+  numYTicks: PropTypes.number,
   /**
    * A function which formats the xAxis
    */
@@ -300,8 +310,10 @@ ChartArea.defaultProps = {
   formatY: formatTicks,
   labelY: '',
   labelX: '',
+  numXTicks: 6,
+  numYTicks: 4,
   labelYProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' },
-  labelXProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' },
+  labelXProps: { fontSize: 12, textAnchor: 'middle', fill: 'black', dy: '-0.5rem' },
   formatX: formatXTicks,
   margin: margin
 }

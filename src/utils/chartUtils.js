@@ -53,14 +53,14 @@ export const determineViewBox = ({ biaxialChildren, margin, parentWidth, parentH
  * @param {Object} Children - React Children through which it maps
  */
 export const biaxial = children =>
-  Children.map(children, child => child.props.hasOwnProperty('axisId')).includes(true)
+  children && Children.map(children, child => child.props.hasOwnProperty('axisId')).includes(true)
 
 /**
  * Takes React Chilren and returns true or false if BarChart element is found
  * @param {Object} Children - React Children through which it maps
  */
 export const barChart = children =>
-  Children.map(children, child => child.type.name === 'BarChart').includes(true)
+  children && Children.map(children, child => child.type.name === 'BarChart').includes(true)
 /**
  * Own implementation of localPoint from VX. Makes it work on Firefox
  * @param {event} event - Event from which to extract svg canvas points

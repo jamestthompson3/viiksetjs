@@ -19,13 +19,13 @@ export const StyledGridRows = styled(GridRows).attrs({
 })``
 export const StyledLeftAxis = styled(AxisLeft).attrs({
   strokeWidth: 2,
-  numTicks: 4,
+  numTicks: p => p.numTicks,
   stroke: p => findColor(p),
   tickLabelProps: p => () => ({ fill: findColor(p), dx: '-2em' })
 })``
 export const StyledBottomAxis = styled(AxisBottom).attrs({
   top: p => p.height,
-  numTicks: 6,
+  numTicks: p => p.numTicks,
   stroke: p => findColor(p),
   tickLabelProps: p => () => ({
     fill: findColor(p),
@@ -131,6 +131,7 @@ const BoundedTooltip = withBoundingRects(TooltipBucket)
 export const withBounds = component => withBoundingRects(component)
 
 export const TooltipComponent = ({ tooltipData, color, x }) => {
+  console.log(x)
   return (
     <BoundedTooltip left={x}>
       <TooltipWrapper color={color}>

@@ -18,13 +18,11 @@ class BarChart extends Component {
       dataKey,
       xScale,
       xKey,
-      margin,
       height,
       notool,
-      yPoints,
       mouseMove,
       mouseLeave,
-      fill,
+      nofill,
       inheritedScale
     } = this.props
     if (data.map(item => item[dataKey]).includes(undefined)) {
@@ -33,21 +31,20 @@ class BarChart extends Component {
     }
     const xPoint = d => xScale(d[xKey])
     const barHeight = d => inheritedScale(d[dataKey])
-    const yMin = Math.min(...data.map(d => barHeight((d))))
     return (
       <Fragment>
         <LinearGradient from={rgba(color, 0.35)} to={rgba(color, 0.05)} id={`gradient${xKey}`} />
-        {data.map((d, i) => (
+        {data.map(d => (
           <Group key={`bar${xPoint(d)}`}>
             <Bar
               width={xScale.bandwidth()}
               height={barHeight(d)}
               x={xPoint(d)}
-              y={height - barHeight(d) - margin.bottom}
+              y={height - barHeight(d)}
               rx={5}
               data={d}
               ry={0}
-              fill={fill && `url(#gradient${xKey})`}
+              fill={!nofill && `url(#gradient${xKey})`}
               stroke={color}
               strokeWidth={1}
               onMouseMove={d => event => notool || mouseMove({ event, datum: d })}
@@ -73,6 +70,6 @@ BarChart.propTypes = {
 
 BarChart.defaultProps = {
   color: 'rgb(0, 157, 253)',
-  fill: true
+  nofill: false
 }
 export default BarChart
