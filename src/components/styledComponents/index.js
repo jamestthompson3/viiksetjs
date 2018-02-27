@@ -80,8 +80,6 @@ export const Corner = styled.div`
   border-bottom: 2px solid ${p => (p.color ? p.color : p.theme.primaryColor)};
   border-right-bottom-radius: 5px;
   background: #1a2e3c;
-  transform: ${p =>
-    p.bounds.transform ? 'translate(4.4rem, -2rem) rotate(317deg)' : 'rotate(45deg)'};
 `
 const TooltipContainer = styled.div.attrs({
   style: ({ bounds }) => ({
@@ -89,8 +87,8 @@ const TooltipContainer = styled.div.attrs({
     top: `${bounds.top}px`
   })
 })`
-  display: flex;
-  position: absolute;
+  display: inline-flex;
+  position: relative;
   pointer-events: none;
   z-index: 10000;
   flex-direction: column;
@@ -98,15 +96,14 @@ const TooltipContainer = styled.div.attrs({
   align-items: center;
 `
 
-const DEFAULT_TOOLTIP_ALIGN = 12
 
 const boundsSetter = ({ left, rect, parentRect }) => {
   if (left + rect.width > parentRect.width) {
-    return parentRect.left + left - rect.width
+    return left - rect.width
   } else if (left + rect.width < parentRect.left) {
-    return parentRect.left + left + (rect.width / 3)
+    return left + (rect.width / 3)
   } else {
-    return parentRect.left + left - (rect.width / 4) // default case
+    return  left - (rect.width / 4) // default case
   }
 }
 const TooltipBucket = ({ children, getRects, left }) => {
@@ -115,7 +112,7 @@ const TooltipBucket = ({ children, getRects, left }) => {
     if (rect && parentRect) {
       return {
         left: boundsSetter({ left, rect, parentRect }),
-        top: parentRect.top - rect.height
+        top: -parentRect.height - rect.height
       }
     }
     return {
@@ -131,7 +128,6 @@ const BoundedTooltip = withBoundingRects(TooltipBucket)
 export const withBounds = component => withBoundingRects(component)
 
 export const TooltipComponent = ({ tooltipData, color, x }) => {
-  console.log(x)
   return (
     <BoundedTooltip left={x}>
       <TooltipWrapper color={color}>
