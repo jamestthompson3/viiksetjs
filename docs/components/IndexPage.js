@@ -1,7 +1,8 @@
 import React from 'react'
 import styled, { injectGlobal } from 'styled-components'
+import { Line } from '@vx/shape'
 
-import { ChartArea, LineChart, BarChart } from '../../lib'
+import { ChartArea, LineChart, BarChart, withBounds } from '../../lib'
 import timeSeries from '../data/timeSeries.json'
 import categoricalSeries from '../data/categoricalSeries.json'
 import numericSeries from '../data/numericSeries.json'
@@ -15,7 +16,7 @@ injectGlobal`
 `
 
 const PageWrapper = styled.div`
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   h2 {
     text-align: center;
@@ -38,14 +39,39 @@ const Header = styled.div`
   border-bottom: 3px solid #00adee;
 `
 const Snippet = styled.pre`
-  background:  #333;
+  background: #333;
   color: white;
   width: 80%;
   padding-top: 2rem;
   margin: auto;
   padding-bottom: 2rem;
 `
+const TooltipContainer = styled.span.attrs({
+  style: p => ({
+    left: `${p.rect ? p.left + p.rect.width : p.left}px`,
+    top: `${p.parentRect ? -(p.parentRect.height - p.yCoord + p.rect.height) : p.yCoord}px`
+  })
+})`
+  position: relative;
+  pointer-events: none;
+`
 
+const Indicator = ({ mouseX, color, height }) => (
+  <Line
+    from={{ x: mouseX - 2.5, y: 0 }}
+    to={{ x: mouseX - 2.5, y: height }}
+    stroke={color}
+    strokeWidth={5}
+    strokeOpacity={1.5}
+    style={{ pointerEvents: 'none' }}
+  />
+)
+const BoundedTooltip = withBounds(TooltipContainer)
+const LinearTooltip = ({ tooltipData, mouseX, yCoords }) => (
+  <BoundedTooltip left={mouseX} yCoord={yCoords[1]}>
+    {tooltipData.y < 300 ? '❄️' : '🔥'}
+  </BoundedTooltip>
+)
 const IndexPage = () => (
   <PageWrapper>
     <Header>
@@ -58,13 +84,12 @@ const IndexPage = () => (
         <LineChart dataKey="messages" color="#2189C8" />
       </ChartArea>
     </GraphContainer>
-     <Snippet>
+    <Snippet>
       {`
         <ChartArea data={timeSeries.data} color="#2189C8" stroke="grey">
           <LineChart dataKey="messages" color="#2189C8" />
-        </ChartArea>`
-      }
-      </Snippet>
+        </ChartArea>`}
+    </Snippet>
     <h2>Categorical Series</h2>
     <GraphContainer>
       <ChartArea
@@ -80,7 +105,7 @@ const IndexPage = () => (
       </ChartArea>
     </GraphContainer>
     <Snippet>
-    {`
+      {`
       <ChartArea
         data={categoricalSeries.data}
         type="ordinal"
@@ -94,7 +119,7 @@ const IndexPage = () => (
       </ChartArea>
       `}
     </Snippet>
-    <h2>Numeric Data</h2>
+    <h2>Numeric Data With Custom Tooltip</h2>
     <GraphContainer>
       <ChartArea
         data={numericSeries.data}
@@ -104,13 +129,20 @@ const IndexPage = () => (
         yKey="y"
         type="linear"
         labelY="Heat (K)"
-        labelX="Time (ms)"
+        labelX="Time (s)"
+        tooltip={LinearTooltip}
+        indicator={Indicator}
       >
         <LineChart dataKey="y" color="#42f4c2" />
       </ChartArea>
     </GraphContainer>
     <Snippet>
-    {`
+      {`
+        const LinearTooltip = ({ tooltipData, mouseX, yCoords }) => (
+          <BoundedTooltip left={mouseX} yCoord={yCoords[1]}>
+             {tooltipData.y < 300 ? '❄️' : '🔥'}
+          </BoundedTooltip>
+          )
       <ChartArea
         data={numericSeries.data}
         color="#42f4c2"
@@ -120,12 +152,12 @@ const IndexPage = () => (
         type="linear"
         labelY="Heat (K)"
         labelX="Time (ms)"
+        tooltip={LinearTooltip}
       >
         <LineChart dataKey="y" color="#42f4c2" />
       </ChartArea>
       `}
-      </Snippet>
+    </Snippet>
   </PageWrapper>
 )
-
 export default IndexPage
