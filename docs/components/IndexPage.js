@@ -56,10 +56,10 @@ const TooltipContainer = styled.span.attrs({
   pointer-events: none;
 `
 
-const Indicator = ({ mouseX, color, height }) => (
+const Indicator = ({ x, color, height }) => (
   <Line
-    from={{ x: mouseX - 2.5, y: 0 }}
-    to={{ x: mouseX - 2.5, y: height }}
+    from={{ x: x - 2.5, y: 0 }}
+    to={{ x: x - 2.5, y: height }}
     stroke={color}
     strokeWidth={5}
     strokeOpacity={1.5}
@@ -67,8 +67,8 @@ const Indicator = ({ mouseX, color, height }) => (
   />
 )
 const BoundedTooltip = withBounds(TooltipContainer)
-const LinearTooltip = ({ tooltipData, mouseX, yCoords }) => (
-  <BoundedTooltip left={mouseX} yCoord={yCoords[1]}>
+const LinearTooltip = ({ tooltipData, x, yCoords }) => (
+  <BoundedTooltip left={x} yCoord={yCoords[1]}>
     {tooltipData.y < 300 ? '❄️' : '🔥'}
   </BoundedTooltip>
 )
@@ -138,8 +138,8 @@ const IndexPage = () => (
     </GraphContainer>
     <Snippet>
       {`
-        const LinearTooltip = ({ tooltipData, mouseX, yCoords }) => (
-          <BoundedTooltip left={mouseX} yCoord={yCoords[1]}>
+        const LinearTooltip = ({ tooltipData, x, yCoords }) => (
+          <BoundedTooltip left={x} yCoord={yCoords[1]}>
              {tooltipData.y < 300 ? '❄️' : '🔥'}
           </BoundedTooltip>
           )
@@ -158,6 +158,12 @@ const IndexPage = () => (
       </ChartArea>
       `}
     </Snippet>
+    <h2>Streaming Graph</h2>
+    <GraphContainer>
+      <ChartArea connection="ws://wiki-update-sockets.herokuapp.com/" color="#42f4c2" stroke="grey">
+        <LineChart dataKey="y" color="#42f4c2" />
+      </ChartArea>
+    </GraphContainer>
   </PageWrapper>
 )
 export default IndexPage

@@ -76,7 +76,7 @@ class ChartArea extends Component {
     )
     const yPoints = getY(data, yKey)
     const yScale = determineYScale({ type, yPoints, height, margin })
-    const yScales = biaxialChildren ? createScalarData(data, dataKeys, height, margin) : null
+    const yScales = biaxialChildren && createScalarData(data, dataKeys, height, margin)
     const xScale = determineXScale({ type, width, xPoints, margin })
     return this.setState({
       width,
@@ -93,7 +93,7 @@ class ChartArea extends Component {
   }
   mouseMove = ({ event, datum }) => {
     const { xPoints, xScale, yScale, yScales, dataKeys } = this.state
-    const { data, updateTooltip } = this.props
+    const { data, updateTooltip, xKey } = this.props
     const svgPoint = localPoint(this.chart, event).x
     if (datum) {
       return updateTooltip({ calculatedData: datum, x: svgPoint, mouseX: svgPoint })
@@ -108,7 +108,7 @@ class ChartArea extends Component {
           : bounds.dLeft || bounds.dRight
       },
       calculatedData => {
-        const x = xScale(moment(head(extractX(calculatedData))))
+        const x = xScale(head(extractX(calculatedData, xKey)))
         const yCoords = yScales
           ? dataKeys.map(key => yScales[key](calculatedData[key]))
           : extractY(calculatedData).map(item => yScale(item))

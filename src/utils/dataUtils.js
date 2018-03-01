@@ -1,5 +1,6 @@
 import { scaleLinear } from 'd3-scale'
 import { flatten } from 'lodash'
+import moment from 'moment'
 
 /**
  * Takes an object and arguement and returns the values of the object according to the argument type
@@ -41,12 +42,16 @@ export const extractY = (datum, yKey) =>
   yKey ? [datum[yKey]] : flatten(parseObject(datum, 'number')).filter(i => i != null)
 
 /**
- * Takes a data object and extracts all X values
+ * Takes a data object and extracts all X values and parse them to date time objects if applicable
  * @param {Object} datum - the object which you want to extract the values from
  * @param {String} xKey - a key for the xvalue, if not using categorical or timeseries data
  */
 export const extractX = (datum, xKey) =>
-  xKey ? [datum[xKey]] : flatten(parseObject(datum, 'string')).filter(i => i != null)
+  xKey
+    ? [datum[xKey]]
+    : flatten(parseObject(datum, 'string'))
+        .filter(i => i != null)
+        .map(i => (moment(i).isValid() ? moment(i) : i))
 
 /**
  * Takes a data object and extracts all Y labels
