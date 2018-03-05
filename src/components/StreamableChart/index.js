@@ -39,7 +39,7 @@ class StreamableChart extends Component {
   calculateData = () => {
     const {
       children,
-     size,
+      size,
       xKey,
       yKey,
       type,
@@ -96,61 +96,57 @@ class StreamableChart extends Component {
       chartData,
       color
     } = this.props
-    return (
-      chartData && (
-        <svg
-          width={size.width}
-          height={size.height}
-          preserveAspectRatio="none"
-          viewBox={
-            viewBox
-              ? viewBox
-              : determineViewBox(biaxialChildren, margin, size.width, size.height)
-          }
-          ref={svg => (this.chart = svg)}
-        >
-          {Children.map(children, child =>
-            cloneElement(child, {
-              data,
-              xScale,
-              margin,
-              height,
-              notool: true,
-              yPoints,
-              width,
-              xKey,
-              inheritedScale: yScale,
-              formatY,
-              numYTicks,
-              formatX
-            })
+    return !chartData ? (
+      <h2>waiting on connection</h2>
+    ) : (
+      <svg
+        width={size.width}
+        height={size.height}
+        preserveAspectRatio="none"
+        viewBox={
+          viewBox ? viewBox : determineViewBox(biaxialChildren, margin, size.width, size.height)
+        }
+        ref={svg => (this.chart = svg)}
+      >
+        {Children.map(children, child =>
+          cloneElement(child, {
+            data,
+            xScale,
+            margin,
+            height,
+            notool: true,
+            yPoints,
+            width,
+            xKey,
+            inheritedScale: yScale,
+            formatY,
+            numYTicks,
+            formatX
+          })
+        )}
+        <Group left={margin.left}>
+          {!nogrid && <StyledGridRows scale={yScale} {...{ stroke }} width={width - margin.left} />}
+          {biaxialChildren || (
+            <StyledLeftAxis
+              scale={determineYScale({ type: null, yPoints, height, margin })}
+              color={color}
+              numTicks={numYTicks}
+              hideTicks
+              tickFormat={formatY}
+              label={labelY || ''}
+              labelProps={labelYProps}
+            />
           )}
-          <Group left={margin.left}>
-            {!nogrid && (
-              <StyledGridRows scale={yScale} {...{ stroke }} width={width - margin.left} />
-            )}
-            {biaxialChildren || (
-              <StyledLeftAxis
-                scale={determineYScale({ type: null, yPoints, height, margin })}
-                color={color}
-                numTicks={numYTicks}
-                hideTicks
-                tickFormat={formatY}
-                label={labelY || ''}
-                labelProps={labelYProps}
-              />
-            )}
-          </Group>
-          <StyledBottomAxis
-            scale={xScale}
-            {...{ color, height, margin, numTicks: numXTicks }}
-            hideTicks
-            tickFormat={formatX}
-            label={labelX || ''}
-            labelProps={labelXProps}
-          />
-        </svg>
-      )
+        </Group>
+        <StyledBottomAxis
+          scale={xScale}
+          {...{ color, height, margin, numTicks: numXTicks }}
+          hideTicks
+          tickFormat={formatX}
+          label={labelX || ''}
+          labelProps={labelXProps}
+        />
+      </svg>
     )
   }
 }
@@ -158,11 +154,11 @@ class StreamableChart extends Component {
 StreamableChart.propTypes = {
   /**
    * If the data array reaches this limit, the connection will close
-  */
+   */
   stopPersist: PropTypes.number,
   /**
    * If the data array reaches this limit, values will be popped from the beginning  of the array
-  */
+   */
   persist: PropTypes.number,
   /**
    * Optional prop to apply color axes and x-ticks

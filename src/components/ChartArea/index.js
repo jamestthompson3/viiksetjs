@@ -212,7 +212,7 @@ class ChartArea extends Component {
                 <Indicator {...{ yCoords, x, stroke, color, height, mouseX }} />
               )}
           </svg>
-          {x && <Tooltip tooltipData={calculatedData} {...{ x, color, yCoords, mouseX }} />}
+          {x && <Tooltip tooltipData={calculatedData} {...{ x, color, yCoords, mouseX, height }} />}
         </Fragment>
       )
     )
