@@ -1,8 +1,6 @@
-import React, { Children, cloneElement, Fragment, Component } from 'react'
+import React, { Children, cloneElement, Component, Fragment } from 'react'
 import PropTypes from 'prop-types'
-import { withParentSize } from '@vx/responsive'
 import { Group } from '@vx/group'
-
 import { Bar } from '@vx/shape'
 import { bisect } from 'd3-array'
 import moment from 'moment'
@@ -26,6 +24,7 @@ import {
   barChart
 } from '../../utils/chartUtils'
 import withTooltip from '../Tooltip/withTooltip'
+import withParentSize from '../Responsive/withParentSize'
 import {
   TooltipComponent,
   Indicator,
@@ -42,18 +41,12 @@ class ChartArea extends Component {
   }
   componentDidMount() {
     this.calculateData()
-    document.addEventListener('resize', this.calculateData())
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('resize', this.calculateData())
   }
 
   componentDidUpdate(prevProps) {
     if (
       prevProps.data !== this.props.data ||
-      prevProps.parentWidth !== this.props.parentWidth ||
-      prevProps.parentHeight !== this.props.parentHeight
+      prevProps.size !== this.props.size
     ) {
       return this.calculateData()
     }
@@ -61,15 +54,16 @@ class ChartArea extends Component {
 
   calculateData = () => {
     this.setState({ chartData: false })
-    const { data, children, parentHeight, parentWidth, xKey, yKey, type, margin } = this.props
+    const { data, children, size, xKey, yKey, type, margin } = this.props
     if (isEmpty(data)) {
+      // eslint-disable-next-line
       console.error('Data is empty, cannot calculate chart')
       return null
     }
     const biaxialChildren = biaxial(children)
     const dataKeys = extractLabels(data[0])
-    const width = parentWidth - margin.left - margin.right
-    const height = parentHeight - margin.top - margin.bottom
+    const width = size.width - margin.left - margin.right
+    const height = size.height - margin.top - margin.bottom
     const xPoints = uniq(getX(data, xKey)).map(
       datum =>
         typeof datum === 'string' && moment(datum).isValid() ? moment(datum).toDate() : datum
@@ -121,8 +115,7 @@ class ChartArea extends Component {
   render() {
     const { width, height, xScale, yScale, biaxialChildren, chartData, yPoints } = this.state
     const {
-      parentHeight,
-      parentWidth,
+      size,
       children,
       viewBox,
       data,
@@ -150,13 +143,13 @@ class ChartArea extends Component {
       chartData && (
         <Fragment>
           <svg
-            width={parentWidth}
-            height={parentHeight}
+            width={size.width}
+            height={size.height}
             preserveAspectRatio="none"
             viewBox={
               viewBox
                 ? viewBox
-                : determineViewBox({ biaxialChildren, margin, parentWidth, parentHeight })
+                : determineViewBox(biaxialChildren, margin, size.width, size.height)
             }
             ref={svg => (this.chart = svg)}
           >

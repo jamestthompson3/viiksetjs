@@ -6,7 +6,7 @@ import { LinearGradient } from '@vx/gradient'
 import { PatternLines } from '@vx/pattern'
 import { GridRows } from '@vx/grid'
 import { AreaClosed, LinePath } from '@vx/shape'
-import { AxisBottom, AxisLeft } from '@vx/axis'
+import { AxisBottom, AxisLeft, AxisRight } from '@vx/axis'
 import { rgba } from 'polished'
 
 const findStroke = p => p.theme[p.stroke] || p.stroke || p.theme.primaryColor
@@ -21,7 +21,13 @@ export const StyledLeftAxis = styled(AxisLeft).attrs({
   strokeWidth: 2,
   numTicks: p => p.numTicks,
   stroke: p => findColor(p),
-  tickLabelProps: p => () => ({ fill: findColor(p), dx: '-2em' })
+  tickLabelProps: p => () =>  p.tickLabelProps || ({ fill: findColor(p), dx: '-2em' })
+})``
+export const StyledRightAxis = styled(AxisRight).attrs({
+  strokeWidth: 2,
+  numTicks: p => p.numTicks,
+  stroke: p => findColor(p),
+  tickLabelProps: p => () =>  p.tickLabelProps || ({ fill: findColor(p), dx: '-2em' })
 })``
 export const StyledBottomAxis = styled(AxisBottom).attrs({
   top: p => p.height,
