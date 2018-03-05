@@ -5,7 +5,6 @@ import styled from 'styled-components'
 const Container = styled.div`
   width: 100%;
   height: 100%;
-  position: ${p => p.position && 'static'} !important;
 `
 
 export default function withParentSize(BaseComponent) {
@@ -20,7 +19,7 @@ export default function withParentSize(BaseComponent) {
     }
 
     componentDidUpdate(prevProps) {
-      if (prevProps.size != this.props.size) {
+      if (prevProps.size.width !== this.props.size.width || prevProps.size.height !== this.props.size.height) {
         this.resize()
       }
     }

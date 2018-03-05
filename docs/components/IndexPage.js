@@ -1,14 +1,25 @@
 import React from 'react'
-import styled, { injectGlobal } from 'styled-components'
-import { Line } from '@vx/shape'
 import { get, set, clone } from 'lodash'
 import moment from 'moment'
+import { injectGlobal } from 'styled-components'
 
-import { ChartArea, LineChart, BarChart, withBounds, YAxis, StreamableChart } from '../../lib'
+import { ChartArea, LineChart, BarChart, YAxis, StreamableChart } from '../../lib'
 import timeSeries from '../data/timeSeries.json'
 import categoricalSeries from '../data/categoricalSeries.json'
 import numericSeries from '../data/numericSeries.json'
 import biaxialSeries from '../data/biaxialSeries.json'
+import {
+  PageWrapper,
+  GraphContainer,
+  Header,
+  Snippet,
+  LabelContainer,
+  LabelBlock,
+  Label,
+  Indicator,
+  LinearTooltip
+} from './styledComponents'
+
 
 injectGlobal`
   body {
@@ -18,83 +29,6 @@ injectGlobal`
   }
 `
 
-const PageWrapper = styled.div`
-  width: 100%;
-  height: 100vh;
-  h2 {
-    text-align: center;
-  }
-`
-
-const GraphContainer = styled.div`
-  width: 80%;
-  height: 20rem;
-  margin: auto;
-`
-
-const Header = styled.div`
-  background: #00395e;
-  display: flex;
-  height: 100px;
-  width: 100%;
-  color: #fff;
-  flex-direction: column;
-  border-bottom: 3px solid #00adee;
-`
-const Snippet = styled.pre`
-  background: #333;
-  color: white;
-  width: 80%;
-  padding-top: 2rem;
-  margin: auto;
-  padding-bottom: 2rem;
-`
-const TooltipContainer = styled.span.attrs({
-  style: p => ({
-    left: `${p.rect ? p.left + p.rect.width : p.left}px`,
-    top: `${p.parentRect ? -(p.parentRect.height - p.yCoord + p.rect.height) : p.yCoord}px`
-  })
-})`
-  position: relative;
-  pointer-events: none;
-`
-
-const LabelContainer = styled.div`
-  display: flex;
-  justify-content: space-around;
-  width: 85%;
-  margin: auto;
-`
-const LabelBlock = styled.div`
-  width: 10px;
-  height: 10px;
-  margin-right: 3px;
-  background: ${p => p.color};
-`
-
-const Label = styled.p`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: ${p => p.color};
-`
-
-const Indicator = ({ x, color, height }) => (
-  <Line
-    from={{ x: x - 2.5, y: 0 }}
-    to={{ x: x - 2.5, y: height }}
-    stroke={color}
-    strokeWidth={5}
-    strokeOpacity={1.5}
-    style={{ pointerEvents: 'none' }}
-  />
-)
-const BoundedTooltip = withBounds(TooltipContainer)
-const LinearTooltip = ({ tooltipData, x, yCoords }) => (
-  <BoundedTooltip left={x} yCoord={yCoords[1]}>
-    {tooltipData.y < 300 ? '❄️' : '🔥'}
-  </BoundedTooltip>
-)
 const streamParser = message => JSON.parse(message.data)
 const streamedData = {
   special: 0,
@@ -115,7 +49,7 @@ const streamMap = (data, message) => {
 const IndexPage = () => (
   <PageWrapper>
     <Header>
-      <h1 style={{ textAlign: 'center' }}>Welcome to ViiksetJS!</h1>
+      <h1>Welcome to ViiksetJS!</h1>
     </Header>
     <h1>Examples</h1>
     <h2>Time Series</h2>
@@ -203,7 +137,6 @@ const IndexPage = () => (
       <StreamableChart
         connection="ws://wiki-update-sockets.herokuapp.com/"
         color="#331E38"
-        persist={200}
         stopPersist={200}
         stroke="grey"
         nogrid
@@ -263,7 +196,6 @@ const IndexPage = () => (
         color="#331E38"
         stroke="grey"
         nogrid
-        persist={200}
         stopPersist={200}
         labelY="Type Count"
         streamParser={streamParser}
