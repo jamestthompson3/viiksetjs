@@ -13,7 +13,10 @@
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "*.{js}": ["prettier --write", "git add"]
+    "*.{js}": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "babel": {
     "presets": [
@@ -43,8 +46,7 @@
     }
   },
   "dependencies": {
-    "d3": "^4.12.0",
-    "element-resize-detector": "^1.1.12"
+    "d3": "^4.12.0"
   },
   "devDependencies": {
     "@vx/axis": "^0.0.158",
@@ -55,7 +57,6 @@
     "@vx/group": "^0.0.153",
     "@vx/pattern": "^0.0.153",
     "@vx/point": "^0.0.153",
-    "@vx/responsive": "^0.0.158",
     "@vx/shape": "^0.0.158",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^8.0.3",
@@ -74,6 +75,7 @@
     "polished": "^1.9.2",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-sizeme": "^2.3.6",
     "styled-components": "^3.1.6"
   }
 }

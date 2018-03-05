@@ -43,7 +43,7 @@ export const determineYScale = ({ type, yPoints, height, margin }) => {
  * @param {Int} parentHeight - Height of parent container
  */
 
-export const determineViewBox = ({ biaxialChildren, margin, parentWidth, parentHeight }) =>
+export const determineViewBox = (biaxialChildren, margin, parentWidth, parentHeight) =>
   biaxialChildren
     ? `-10 0 ${parentWidth} ${parentHeight}`
     : `${-margin.left} 0 ${parentWidth} ${parentHeight}`
