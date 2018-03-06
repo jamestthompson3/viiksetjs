@@ -42,6 +42,7 @@ export const Header = styled.div`
 export const Snippet = styled.pre`
   background: #1b1b1b;
   color: white;
+  overflow-x: auto;
   border-radius: 3px;
   width: 80%;
   padding-top: 2rem;

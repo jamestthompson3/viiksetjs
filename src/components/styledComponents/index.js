@@ -1,12 +1,11 @@
 import React, { Fragment } from 'react'
 import styled from 'styled-components'
-import { Line } from '@vx/shape'
 import { set, get } from 'lodash'
 import { withBoundingRects } from '@vx/bounds'
 import { LinearGradient } from '@vx/gradient'
 import { PatternLines } from '@vx/pattern'
 import { GridRows } from '@vx/grid'
-import { AreaClosed, LinePath } from '@vx/shape'
+import { AreaClosed, LinePath, Bar, Line } from '@vx/shape'
 import { AxisBottom, AxisLeft, AxisRight } from '@vx/axis'
 import { rgba } from 'polished'
 
@@ -40,6 +39,13 @@ export const StyledLine = styled(Line).attrs({
   stroke: p => findColor(p),
   strokeWidth: p => p.width
 })
+
+export const StyledBar = styled(Bar).attrs({
+  rx: 5,
+  ry: 0,
+  stroke: p => p.findColor(p),
+  strokeWidth: 1
+})``
 export const StyledGridRows = styled(GridRows).attrs({
   pointerEvents: 'none',
   width: p => p.width,
