@@ -45,9 +45,7 @@
       }
     }
   },
-  "dependencies": {
-    "d3": "^4.12.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@vx/axis": "^0.0.158",
     "@vx/bounds": "^0.0.153",
