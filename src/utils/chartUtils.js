@@ -5,19 +5,19 @@ import { scaleLinear, scaleTime, scaleBand } from 'd3-scale'
 export const determineXScale = ({ type, xPoints, width, margin }) => {
   const range = [margin.left, width]
   switch (type) {
-  case 'ordinal':
-    return scaleBand()
-      .domain(xPoints)
-      .range(range)
-      .padding(0.1)
-  case 'linear':
-    return scaleLinear()
-      .domain([xPoints[0], xPoints[xPoints.length - 1]])
-      .range(range)
-  default:
-    return scaleTime()
-      .domain([xPoints[0], xPoints[xPoints.length - 1]])
-      .range(range)
+    case 'ordinal':
+      return scaleBand()
+        .domain(xPoints)
+        .range(range)
+        .padding(0.1)
+    case 'linear':
+      return scaleLinear()
+        .domain([xPoints[0], xPoints[xPoints.length - 1]])
+        .range(range)
+    default:
+      return scaleTime()
+        .domain([xPoints[0], xPoints[xPoints.length - 1]])
+        .range(range)
   }
 }
 
@@ -25,12 +25,12 @@ export const determineYScale = ({ type, yPoints, height, margin }) => {
   switch (type) {
     case 'ordinal':
       return scaleLinear()
-      .domain([Math.max(...yPoints), 0])
-      .range([height, margin.top])
+        .domain([Math.max(...yPoints), 0])
+        .range([height, margin.top])
     default:
       return scaleLinear()
-      .domain([0, Math.max(...yPoints)])
-      .range([height, margin.top])
+        .domain([0, Math.max(...yPoints)])
+        .range([height, margin.top])
   }
 }
 

@@ -124,7 +124,7 @@ d => {
 
 ## LineChart
 
-`LineChart` component inherits the data from the `ChartArea` which wraps it. Using this data, it scales itself accordingly. A `dataKey` prop must be provided in order for the component to know which data points it should render.
+The `LineChart` component inherits the data from the `ChartArea` which wraps it. Using this data, it scales itself accordingly. A `dataKey` prop must be provided in order for the component to know which data points it should render.
 
 ### Props
 
@@ -166,7 +166,7 @@ const data = [
 
 ## BarChart
 
-`BarChart` component inherits the data from the `ChartArea` which wraps it. Using this data, it scales itself accordingly. When creating a `BarChart` component, it is necessary to pass `type='ordinal'` to the parent `ChartArea`. A `dataKey` prop must be provided in order for the component to know which data points it should render. Passing an `xKey` prop to the `ChartArea` component is also required to denote which values should be graphed across the xValue, as is passing a `yKey` if there is more than one item in the data object that is an integer or float.
+The `BarChart` component inherits the data from the `ChartArea` which wraps it. Using this data, it scales itself accordingly. When creating a categorical `BarChart` component, it is necessary to pass `type='ordinal'` to the parent `ChartArea`. A `dataKey` prop must be provided in order for the component to know which data points it should render. Passing an `xKey` prop to the `ChartArea` component is also required to denote which values should be graphed across the xValue, as is passing a `yKey` if there is more than one item in the data object that is an integer or float.
 
 ### Props
 
@@ -202,6 +202,66 @@ const data = [
   <BarChart dataKey="score" color="#dc7d5b" />
 </ChartArea>
 ```
+
+## ScatterPlot
+The `ScatterPlot` component inherits the data from the `ChartArea` which wraps it. Using this data, it scales itself accordingly. A `dataKey` prop must be provided in order for the component to know which data points it should render.
+
+### Props
+
+| Prop    | Default | Type    | Desc                                                                   |
+| :------ | :-----: | :------ | :--------------------------------------------------------------------- |
+| dataKey |   ''    | String  | Key for data to be graphed                                             |
+| color   |  #000   | String  | Color string. Supports colors from styled-components' `themeProvider`. |
+| opacity  |  0.8  | Number | The opacity of the points in the Scatterplot    |
+| radius  |  8  | Number | The radius of the points in the Scatterplot    |
+
+```js
+<ChartArea
+          data={numericSeries.data}
+          color="#42f4c2"
+          stroke="grey"
+          xKey="x"
+          yKey="y"
+          type="linear"
+          labelY="Heat (K)"
+          labelX="Observation No."
+          tooltip={LinearTooltip}
+          indicator={Indicator}
+        >
+          <ScatterPlot dataKey="y" color="#42f4c2" />
+        </ChartArea>
+```
+
+## StyledPoint
+A simple point component.
+
+### Props
+
+| Prop    | Default | Type    | Desc                                                                   |
+| :------ | :-----: | :------ | :--------------------------------------------------------------------- |
+| x |   -    | Number  | x coordinate                                  |
+| y |   -    | Number  | y coordinate                                  |
+| color   |  -   | String  | Color string. Supports colors from styled-components' `themeProvider`. |
+| opacity | - | Number | Opacity for the point |
+| radius | - | Number | Size of point radius |
+
+## StyledLine
+A simple line component.
+export const StyledLine = styled(Line).attrs({
+  from: p => p.from,
+  to: p => p.to,
+  stroke: p => findColor(p),
+  strokeWidth: p => p.width
+})
+
+### Props
+
+| Prop    | Default | Type    | Desc                                                                   |
+| :------ | :-----: | :------ | :--------------------------------------------------------------------- |
+| to |   -    | Object  | Starting point of the line with shape of `{ x: int, y: int}` |
+| from |   -    | Object  | Ending point of the line with shape of `{ x: int, y: int}` |
+| color   |  -   | String  | Color string. Supports colors from styled-components' `themeProvider`. |
+| width | - | Number |  Width of the line. |
 
 ## Tooltips
 
