@@ -115,7 +115,7 @@ LineChart.propTypes = {
    **/
   nofill: PropTypes.bool,
   /**
-   * If true, there will be no patter on the line chart.
+   * If true, there will be no pattern on the line chart.
    */
   nopattern: PropTypes.bool
 }

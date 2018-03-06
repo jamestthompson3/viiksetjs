@@ -44,10 +44,10 @@ class ChartArea extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (
-      prevProps.data !== this.props.data ||
-      prevProps.size !== this.props.size
-    ) {
+    const dataWasChanged = prevProps.data !== this.props.data
+    const widthWasChanged = prevProps.size && prevProps.size.width !== this.props.size.width
+    const heightWasChanged = prevProps.size && prevProps.size.height !== this.props.size.height
+    if (dataWasChanged || widthWasChanged || heightWasChanged) {
       return this.calculateData()
     }
   }
@@ -147,9 +147,7 @@ class ChartArea extends Component {
             height={size.height}
             preserveAspectRatio="none"
             viewBox={
-              viewBox
-                ? viewBox
-                : determineViewBox(biaxialChildren, margin, size.width, size.height)
+              viewBox ? viewBox : determineViewBox(biaxialChildren, margin, size.width, size.height)
             }
             ref={svg => (this.chart = svg)}
           >
@@ -251,9 +249,11 @@ ChartArea.propTypes = {
   formatY: PropTypes.func,
   /**
    * A label for the yAxis
+   */
   labelY: PropTypes.string,
   /**
    * Label props object for yLabel
+   */
   labelYProps: PropTypes.object,
   /**
    * A label for the xAxis

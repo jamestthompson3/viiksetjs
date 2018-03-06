@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react'
 import styled from 'styled-components'
 import { Line } from '@vx/shape'
+import { set, get } from 'lodash'
 import { withBoundingRects } from '@vx/bounds'
 import { LinearGradient } from '@vx/gradient'
 import { PatternLines } from '@vx/pattern'
@@ -11,7 +12,34 @@ import { rgba } from 'polished'
 
 const findStroke = p => p.theme[p.stroke] || p.stroke || p.theme.primaryColor
 const findColor = p => p.theme[p.color] || p.color || p.theme.primaryColor
-
+const findFill = p => p.theme[p.color] || p.color || p.theme.primaryColor
+const propsColorSetter = p => {
+  switch (true) {
+    case get(p, 'stroke'):
+      return set(p, 'stroke', findStroke(p))
+    case get(p, 'fill'):
+      return set(p, 'fill', findFill(p))
+    case get(p, 'color'):
+      return set(p, 'color', findColor(p))
+    default:
+      return p
+  }
+}
+export const StyledPoint = styled.circle.attrs({
+  cx: p => p.x,
+  cy: p => p.y,
+  stroke: p => findColor(p),
+  strokeWidth: 1,
+  fillOpacity: p => p.opacity,
+  fill: p => findColor(p),
+  r: p => p.radius
+})``
+export const StyledLine = styled(Line).attrs({
+  from: p => p.from,
+  to: p => p.to,
+  stroke: p => findColor(p),
+  strokeWidth: p => p.width
+})
 export const StyledGridRows = styled(GridRows).attrs({
   pointerEvents: 'none',
   width: p => p.width,
@@ -21,13 +49,15 @@ export const StyledLeftAxis = styled(AxisLeft).attrs({
   strokeWidth: 2,
   numTicks: p => p.numTicks,
   stroke: p => findColor(p),
-  tickLabelProps: p => () =>  p.tickLabelProps || ({ fill: findColor(p), dx: '-2em' })
+  tickLabelProps: p => () =>
+    propsColorSetter(p.tickLabelProps) || { fill: findColor(p), dx: '-2em' }
 })``
 export const StyledRightAxis = styled(AxisRight).attrs({
   strokeWidth: 2,
   numTicks: p => p.numTicks,
   stroke: p => findColor(p),
-  tickLabelProps: p => () =>  p.tickLabelProps || ({ fill: findColor(p), dx: '-2em' })
+  tickLabelProps: p => () =>
+    propsColorSetter(p.tickLabelProps) || { fill: findColor(p), dx: '-2em' }
 })``
 export const StyledBottomAxis = styled(AxisBottom).attrs({
   top: p => p.height,
@@ -102,14 +132,13 @@ const TooltipContainer = styled.div.attrs({
   align-items: center;
 `
 
-
 const boundsSetter = ({ left, rect, parentRect }) => {
   if (left + rect.width > parentRect.width) {
     return left - rect.width
   } else if (left + rect.width < parentRect.left) {
-    return left + (rect.width / 3)
+    return left + rect.width / 3
   } else {
-    return  left - (rect.width / 4) // default case
+    return left - rect.width / 4 // default case
   }
 }
 const TooltipBucket = ({ children, getRects, left }) => {
