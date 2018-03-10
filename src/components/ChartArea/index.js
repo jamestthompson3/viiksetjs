@@ -51,7 +51,7 @@ class ChartArea extends Component {
       return this.calculateData()
     }
   }
-
+  // TODO WORK WITH DT OBJECTS
   calculateData = () => {
     this.setState({ chartData: false })
     const { data, children, size, xKey, yKey, type, margin } = this.props
@@ -157,7 +157,6 @@ class ChartArea extends Component {
                 xScale,
                 margin,
                 height,
-                chartData,
                 yPoints,
                 width,
                 notool,

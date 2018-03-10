@@ -14,7 +14,9 @@ import {
 
 class LineChart extends Component {
   shouldComponentUpdate(prevProps) {
-    return !(this.props.yPoints === prevProps.yPoints) || !(prevProps.dataKey === this.props.dataKey)
+    return (
+      !(this.props.yPoints === prevProps.yPoints) || !(prevProps.dataKey === this.props.dataKey)
+    )
   }
   render() {
     const {
@@ -40,14 +42,16 @@ class LineChart extends Component {
       return null
     }
     const yPoints = d => d[dataKey]
-    const xPoints = d => xKey ? d[xKey] :
-      flatten(
-        Object.values(d).map(value => {
-          if (typeof value === 'string') {
-            return moment(value)
-          }
-        })
-      ).filter(i => i != null)[0]
+    const xPoints = d =>
+      xKey
+        ? d[xKey]
+        : flatten(
+            Object.values(d).map(value => {
+              if (typeof value === 'string') {
+                return moment(value)
+              }
+            })
+          ).filter(i => i != null)[0]
     const dataPoints = data.map(item => item[dataKey])
     const yScale = scaleLinear()
       .domain([0, Math.max(...dataPoints)])
@@ -61,12 +65,12 @@ class LineChart extends Component {
     }
     return (
       <Fragment>
-          {!nofill && (
-            <Fragment>
-              <StyledGradient {...{ color }} id={`gradient${dataKey}`} />
-              <StyledPatternLines {...{ color }} id={`dlines${dataKey}`} />
-            </Fragment>
-          )}
+        {!nofill && (
+          <Fragment>
+            <StyledGradient {...{ color }} id={`gradient${dataKey}`} />
+            <StyledPatternLines {...{ color }} id={`dlines${dataKey}`} />
+          </Fragment>
+        )}
         <StyledLinePath
           {...{ data, color }}
           y={yPoints}
@@ -75,18 +79,20 @@ class LineChart extends Component {
           xScale={xScale}
           curve={curveMonotoneX}
         />
-        {!nofill &&
+        {!nofill && (
+          <StyledAreaClosed
+            {...{ data, color }}
+            y={yPoints}
+            x={xPoints}
+            fill={findFill('gradient')}
+            yScale={getAxis()}
+            xScale={xScale}
+            curve={curveMonotoneX}
+          />
+        )}
+        {!nopattern ||
+          (!nofill && (
             <StyledAreaClosed
-              {...{ data, color }}
-              y={yPoints}
-              x={xPoints}
-              fill={findFill('gradient')}
-              yScale={getAxis()}
-              xScale={xScale}
-              curve={curveMonotoneX}
-            />
-          }
-            {!nopattern || !nofill && <StyledAreaClosed
               {...{ data, color }}
               y={yPoints}
               yScale={getAxis()}
@@ -95,7 +101,7 @@ class LineChart extends Component {
               x={xPoints}
               curve={curveMonotoneX}
             />
-          }
+          ))}
       </Fragment>
     )
   }

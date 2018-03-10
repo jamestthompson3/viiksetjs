@@ -1,1 +1,5 @@
-docs/
+examples/
+dist/
+src/
+.eslintrc
+.prettierrc
