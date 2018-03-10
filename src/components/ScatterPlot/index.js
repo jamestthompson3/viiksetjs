@@ -19,22 +19,22 @@ class ScatterPlot extends Component {
       dataKey,
       xScale,
       xKey,
-      nofill,
       opacity,
       radius,
       height,
       margin,
-      nopattern,
       inheritedScale,
       axisId
     } = this.props
     // Check if data exists
     if (data.map(item => item[dataKey]).includes(undefined)) {
-      new ReferenceError(`LineChart: No data found with dataKey ${dataKey}`)
+      // eslint-disable-next-line
+      new console.error(`LineChart: No data found with dataKey ${dataKey}`)
       return null
     }
     if (axisId && data.map(item => item[axisId]).includes(undefined)) {
-      new ReferenceError(`LineChart: No data found with axisId ${axisId}`)
+      // eslint-disable-next-line
+      new console.error(`LineChart: No data found with axisId ${axisId}`)
       return null
     }
     const getAxis = () => (axisId == null ? inheritedScale : yScale)

@@ -1,4 +1,6 @@
-import { timeFormat } from 'd3-time-format'
+import {
+  timeFormat
+} from 'd3-time-format'
 import moment from 'moment'
 /**
  * Takes a data point and formats it to the following time
@@ -20,7 +22,7 @@ export const tooltipTime = timeFormat('%a %b %d %H:%M')
  * Takes a data point and divides by 1000 and adds 'k' if greater than 1000
  * @param {Integer}
  */
-export const formatTicks = d => (d >= 1000 ? `${d / 1000}k` : d)
+export const formatTicks = d => (typeof d === 'number' ? (d >= 1000 ? `${d / 1000}k` : d) : d)
 
 /**
  * Takes a data point and determines how it should be formatted

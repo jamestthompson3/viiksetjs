@@ -47,7 +47,8 @@ class ChartArea extends Component {
     const dataWasChanged = prevProps.data !== this.props.data
     const widthWasChanged = prevProps.size && prevProps.size.width !== this.props.size.width
     const heightWasChanged = prevProps.size && prevProps.size.height !== this.props.size.height
-    if (dataWasChanged || widthWasChanged || heightWasChanged) {
+    const typeWasChanged = prevProps.type !== this.props.type
+    if (dataWasChanged || widthWasChanged || heightWasChanged || typeWasChanged) {
       return this.calculateData()
     }
   }
@@ -91,29 +92,39 @@ class ChartArea extends Component {
     const svgPoint = localPoint(this.chart, event).x
     if (datum) {
       return updateTooltip({ calculatedData: datum, x: svgPoint, mouseX: svgPoint })
+    } else {
+      const xValue = xScale.invert(svgPoint)
+      flow(
+        xValue => bisect(xPoints, xValue),
+        index => {
+          const bounds = { dLeft: data[index - 1], dRight: data[index] }
+          return xValue - xPoints[index - 1] > xPoints[index] - xValue
+            ? bounds.dRight || bounds.dLeft
+            : bounds.dLeft || bounds.dRight
+        },
+        calculatedData => {
+          const x = xScale(head(extractX(calculatedData, xKey)))
+          const yCoords = yScales
+            ? dataKeys.map(key => yScales[key](calculatedData[key]))
+            : extractY(calculatedData).map(item => yScale(item))
+          return updateTooltip({ calculatedData, x, mouseX: svgPoint, yCoords })
+        }
+      )(xValue)
     }
-    const xValue = xScale.invert(svgPoint)
-    flow(
-      xValue => bisect(xPoints, xValue),
-      index => {
-        const bounds = { dLeft: data[index - 1], dRight: data[index] }
-        return xValue - xPoints[index - 1] > xPoints[index] - xValue
-          ? bounds.dRight || bounds.dLeft
-          : bounds.dLeft || bounds.dRight
-      },
-      calculatedData => {
-        const x = xScale(head(extractX(calculatedData, xKey)))
-        const yCoords = yScales
-          ? dataKeys.map(key => yScales[key](calculatedData[key]))
-          : extractY(calculatedData).map(item => yScale(item))
-        return updateTooltip({ calculatedData, x, mouseX: svgPoint, yCoords })
-      }
-    )(xValue)
   }
 
   mouseLeave = () => this.props.updateTooltip({ calculatedData: null, x: null, yCoords: null })
   render() {
-    const { width, height, xScale, yScale, biaxialChildren, chartData, yPoints } = this.state
+    const {
+      width,
+      height,
+      xScale,
+      yScale,
+      biaxialChildren,
+      chartData,
+      yPoints,
+      xPoints
+    } = this.state
     const {
       size,
       children,
@@ -122,17 +133,22 @@ class ChartArea extends Component {
       xKey,
       formatY,
       formatX,
+      yKey,
       labelY,
       labelYProps,
       labelX,
       labelXProps,
+      yTickLabelProps,
+      xTickLabelProps,
       numXTicks,
       numYTicks,
+      type,
       stroke,
       nogrid,
       notool,
       color,
       yCoords,
+      noYaxis,
       calculatedData,
       tooltip: Tooltip,
       indicator: Indicator,
@@ -146,9 +162,7 @@ class ChartArea extends Component {
             width={size.width}
             height={size.height}
             preserveAspectRatio="none"
-            viewBox={
-              viewBox ? viewBox : determineViewBox(biaxialChildren, margin, size.width, size.height)
-            }
+            viewBox={viewBox || determineViewBox(biaxialChildren, margin, size.width, size.height)}
             ref={svg => (this.chart = svg)}
           >
             {Children.map(children, child =>
@@ -158,11 +172,14 @@ class ChartArea extends Component {
                 margin,
                 height,
                 yPoints,
+                xPoints,
                 width,
                 notool,
+                type,
                 mouseMove: this.mouseMove,
                 mouseLeave: this.mouseLeave,
                 xKey,
+                yKey,
                 inheritedScale: yScale,
                 formatY,
                 numYTicks,
@@ -184,21 +201,27 @@ class ChartArea extends Component {
               {!nogrid && (
                 <StyledGridRows scale={yScale} {...{ stroke }} width={width - margin.left} />
               )}
-              {biaxialChildren || (
-                <StyledLeftAxis
-                  scale={determineYScale({ type: null, yPoints, height, margin })}
-                  color={color}
-                  numTicks={numYTicks}
-                  hideTicks
-                  tickFormat={formatY}
-                  label={labelY || ''}
-                  labelProps={labelYProps}
-                />
-              )}
+              {biaxialChildren ||
+                noYaxis || (
+                  <StyledLeftAxis
+                    scale={determineYScale({
+                      type: type === 'horizontal' ? 'horizontal' : null,
+                      yPoints,
+                      height,
+                      margin
+                    })}
+                    {...{ color, numTicks: numYTicks, tickLabels: yTickLabelProps }}
+                    hideTicks
+                    tickFormat={formatY}
+                    label={labelY || ''}
+                    labelProps={labelYProps}
+                  />
+                )}
             </Group>
             <StyledBottomAxis
               scale={xScale}
-              {...{ color, height, margin, numTicks: numXTicks }}
+              left={-margin.right}
+              {...{ color, height, margin, numTicks: numXTicks, tickLabels: xTickLabelProps }}
               hideTicks
               tickFormat={formatX}
               label={labelX || ''}
@@ -247,6 +270,10 @@ ChartArea.propTypes = {
    */
   formatY: PropTypes.func,
   /**
+   * If true, no Yaxis will be shown
+   */
+  noYaxis: PropTypes.bool,
+  /**
    * A label for the yAxis
    */
   labelY: PropTypes.string,
@@ -255,6 +282,10 @@ ChartArea.propTypes = {
    */
   labelYProps: PropTypes.object,
   /**
+   * Label props for y ticks
+   */
+  yTickLabelProps: PropTypes.function,
+  /**
    * A label for the xAxis
    */
   labelX: PropTypes.string,
@@ -262,6 +293,10 @@ ChartArea.propTypes = {
    * Label props object for xLabel
    */
   labelXProps: PropTypes.object,
+  /**
+   * Label props for x ticks
+   */
+  xTickLabelProps: PropTypes.function,
   /**
    * Number of ticks for xAxis
    */

@@ -8,7 +8,6 @@ import { GraphContainer, Snippet, BiaxialTooltip } from '../styledComponents'
 const Biaxial = () => {
   return (
     <Fragment>
-      <h2>Biaxial Line Chart</h2>
       <GraphContainer>
         <ChartArea
           data={biaxialSeries.data}

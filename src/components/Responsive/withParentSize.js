@@ -26,7 +26,5 @@ export default function withParentSize(BaseComponent) {
     }
   }
 
-  return sizeMe({ monitorHeight: true, refreshMode: 'debounce', refreshRate: 100 })(
-    WrappedComponent
-  )
+  return sizeMe({ monitorHeight: true, refreshMode: 'debounce', refreshRate: 30 })(WrappedComponent)
 }

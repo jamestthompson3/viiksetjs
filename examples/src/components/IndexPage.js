@@ -10,6 +10,35 @@ injectGlobal`
     padding: 0;
     font-family: 'Roboto', sans-serif;
   }
+   ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar:horizontal {
+    height: 8px;
+  }
+
+  /* Corner */
+  ::-webkit-scrollbar-corner {
+    background: inherit;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    background: rgba(0,0,0,0.25);
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.65);
+  }
+  ::-webkit-scrollbar-thumb:window-inactive {
+    background: rgba(255,255,255,0.65);
+  }
 `
 
 const selectorList = [
@@ -18,12 +47,13 @@ const selectorList = [
   { title: 'Scatterplot', label: 'scatter' },
   { title: 'Streaming Chart', label: 'streaming' },
   { title: 'Stacked Line', label: 'stackedline' },
-  { title: 'Biaxial Line', label: 'biaxial' }
+  { title: 'Biaxial Line', label: 'biaxial' },
+  { title: 'Stacked Bar', label: 'stackedbar' }
 ]
 
 class IndexPage extends Component {
   state = {
-    active: 'time'
+    active: 'stackedbar'
   }
   render() {
     const { active } = this.state

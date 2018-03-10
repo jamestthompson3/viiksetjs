@@ -34,11 +34,13 @@ class LineChart extends Component {
     } = this.props
     // Check if data exists
     if (data.map(item => item[dataKey]).includes(undefined)) {
-      new ReferenceError(`LineChart: No data found with dataKey ${dataKey}`)
+      // eslint-disable-next-line
+      console.error(`LineChart: No data found with dataKey ${dataKey}`)
       return null
     }
     if (axisId && data.map(item => item[axisId]).includes(undefined)) {
-      new ReferenceError(`LineChart: No data found with axisId ${axisId}`)
+      // eslint-disable-next-line
+      console.error(`LineChart: No data found with axisId ${axisId}`)
       return null
     }
     const yPoints = d => d[dataKey]

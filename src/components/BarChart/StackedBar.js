@@ -1,50 +1,103 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Group } from '@vx/group'
-import Bar from './Bar'
 import { stack } from 'd3-shape'
-import { scaleOrdinal } from 'd3-scale'
+import { scaleOrdinal, scaleBand, scaleLinear } from 'd3-scale'
+import { get, flatten, sum, set } from 'lodash'
 
 import { extractLabels } from '../../utils/dataUtils'
+import { StyledBar } from '../styledComponents'
 
 class StackedBar extends Component {
   shouldComponentUpdate(prevProps) {
-    return (
-      !(prevProps.yPoints === this.props.yPoints) || !(prevProps.dataKey === this.props.dataKey)
-    )
+    return !(prevProps.yPoints === this.props.yPoints) || !(prevProps.keys === this.props.keys)
   }
 
-  determineScale = type => {
-    const { xScale, yScale } = this.props
-    return type === 'horizontal' ? xScale : yScale
+  determineScales = ({ type, data, keys }) => {
+    const { margin, height, width, yPoints, xPoints } = this.props
+    const dataDomain = Math.max(
+      ...flatten(data.map(d => keys.map(key => get(d, key))).map(arr => sum(arr)))
+    )
+    if (type === 'horizontal') {
+      const xScale = scaleLinear()
+        .domain([0, dataDomain])
+        .range([margin.left, width])
+      const yScale = scaleBand()
+        .domain(yPoints)
+        .range([height, margin.top])
+        .padding(0.1)
+      return { xScale, yScale }
+    } else {
+      const xScale = scaleBand()
+        .domain(xPoints)
+        .range([margin.left, width])
+        .padding(0.1)
+      const yScale = scaleLinear()
+        .domain([dataDomain, 0])
+        .range([height, margin.top])
+      return { xScale, yScale }
+    }
   }
+
+  determineBarWidth = ({ d, isHorizontal, xScale, yScale }) => {
+    if (isHorizontal) {
+      return xScale(d[1]) - xScale(d[0])
+    } else {
+      return yScale(d[1]) - yScale(d[0])
+    }
+  }
+
   render() {
-    const { data, top, left, y, xScale, yScale, type, colors, xKey } = this.props
-    const keys = extractLabels(data[0])
+    const {
+      data,
+      type,
+      colors,
+      xKey,
+      keys,
+      yKey,
+      width,
+      height,
+      margin,
+      notool,
+      mouseMove,
+      mouseLeave
+    } = this.props
+    if (!keys) {
+      // eslint-disable-next-line
+      console.warn(
+        'StackedBar: You have not provided the keys prop, this could explain unexpected render output'
+      )
+    }
     const zScale = scaleOrdinal()
-      .domain(keys)
+      .domain(keys || extractLabels(data[0]))
       .range(colors)
-    const scale = this.determineScale(type)
-    const series = stack().keys(keys)(data)
-    const bandwidth = scale.bandwidth()
+    const { xScale, yScale } = this.determineScales({ type, data, keys })
+    const isHorizontal = type === 'horizontal'
+    const series = stack().keys(keys || extractLabels(data[0]))(data)
+    const bandwidth = isHorizontal ? yScale.bandwidth() : xScale.bandwidth()
     const xPoint = d => xScale(d[xKey])
+    const yPoint = d => yScale(d[yKey])
     return (
-      <Group top={top} left={left}>
+      <Group>
         {series &&
           series.map((s, i) => (
             <Group key={i}>
               {s.map((d, ii) => {
-                const barWidth = scale(d[1]) - scale(d[0])
+                const barWidth = this.determineBarWidth({ d, isHorizontal, xScale, yScale })
                 return (
-                  <Bar
+                  <StyledBar
                     key={`bar-group-bar-${i}-${ii}-${s.key}`}
-                    x={xPoint(d)}
-                    y={yScale(y(d.data))}
-                    width={barWidth}
-                    height={bandwidth}
+                    x={isHorizontal ? width + margin.left - xScale(d[1]) : xPoint(d.data)}
+                    y={isHorizontal ? yPoint(d.data) : height + margin.top - yScale(d[1])}
+                    width={isHorizontal ? barWidth : bandwidth}
+                    height={isHorizontal ? bandwidth : barWidth}
                     fill={zScale(s.key)}
-                    data={d}
-                    {...restProps}
+                    data={d.data}
+                    onMouseMove={data => event => {
+                      const key = s.key
+                      return notool || mouseMove({ event, datum: set({}, key, data[key]) })
+                    }}
+                    onMouseLeave={() => event => mouseLeave()}
                   />
                 )
               })}
@@ -56,11 +109,9 @@ class StackedBar extends Component {
 }
 
 StackedBar.propTypes = {
-  data: PropTypes.array.isRequired,
-  y: PropTypes.func.isRequired,
-  xScale: PropTypes.func.isRequired,
-  yScale: PropTypes.func.isRequired,
-  colors: PropTypes.array.isRequired,
+  xScale: PropTypes.func,
+  inheritedScale: PropTypes.func,
+  colors: PropTypes.array,
   top: PropTypes.number,
   left: PropTypes.number
 }

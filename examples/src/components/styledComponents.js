@@ -35,6 +35,7 @@ export const Selector = styled.h4`
   cursor: pointer;
   text-align: center;
   color: ${p => (p.active ? '#fff' : '#000')};
+  box-shadow: ${p => p.active && '0px 0px 0px 1px #49484f'};
 `
 export const FilterBox = styled.div`
   flex: 1 1 120px;
@@ -74,7 +75,7 @@ export const Snippet = styled.pre`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-top: 2rem;
+  padding-top: 1rem;
   margin: auto;
   margin-top: 1rem;
   padding-bottom: 2rem;

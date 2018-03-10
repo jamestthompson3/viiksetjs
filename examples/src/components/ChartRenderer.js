@@ -2,6 +2,7 @@ import React from 'react'
 import {
   Biaxial,
   CategoricalSeries,
+  StackedBarExample,
   Scatterplot,
   StackedLine,
   StreamingChart,
@@ -21,6 +22,8 @@ const ChartRenderer = ({ active }) => {
       return <StreamingChart />
     case 'biaxial':
       return <Biaxial />
+    case 'stackedbar':
+      return <StackedBarExample />
     default:
       return null
   }

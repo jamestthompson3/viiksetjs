@@ -25,12 +25,12 @@ class BarChart extends Component {
       inheritedScale
     } = this.props
     if (data.map(item => item[dataKey]).includes(undefined)) {
-      new ReferenceError(`BarChart: No data found with dataKey ${dataKey}`)
+      // eslint-disable-next-line
+      console.error(`BarChart: No data found with dataKey ${dataKey}`)
       return null
     }
     const xPoint = d => xScale(d[xKey])
     const barHeight = d => inheritedScale(d[dataKey])
-    console.log('barchart')
     return (
       <Fragment>
         <StyledGradient color={color} id={`gradient${xKey}`} />

@@ -12,16 +12,15 @@ import { rgba } from 'polished'
 const findStroke = p => p.theme[p.stroke] || p.stroke || p.theme.primaryColor
 const findColor = p => p.theme[p.color] || p.color || p.theme.primaryColor
 const findFill = p => p.theme[p.color] || p.color || p.theme.primaryColor
-const propsColorSetter = p => {
+const propsColorSetter = (func, p) => {
+  const exec = func()
   switch (true) {
-    case get(p, 'stroke'):
-      return set(p, 'stroke', findStroke(p))
-    case get(p, 'fill'):
-      return set(p, 'fill', findFill(p))
-    case get(p, 'color'):
-      return set(p, 'color', findColor(p))
+    case get(p, 'color') != null:
+      return () => set(exec, 'stroke', findColor(p))
+    case get(p, 'stroke') != null:
+      return () => set(exec, 'stroke', findStroke(p))
     default:
-      return p
+      return () => set(exec, 'stroke', findColor(p))
   }
 }
 export const StyledPoint = styled.circle.attrs({
@@ -56,27 +55,33 @@ export const StyledLeftAxis = styled(AxisLeft).attrs({
   strokeWidth: 2,
   numTicks: p => p.numTicks,
   stroke: p => findColor(p),
-  tickLabelProps: p => () =>
-    propsColorSetter(p.tickLabelProps) || { fill: findColor(p), dx: '-2em' }
+  tickLabelProps: p =>
+    p.tickLabels ? propsColorSetter(p.tickLabels, p) : () => ({ fill: findColor(p), dx: '-2em' }),
+  labelProps: p => () => propsColorSetter(p.labelProps, p) || { fill: findColor(p), dx: '-2em' }
 })``
 export const StyledRightAxis = styled(AxisRight).attrs({
   strokeWidth: 2,
   numTicks: p => p.numTicks,
   stroke: p => findColor(p),
-  tickLabelProps: p => () =>
-    propsColorSetter(p.tickLabelProps) || { fill: findColor(p), dx: '-2em' }
+  tickLabelProps: p =>
+    p.tickLabels ? propsColorSetter(p.tickLabels, p) : () => ({ fill: findColor(p) }),
+  labelProps: p => () => propsColorSetter(p.labelProps, p) || { fill: findColor(p) }
 })``
 export const StyledBottomAxis = styled(AxisBottom).attrs({
   top: p => p.height,
   numTicks: p => p.numTicks,
   stroke: p => findColor(p),
-  tickLabelProps: p => () => ({
-    fill: findColor(p),
-    dy: '-0.25rem',
-    fontWeight: '900',
-    textAnchor: 'left',
-    fontSize: 11
-  })
+  tickLabelProps: p =>
+    p.tickLabels
+      ? propsColorSetter(p.tickLabels, p)
+      : () => ({
+          fill: findColor(p),
+          dy: '-0.25rem',
+          fontWeight: '900',
+          textAnchor: 'left',
+          fontSize: 11
+        }),
+  labelProps: p => () => propsColorSetter(p.labelProps) || { fill: findColor(p), dx: '-2em' }
 })``
 export const StyledGradient = styled(LinearGradient).attrs({
   from: p => rgba(findColor(p), 0.35),
@@ -104,7 +109,7 @@ export const TooltipWrapper = styled.div`
   display: block;
   color: #fff;
   width: 125px;
-  border: 2px solid ${p => (p.color ? p.color : p.theme.primaryColor)};
+  border: 2px solid ${p => p.color || p.theme.primaryColor};
   border-radius: 5px;
   background: #1a2e3c;
   box-shadow: 6px 6px 27px -12px rgba(0, 0, 0, 0.75);
@@ -119,8 +124,8 @@ export const Corner = styled.div`
   width: 16px;
   margin-top: -0.625rem;
   z-index: 110;
-  border-right: 2px solid ${p => (p.color ? p.color : p.theme.primaryColor)};
-  border-bottom: 2px solid ${p => (p.color ? p.color : p.theme.primaryColor)};
+  border-right: 2px solid ${p => p.color || p.theme.primaryColor};
+  border-bottom: 2px solid ${p => p.color || p.theme.primaryColor};
   border-right-bottom-radius: 5px;
   background: #1a2e3c;
 `
@@ -141,9 +146,9 @@ const TooltipContainer = styled.div.attrs({
 
 const boundsSetter = ({ left, rect, parentRect }) => {
   if (left + rect.width > parentRect.width) {
-    return left - rect.width
+    return left - rect.width / 2 // case for shifting to the right
   } else if (left + rect.width < parentRect.left) {
-    return left + rect.width / 3
+    return left + rect.width / 4 // case for shifting to the left
   } else {
     return left - rect.width / 4 // default case
   }
