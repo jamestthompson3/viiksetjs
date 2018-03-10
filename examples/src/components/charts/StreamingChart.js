@@ -25,7 +25,6 @@ const streamMap = (data, message) => {
 const StreamingChart = () => {
   return (
     <Fragment>
-      <h2>Streaming Graph</h2>
       <GraphContainer>
         <StreamableChart
           connection="ws://wiki-update-sockets.herokuapp.com/"

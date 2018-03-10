@@ -14,10 +14,6 @@ export const determineXScale = ({ type, xPoints, width, margin }) => {
       return scaleLinear()
         .domain([xPoints[0], xPoints[xPoints.length - 1]])
         .range(range)
-    case 'horizontal':
-      return scaleLinear()
-        .domain([0, Math.max(...xPoints)])
-        .range(range)
     default:
       return scaleTime()
         .domain([xPoints[0], xPoints[xPoints.length - 1]])
@@ -35,7 +31,8 @@ export const determineYScale = ({ type, yPoints, height, margin }) => {
     case 'horizontal':
       return scaleBand()
         .domain(yPoints)
-        .range(range)
+        .range([height, margin.top])
+        .padding(0.1)
     default:
       return scaleLinear()
         .domain([0, Math.max(...yPoints)])
@@ -67,7 +64,11 @@ export const biaxial = children =>
  * @param {Object} Children - React Children through which it maps
  */
 export const barChart = children =>
-  children && Children.map(children, child => child.type.name === 'BarChart').includes(true)
+  children &&
+  Children.map(
+    children,
+    child => child.type.name === 'BarChart' || child.type.name === 'StackedBar'
+  ).includes(true)
 /**
  * Own implementation of localPoint from VX. Makes it work on Firefox
  * @param {event} event - Event from which to extract svg canvas points

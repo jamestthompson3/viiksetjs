@@ -6,7 +6,6 @@ import { ChartArea, LineChart } from 'viiksetjs'
 const TimeSeries = () => {
   return (
     <Fragment>
-      <h2>Time Series</h2>
       <GraphContainer>
         <ChartArea data={timeSeries.data} color="#2189C8" stroke="grey">
           <LineChart dataKey="messages" color="#2189C8" />

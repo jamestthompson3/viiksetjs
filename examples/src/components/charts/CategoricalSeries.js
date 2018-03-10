@@ -1,13 +1,12 @@
 import React, { Fragment } from 'react'
 
-import categoricalSeries from '../../data/timeSeries.json'
+import categoricalSeries from '../../data/categoricalSeries.json'
 import { GraphContainer, Snippet } from '../styledComponents'
 import { ChartArea, BarChart } from 'viiksetjs'
 
 const CategoricalSeries = () => {
   return (
     <Fragment>
-      <h2>Categorical Series</h2>
       <GraphContainer>
         <ChartArea
           data={categoricalSeries.data}

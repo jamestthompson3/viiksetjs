@@ -8,7 +8,6 @@ import { ChartArea, ScatterPlot } from 'viiksetjs'
 const Scatterplot = () => {
   return (
     <Fragment>
-      <h2>Numeric Data With Custom Tooltip</h2>
       <GraphContainer>
         <ChartArea
           data={numericSeries.data}

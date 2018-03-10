@@ -2,7 +2,20 @@ import React from 'react'
 import { scaleLinear } from 'd3-scale'
 import { StyledLeftAxis, StyledRightAxis } from '../styledComponents'
 
-const YAxis = ({ height, data, axisId, color, position, width, formatY, margin, label, labelProps, numYTicks}) => {
+const YAxis = ({
+  height,
+  data,
+  axisId,
+  color,
+  position,
+  width,
+  formatY,
+  margin,
+  label,
+  labelProps,
+  numYTicks,
+  tickLabels
+}) => {
   // Check if data exists
   if (data.map(item => item[axisId]).includes(undefined)) {
     new ReferenceError(`YAxis: No data found with axisId ${axisId}`)
@@ -14,26 +27,18 @@ const YAxis = ({ height, data, axisId, color, position, width, formatY, margin, 
     .range([height, margin.top])
   return position === 'left' ? (
     <StyledLeftAxis
-      scale={yScale}
+      {...{ scale: yScale, label, labelProps, tickLabels, color }}
       left={margin.left}
-      label={label}
-      labelProps={labelProps}
-      color={color}
       numTicks={numYTicks}
       hideTicks
-      tickLabelProps={() => ({ fill: color, dx: '-2em', fontSize: 12 })}
       tickFormat={formatY}
     />
   ) : (
     <StyledRightAxis
-      scale={yScale}
+      {...{ scale: yScale, label, labelProps, tickLabels, color }}
       left={width}
-      label={label}
-      labelProps={labelProps}
-      color={color}
       numTicks={numYTicks}
       hideTicks
-      tickLabelProps={() => ({ fill: color, fontSize: 12 })}
       tickFormat={formatY}
     />
   )

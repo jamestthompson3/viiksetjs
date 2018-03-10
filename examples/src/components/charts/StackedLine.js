@@ -6,7 +6,6 @@ import { GraphContainer, Snippet } from '../styledComponents'
 const StackedLine = () => {
   return (
     <Fragment>
-      <h2>Stacked Line Chart</h2>
       <GraphContainer>
         <ChartArea
           data={biaxialSeries.data}
