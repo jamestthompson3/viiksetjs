@@ -14,6 +14,10 @@ export const determineXScale = ({ type, xPoints, width, margin }) => {
       return scaleLinear()
         .domain([xPoints[0], xPoints[xPoints.length - 1]])
         .range(range)
+    case 'horizontal':
+      return scaleLinear()
+        .domain([0, Math.max(...xPoints)])
+        .range(range)
     default:
       return scaleTime()
         .domain([xPoints[0], xPoints[xPoints.length - 1]])
@@ -22,15 +26,20 @@ export const determineXScale = ({ type, xPoints, width, margin }) => {
 }
 
 export const determineYScale = ({ type, yPoints, height, margin }) => {
+  const range = [height, margin.top]
   switch (type) {
     case 'ordinal':
       return scaleLinear()
         .domain([Math.max(...yPoints), 0])
-        .range([height, margin.top])
+        .range(range)
+    case 'horizontal':
+      return scaleBand()
+        .domain(yPoints)
+        .range(range)
     default:
       return scaleLinear()
         .domain([0, Math.max(...yPoints)])
-        .range([height, margin.top])
+        .range(range)
   }
 }
 
@@ -39,14 +48,12 @@ export const determineYScale = ({ type, yPoints, height, margin }) => {
  * @param {String} viewBox - Optional prop passed to chartArea if custom viewbox is wanted
  * @param {Bool} biaxialChildren - Bool based on whether or not the chart has biaxial children
  * @param {Object} margin - Margin object
- * @param {Int} parentWidth - Width of parent container
- * @param {Int} parentHeight - Height of parent container
+ * @param {Int} width - Width of parent container
+ * @param {Int} height - Height of parent container
  */
 
-export const determineViewBox = (biaxialChildren, margin, parentWidth, parentHeight) =>
-  biaxialChildren
-    ? `-10 0 ${parentWidth} ${parentHeight}`
-    : `${-margin.left} 0 ${parentWidth} ${parentHeight}`
+export const determineViewBox = (biaxialChildren, margin, width, height) =>
+  biaxialChildren ? `-10 0 ${width} ${height}` : `${-margin.left} 0 ${width} ${height}`
 
 /**
  * Takes React Chilren and returns true or false if unique axis Id is found

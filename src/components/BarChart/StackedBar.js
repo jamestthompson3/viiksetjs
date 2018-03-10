@@ -3,6 +3,9 @@ import PropTypes from 'prop-types'
 import { Group } from '@vx/group'
 import Bar from './Bar'
 import { stack } from 'd3-shape'
+import { scaleOrdinal } from 'd3-scale'
+
+import { extractLabels } from '../../utils/dataUtils'
 
 class StackedBar extends Component {
   shouldComponentUpdate(prevProps) {
@@ -10,50 +13,43 @@ class StackedBar extends Component {
       !(prevProps.yPoints === this.props.yPoints) || !(prevProps.dataKey === this.props.dataKey)
     )
   }
+
+  determineScale = type => {
+    const { xScale, yScale } = this.props
+    return type === 'horizontal' ? xScale : yScale
+  }
   render() {
-    const { data, top, left, y, xScale, yScale, zScale, keys, height } = this.props
+    const { data, top, left, y, xScale, yScale, type, colors, xKey } = this.props
+    const keys = extractLabels(data[0])
+    const zScale = scaleOrdinal()
+      .domain(keys)
+      .range(colors)
+    const scale = this.determineScale(type)
     const series = stack().keys(keys)(data)
-    const format = yScale.tickFormat ? yScale.tickFormat() : d => d
-    const bandwidth = yScale.bandwidth()
-    const step = yScale.step()
-    const paddingInner = yScale.paddingInner()
-    const paddingOuter = yScale.paddingOuter()
+    const bandwidth = scale.bandwidth()
+    const xPoint = d => xScale(d[xKey])
     return (
       <Group top={top} left={left}>
         {series &&
-          series.map((s, i) => {
-            return (
-              <Group key={i}>
-                {s.map((d, ii) => {
-                  const barWidth = xScale(d[1]) - xScale(d[0])
-                  return (
-                    <Bar
-                      key={`bar-group-bar-${i}-${ii}-${s.key}`}
-                      x={xScale(d[0])}
-                      y={yScale(y(d.data))}
-                      width={barWidth}
-                      height={bandwidth}
-                      fill={zScale(s.key)}
-                      data={{
-                        bandwidth,
-                        paddingInner,
-                        paddingOuter,
-                        step,
-                        key: s.key,
-                        value: d[0],
-                        height: bandwidth,
-                        width: barWidth,
-                        y: y(d.data),
-                        yFormatted: format(y(d.data)),
-                        data: d.data
-                      }}
-                      {...restProps}
-                    />
-                  )
-                })}
-              </Group>
-            )
-          })}
+          series.map((s, i) => (
+            <Group key={i}>
+              {s.map((d, ii) => {
+                const barWidth = scale(d[1]) - scale(d[0])
+                return (
+                  <Bar
+                    key={`bar-group-bar-${i}-${ii}-${s.key}`}
+                    x={xPoint(d)}
+                    y={yScale(y(d.data))}
+                    width={barWidth}
+                    height={bandwidth}
+                    fill={zScale(s.key)}
+                    data={d}
+                    {...restProps}
+                  />
+                )
+              })}
+            </Group>
+          ))}
       </Group>
     )
   }
@@ -64,8 +60,7 @@ StackedBar.propTypes = {
   y: PropTypes.func.isRequired,
   xScale: PropTypes.func.isRequired,
   yScale: PropTypes.func.isRequired,
-  zScale: PropTypes.func.isRequired,
-  keys: PropTypes.array.isRequired,
+  colors: PropTypes.array.isRequired,
   top: PropTypes.number,
   left: PropTypes.number
 }

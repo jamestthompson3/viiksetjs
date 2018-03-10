@@ -1,26 +1,52 @@
 import React from 'react'
 import styled from 'styled-components'
-import { withBounds } from '../../lib'
+import { withBounds } from 'viiksetjs'
 import { Line } from '@vx/shape'
 
 export const PageWrapper = styled.div`
   width: 100%;
   background: #333;
+  height: 100vh;
+  overflow-x: hidden;
   h2 {
     text-align: center;
   }
   h1 {
     text-align: center;
+    color: #fff;
   }
   overflow-y: auto;
 `
 
 export const Wrapper = styled.div`
   margin: auto;
-  padding-top: 2rem;
-  padding-bottom: 2rem;
+  border-radius: 3px;
+  padding: 2rem;
   background: #fff;
-  width: 80%;
+  width: 95%;
+  display: flex;
+`
+
+export const Selector = styled.h4`
+  background: ${p => p.active && '#00395e'};
+  padding: 10px;
+  border-radius: 3px;
+  margin: 0;
+  cursor: pointer;
+  text-align: center;
+  color: ${p => (p.active ? '#fff' : '#000')};
+`
+export const FilterBox = styled.div`
+  flex: 1 1 120px;
+  height: 300px;
+  max-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+`
+
+export const ChartBox = styled.div`
+  flex: 2 0 80%;
 `
 
 export const GraphContainer = styled.div`
@@ -45,6 +71,9 @@ export const Snippet = styled.pre`
   overflow-x: auto;
   border-radius: 3px;
   width: 80%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding-top: 2rem;
   margin: auto;
   margin-top: 1rem;
@@ -85,12 +114,12 @@ export const Label = styled.p`
 const Container = styled.div.attrs({
   style: p => ({
     left: `${p.rect ? p.left - p.rect.width / 3 : p.left}px`,
-    top: `${p.parentRect ? -(p.parentRect.height - 200) : p.yCoord}px`
+    top: `${p.parentRect ? -(p.parentRect.height + p.rect.height) : p.yCoord}px`
   })
 })`
   display: flex;
   flex-direction: column;
-  position: absolute;
+  position: relative;
   justify-content: space-around;
   padding: 10px;
   align-items: center;
@@ -114,12 +143,28 @@ export const Indicator = ({ x, color, yCoords, height }) => (
 const BoundedTooltip = withBounds(TooltipContainer)
 export const LinearTooltip = ({ tooltipData, x, yCoords }) => (
   <BoundedTooltip left={x} yCoord={yCoords[1] - 15}>
-    {tooltipData.y < 300 ? '❄️' : '🔥'}
+    {tooltipData.y < 300 ? (
+      <span role="img" arialLabel="cold">
+        ❄️
+      </span>
+    ) : (
+      <span role="img" arialLabel="hot">
+        🔥
+      </span>
+    )}
   </BoundedTooltip>
 )
 export const BiaxialTooltip = ({ tooltipData, x, yCoords }) => (
   <BoundedContainer left={x - 10} yCoord={yCoords[1]}>
-    <p>👩‍💻: {tooltipData.users}</p>
-    <p>📝: {tooltipData.posts}</p>
+    <p>
+      <span role="img" arialLabel="user">
+        👩‍💻
+      </span>: {tooltipData.users}
+    </p>
+    <p>
+      <span role="img" arialLabel="post">
+        📝
+      </span>: {tooltipData.posts}
+    </p>
   </BoundedContainer>
 )

@@ -2,7 +2,7 @@
 
 <img src="./viiksetjs.jpg" />
 
-A lightweight Javascript graphing library for React based on d3 and vx
+A lightweight Javascript graphing library for React based on styled-components and vx
 
 ## About
 
@@ -247,12 +247,6 @@ A simple point component.
 
 ## StyledLine
 A simple line component.
-export const StyledLine = styled(Line).attrs({
-  from: p => p.from,
-  to: p => p.to,
-  stroke: p => findColor(p),
-  strokeWidth: p => p.width
-})
 
 ### Props
 
@@ -261,6 +255,7 @@ export const StyledLine = styled(Line).attrs({
 | to |   -    | Object  | Starting point of the line with shape of `{ x: int, y: int}` |
 | from |   -    | Object  | Ending point of the line with shape of `{ x: int, y: int}` |
 | color   |  -   | String  | Color string. Supports colors from styled-components' `themeProvider`. |
+| strokeDasharray | - | String |  Pattern of stroke. |
 | width | - | Number |  Width of the line. |
 
 ## Tooltips

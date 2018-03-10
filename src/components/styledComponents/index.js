@@ -37,13 +37,14 @@ export const StyledLine = styled(Line).attrs({
   from: p => p.from,
   to: p => p.to,
   stroke: p => findColor(p),
-  strokeWidth: p => p.width
-})
+  strokeWidth: p => p.width,
+  strokeDasharray: p => p.strokeDasharray
+})``
 
 export const StyledBar = styled(Bar).attrs({
   rx: 5,
   ry: 0,
-  stroke: p => p.findColor(p),
+  stroke: p => findColor(p),
   strokeWidth: 1
 })``
 export const StyledGridRows = styled(GridRows).attrs({

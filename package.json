@@ -21,6 +21,7 @@
   "babel": {
     "presets": [
       "react",
+      "env",
       [
         "es2015",
         {
@@ -28,9 +29,6 @@
         }
       ],
       "stage-2"
-    ],
-    "plugins": [
-      "transform-flow-strip-types"
     ],
     "env": {
       "test": {
@@ -45,8 +43,7 @@
       }
     }
   },
-  "dependencies": {},
-  "devDependencies": {
+  "dependencies": {
     "@vx/axis": "^0.0.158",
     "@vx/bounds": "^0.0.153",
     "@vx/curve": "^0.0.153",
@@ -56,25 +53,28 @@
     "@vx/pattern": "^0.0.153",
     "@vx/point": "^0.0.153",
     "@vx/shape": "^0.0.158",
-    "babel-cli": "^6.26.0",
-    "babel-eslint": "^8.0.3",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-2": "^6.24.1",
     "d3-array": "^1.2.1",
     "d3-scale": "^2.0.0",
     "d3-shape": "^1.2.0",
-    "eslint": "^4.12.1",
-    "eslint-plugin-react": "^7.5.1",
-    "husky": "^0.14.3",
-    "jest": "^22.3.0",
-    "lint-staged": "^6.1.1",
     "lodash": "^4.17.5",
-    "moment": "^2.20.1",
+    "moment": "^2.21.0",
     "polished": "^1.9.2",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-sizeme": "^2.3.6",
-    "styled-components": "^3.1.6"
+    "styled-components": "^3.2.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.0.3",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "eslint": "^4.12.1",
+    "eslint-plugin-react": "^7.5.1",
+    "husky": "^0.14.3",
+    "jest": "^22.3.0",
+    "lint-staged": "^6.1.1"
   }
 }

@@ -30,6 +30,7 @@ class BarChart extends Component {
     }
     const xPoint = d => xScale(d[xKey])
     const barHeight = d => inheritedScale(d[dataKey])
+    console.log('barchart')
     return (
       <Fragment>
         <StyledGradient color={color} id={`gradient${xKey}`} />
