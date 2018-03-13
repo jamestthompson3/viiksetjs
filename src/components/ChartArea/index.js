@@ -21,7 +21,8 @@ import {
   localPoint,
   determineViewBox,
   determineYScale,
-  barChart
+  barChart,
+  findTooltipX
 } from '../../utils/chartUtils'
 import withTooltip from '../Tooltip/withTooltip'
 import withParentSize from '../Responsive/withParentSize'
@@ -88,29 +89,29 @@ class ChartArea extends Component {
   }
   mouseMove = ({ event, datum }) => {
     const { xPoints, xScale, yScale, yScales, dataKeys } = this.state
-    const { data, updateTooltip, xKey } = this.props
+    const { data, updateTooltip, xKey, type } = this.props
     const svgPoint = localPoint(this.chart, event).x
     if (datum) {
       return updateTooltip({ calculatedData: datum, x: svgPoint, mouseX: svgPoint })
-    } else {
-      const xValue = xScale.invert(svgPoint)
-      flow(
-        xValue => bisect(xPoints, xValue),
-        index => {
-          const bounds = { dLeft: data[index - 1], dRight: data[index] }
-          return xValue - xPoints[index - 1] > xPoints[index] - xValue
-            ? bounds.dRight || bounds.dLeft
-            : bounds.dLeft || bounds.dRight
-        },
-        calculatedData => {
-          const x = xScale(head(extractX(calculatedData, xKey)))
-          const yCoords = yScales
-            ? dataKeys.map(key => yScales[key](calculatedData[key]))
-            : extractY(calculatedData).map(item => yScale(item))
-          return updateTooltip({ calculatedData, x, mouseX: svgPoint, yCoords })
-        }
-      )(xValue)
     }
+    const xValue = xScale.invert(svgPoint)
+    flow(
+      xValue => bisect(xPoints, xValue),
+      index => {
+        const bounds = { dLeft: data[index - 1], dRight: data[index] }
+        return xValue - xPoints[index - 1] > xPoints[index] - xValue
+          ? bounds.dRight || bounds.dLeft
+          : bounds.dLeft || bounds.dRight
+      },
+      calculatedData => {
+        const calculatedX = head(extractX(calculatedData, xKey))
+        const x = findTooltipX({ type, calculatedX, xScale })
+        const yCoords = yScales
+          ? dataKeys.map(key => yScales[key](calculatedData[key]))
+          : extractY(calculatedData).map(item => yScale(item))
+        return updateTooltip({ calculatedData, x, mouseX: svgPoint, yCoords })
+      }
+    )(xValue)
   }
 
   mouseLeave = () => this.props.updateTooltip({ calculatedData: null, x: null, yCoords: null })
@@ -220,7 +221,6 @@ class ChartArea extends Component {
             </Group>
             <StyledBottomAxis
               scale={xScale}
-              left={-margin.right}
               {...{ color, height, margin, numTicks: numXTicks, tickLabels: xTickLabelProps }}
               hideTicks
               tickFormat={formatX}
@@ -339,6 +339,21 @@ ChartArea.defaultProps = {
   labelX: '',
   numXTicks: 6,
   numYTicks: 4,
+  yTickLabelProps: () => ({
+    dy: '-0.25rem',
+    dx: '-1.75rem',
+    strokeWidth: '0.5px',
+    fontWeight: '400',
+    textAnchor: 'left',
+    fontSize: 12
+  }),
+  xTickLabelProps: () => ({
+    dy: '-0.25rem',
+    fontWeight: '400',
+    strokeWidth: '0.5px',
+    textAnchor: 'left',
+    fontSize: 12
+  }),
   labelYProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' },
   labelXProps: { fontSize: 12, textAnchor: 'middle', fill: 'black', dy: '-0.5rem' },
   formatX: formatXTicks,

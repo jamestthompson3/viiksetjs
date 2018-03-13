@@ -1,6 +1,7 @@
 import { Children } from 'react'
 import { Point } from '@vx/point'
 import { scaleLinear, scaleTime, scaleBand } from 'd3-scale'
+import moment from 'moment'
 
 export const determineXScale = ({ type, xPoints, width, margin }) => {
   const range = [margin.left, width]
@@ -51,6 +52,16 @@ export const determineYScale = ({ type, yPoints, height, margin }) => {
 
 export const determineViewBox = (biaxialChildren, margin, width, height) =>
   biaxialChildren ? `-10 0 ${width} ${height}` : `${-margin.left} 0 ${width} ${height}`
+
+export const findTooltipX = ({ type, calculatedX, xScale }) => {
+  switch (type) {
+    case 'ordinal':
+    case 'linear':
+      return xScale(calculatedX)
+    default:
+      return xScale(moment(calculatedX))
+  }
+}
 
 /**
  * Takes React Chilren and returns true or false if unique axis Id is found
