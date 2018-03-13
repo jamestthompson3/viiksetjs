@@ -16,11 +16,11 @@ const propsColorSetter = (func, p) => {
   const exec = func()
   switch (true) {
     case get(p, 'color') != null:
-      return () => set(exec, 'stroke', findColor(p))
+      return () => ({ ...exec, stroke: findColor(p), fill: findColor(p) })
     case get(p, 'stroke') != null:
-      return () => set(exec, 'stroke', findStroke(p))
+      return () => ({ ...exec, stroke: findStroke(p), fill: findStroke(p) })
     default:
-      return () => set(exec, 'stroke', findColor(p))
+      return () => ({ ...exec, stroke: findColor(p), fill: findColor(p) })
   }
 }
 export const StyledPoint = styled.circle.attrs({
@@ -55,32 +55,21 @@ export const StyledLeftAxis = styled(AxisLeft).attrs({
   strokeWidth: 2,
   numTicks: p => p.numTicks,
   stroke: p => findColor(p),
-  tickLabelProps: p =>
-    p.tickLabels ? propsColorSetter(p.tickLabels, p) : () => ({ fill: findColor(p), dx: '-2em' }),
+  tickLabelProps: p => propsColorSetter(p.tickLabels, p),
   labelProps: p => () => propsColorSetter(p.labelProps, p) || { fill: findColor(p), dx: '-2em' }
 })``
 export const StyledRightAxis = styled(AxisRight).attrs({
   strokeWidth: 2,
   numTicks: p => p.numTicks,
   stroke: p => findColor(p),
-  tickLabelProps: p =>
-    p.tickLabels ? propsColorSetter(p.tickLabels, p) : () => ({ fill: findColor(p) }),
+  tickLabelProps: p => propsColorSetter(p.tickLabels, p),
   labelProps: p => () => propsColorSetter(p.labelProps, p) || { fill: findColor(p) }
 })``
 export const StyledBottomAxis = styled(AxisBottom).attrs({
   top: p => p.height,
   numTicks: p => p.numTicks,
   stroke: p => findColor(p),
-  tickLabelProps: p =>
-    p.tickLabels
-      ? propsColorSetter(p.tickLabels, p)
-      : () => ({
-          fill: findColor(p),
-          dy: '-0.25rem',
-          fontWeight: '900',
-          textAnchor: 'left',
-          fontSize: 11
-        }),
+  tickLabelProps: p => propsColorSetter(p.tickLabels, p),
   labelProps: p => () => propsColorSetter(p.labelProps) || { fill: findColor(p), dx: '-2em' }
 })``
 export const StyledGradient = styled(LinearGradient).attrs({
