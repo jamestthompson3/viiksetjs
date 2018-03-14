@@ -46,6 +46,11 @@ typings/
 .cache
 dist/
 
+# Editor stuff
+.vscode
+.dir-locals.el
+.dumbjumpignore
+
 # Optional eslint cache
 .eslintcache
 

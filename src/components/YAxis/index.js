@@ -16,7 +16,7 @@ const YAxis = ({
   numYTicks,
   tickLabels
 }) => {
-  // Check if data exists
+    // Check if data exists
   if (data.map(item => item[axisId]).includes(undefined)) {
     new ReferenceError(`YAxis: No data found with axisId ${axisId}`)
     return null
@@ -27,25 +27,41 @@ const YAxis = ({
     .range([height, margin.top])
   return position === 'left' ? (
     <StyledLeftAxis
-      {...{ scale: yScale, label, labelProps, tickLabels, color }}
+      {...{ scale: yScale, label, labelProps, color }}
       left={margin.left}
       numTicks={numYTicks}
       hideTicks
       tickFormat={formatY}
+      tickLabels={tickLabels ? tickLabels : () => ({
+	  dy: '-0.25rem',
+	  dx: '-1.75rem',
+	  strokeWidth: '0.5px',
+	  fontWeight: '400',
+	  textAnchor: 'left',
+	  fontSize: 12
+      })}
     />
   ) : (
     <StyledRightAxis
-      {...{ scale: yScale, label, labelProps, tickLabels, color }}
+      {...{ scale: yScale, label, labelProps, color }}
       left={width}
       numTicks={numYTicks}
       hideTicks
       tickFormat={formatY}
+      tickLabels={tickLabels ? tickLabels : () => ({
+	  dy: '-0.25rem',
+	  dx: '0rem',
+	  strokeWidth: '0.5px',
+	  fontWeight: '400',
+	  textAnchor: 'left',
+	  fontSize: 12
+      })}
     />
   )
 }
 
 YAxis.defaultProps = {
-  labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black', y: -20 }
+  labelProps: () => ({ fontSize: 12, textAnchor: 'middle', fill: 'black' })
 }
 
 export default YAxis

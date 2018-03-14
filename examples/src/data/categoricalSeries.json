@@ -20,35 +20,12 @@
    "cocoa": 0.71,
    "score": 2.5,
    "origin": "Ecuador"
- },
-
- {
-   "company": "Duffy's",
-   "beanName": "Rio Dulce, Xoco",
-   "cocoa": 0.70,
-   "score": 4,
-   "origin": "Guatemala"
- },
- {
-   "company": "Dulcinea",
-   "beanName": "Dominican Republic",
-   "cocoa": 0.70,
-   "score": 3.25,
-   "origin": "Dominican Republic"
- },
- {
-   "company": "Durand",
-   "beanName": "Madagascar",
-   "cocoa": 0.82,
-   "score": 2.75,
-   "origin": "Madagascar"
- },
- {
-   "company": "Durci",
-   "beanName": "Maranon, Joya Rara",
-   "cocoa": 0.70,
-   "score": 3.5,
-   "origin": "Peru"
+ },{
+  "company": "Duffy's",
+  "beanName": "Rio Dulce, Xoco",
+  "cocoa": 0.7,
+  "score": 4,
+  "origin": "Guatemala"
  }
-]
+  ]
 }

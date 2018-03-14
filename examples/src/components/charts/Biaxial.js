@@ -22,24 +22,24 @@ const Biaxial = () => {
             axisId="posts"
             position="right"
             label="posts"
-            labelProps={{
+      labelProps={() => ({
               y: -20,
               textAnchor: 'middle',
               fill: 'rgb(244, 196, 65)',
               fontSize: '12px'
-            }}
+      })}
           />
           <YAxis
             color="rgb(238, 66, 244)"
             axisId="users"
             position="left"
             label="users"
-            labelProps={{
+      labelProps={() => ({
               y: -20,
               textAnchor: 'middle',
               fill: 'rgb(238, 66, 244)',
               fontSize: '12px'
-            }}
+      })}
           />
         </ChartArea>
       </GraphContainer>

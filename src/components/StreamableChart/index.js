@@ -86,13 +86,17 @@ class StreamableChart extends Component {
       formatY,
       formatX,
       labelY,
+      type,
       labelYProps,
       labelX,
       labelXProps,
+      xTickLabelProps,
+      yTickLabelProps,
       numXTicks,
       numYTicks,
       stroke,
       nogrid,
+      noYAxis,
       chartData,
       color
     } = this.props
@@ -126,21 +130,26 @@ class StreamableChart extends Component {
         )}
         <Group left={margin.left}>
           {!nogrid && <StyledGridRows scale={yScale} {...{ stroke }} width={width - margin.left} />}
-          {biaxialChildren || (
-            <StyledLeftAxis
-              scale={determineYScale({ type: null, yPoints, height, margin })}
-              color={color}
-              numTicks={numYTicks}
-              hideTicks
-              tickFormat={formatY}
-              label={labelY || ''}
-              labelProps={labelYProps}
-            />
-          )}
+          {biaxialChildren ||
+            noYAxis || (
+              <StyledLeftAxis
+                scale={determineYScale({
+                  type: type === 'horizontal' ? 'horizontal' : null,
+                  yPoints,
+                  height,
+                  margin
+                })}
+                {...{ color, numTicks: numYTicks, tickLabels: yTickLabelProps }}
+                hideTicks
+                tickFormat={formatY}
+                label={labelY || ''}
+                labelProps={labelYProps}
+              />
+            )}
         </Group>
         <StyledBottomAxis
           scale={xScale}
-          {...{ color, height, margin, numTicks: numXTicks }}
+          {...{ color, height, margin, numTicks: numXTicks, tickLabels: xTickLabelProps }}
           hideTicks
           tickFormat={formatX}
           label={labelX || ''}
@@ -171,7 +180,7 @@ StreamableChart.propTypes = {
   /**
    * A string indicating the type of scale the type should have, defaults to timeseries
    */
-  type: PropTypes.oneOf(['ordinal', 'linear']),
+  type: PropTypes.oneOf(['ordinal', 'linear', 'horizontal']),
   /**
    * A string indicating which data values should be used to create the x-axis
    */
@@ -187,7 +196,15 @@ StreamableChart.propTypes = {
   /**
    * Label props object for yLabel
    */
-  labelYProps: PropTypes.object,
+  labelYProps: PropTypes.func,
+  /**
+   * Label props object for yTicks
+   */
+  yTickLabelProps: PropTypes.func,
+  /**
+   * Label props object for xTicks
+   */
+  xTickLabelProps: PropTypes.func,
   /**
    * A label for the xAxis
    */
@@ -195,7 +212,7 @@ StreamableChart.propTypes = {
   /**
    * Label props object for xLabel
    */
-  labelXProps: PropTypes.object,
+  labelXProps: PropTypes.func,
   /**
    * Number of ticks for xAxis
    */
@@ -228,6 +245,7 @@ StreamableChart.defaultProps = {
   color: '#000',
   stroke: '#000',
   nogrid: false,
+  noYAxis: false,
   formatY: formatTicks,
   streamParser: message => message,
   mapStream: (data, message) => [...data, message],
@@ -235,8 +253,23 @@ StreamableChart.defaultProps = {
   labelX: '',
   numXTicks: 6,
   numYTicks: 4,
-  labelYProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' },
-  labelXProps: { fontSize: 12, textAnchor: 'middle', fill: 'black', dy: '-0.5rem' },
+  labelYProps: () => ({ fontSize: 12, textAnchor: 'middle', fill: 'black' }),
+  labelXProps: () => ({ fontSize: 12, textAnchor: 'middle', fill: 'black', dy: '-0.5rem' }),
+  yTickLabelProps: () => ({
+    dy: '-0.25rem',
+    dx: '-1.75rem',
+    strokeWidth: '0.5px',
+    fontWeight: '400',
+    textAnchor: 'left',
+    fontSize: 12
+  }),
+  xTickLabelProps: () => ({
+    dy: '-0.25rem',
+    fontWeight: '400',
+    strokeWidth: '0.5px',
+    textAnchor: 'left',
+    fontSize: 12
+  }),
   formatX: formatXTicks,
   margin: margin
 }

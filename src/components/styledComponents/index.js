@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 import styled from 'styled-components'
-import { set, get } from 'lodash'
+import { get } from 'lodash'
 import { withBoundingRects } from '@vx/bounds'
 import { LinearGradient } from '@vx/gradient'
 import { PatternLines } from '@vx/pattern'
@@ -39,7 +39,6 @@ export const StyledLine = styled(Line).attrs({
   strokeWidth: p => p.width,
   strokeDasharray: p => p.strokeDasharray
 })``
-
 export const StyledBar = styled(Bar).attrs({
   rx: 5,
   ry: 0,
@@ -56,21 +55,21 @@ export const StyledLeftAxis = styled(AxisLeft).attrs({
   numTicks: p => p.numTicks,
   stroke: p => findColor(p),
   tickLabelProps: p => propsColorSetter(p.tickLabels, p),
-  labelProps: p => () => propsColorSetter(p.labelProps, p) || { fill: findColor(p), dx: '-2em' }
+  labelProps: p => propsColorSetter(p.labelProps, p)
 })``
 export const StyledRightAxis = styled(AxisRight).attrs({
   strokeWidth: 2,
   numTicks: p => p.numTicks,
   stroke: p => findColor(p),
   tickLabelProps: p => propsColorSetter(p.tickLabels, p),
-  labelProps: p => () => propsColorSetter(p.labelProps, p) || { fill: findColor(p) }
+  labelProps: p => propsColorSetter(p.labelProps, p)
 })``
 export const StyledBottomAxis = styled(AxisBottom).attrs({
   top: p => p.height,
   numTicks: p => p.numTicks,
   stroke: p => findColor(p),
   tickLabelProps: p => propsColorSetter(p.tickLabels, p),
-  labelProps: p => () => propsColorSetter(p.labelProps) || { fill: findColor(p), dx: '-2em' }
+  labelProps: p => propsColorSetter(p.labelProps, p)
 })``
 export const StyledGradient = styled(LinearGradient).attrs({
   from: p => rgba(findColor(p), 0.35),
