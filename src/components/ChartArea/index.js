@@ -130,7 +130,8 @@ class ChartArea extends Component {
       size,
       children,
       viewBox,
-      data,
+	data,
+	noYAxis,
       xKey,
       formatY,
       formatX,
@@ -149,7 +150,6 @@ class ChartArea extends Component {
       notool,
       color,
       yCoords,
-      noYaxis,
       calculatedData,
       tooltip: Tooltip,
       indicator: Indicator,
@@ -203,7 +203,7 @@ class ChartArea extends Component {
                 <StyledGridRows scale={yScale} {...{ stroke }} width={width - margin.left} />
               )}
               {biaxialChildren ||
-                noYaxis || (
+                noYAxis || (
                   <StyledLeftAxis
                     scale={determineYScale({
                       type: type === 'horizontal' ? 'horizontal' : null,
@@ -272,7 +272,7 @@ ChartArea.propTypes = {
   /**
    * If true, no Yaxis will be shown
    */
-  noYaxis: PropTypes.bool,
+  noYAxis: PropTypes.bool,
   /**
    * A label for the yAxis
    */
@@ -332,7 +332,8 @@ ChartArea.defaultProps = {
   color: '#000',
   stroke: '#000',
   tooltip: TooltipComponent,
-  nogrid: false,
+    nogrid: false,
+    noYAxis: false,
   indicator: Indicator,
   formatY: formatTicks,
   labelY: '',
@@ -354,8 +355,8 @@ ChartArea.defaultProps = {
     textAnchor: 'left',
     fontSize: 12
   }),
-  labelYProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' },
-  labelXProps: { fontSize: 12, textAnchor: 'middle', fill: 'black', dy: '-0.5rem' },
+  labelYProps: () => ({ fontSize: 12, textAnchor: 'middle', fill: 'black' }),
+  labelXProps: () => ({ fontSize: 12, textAnchor: 'middle', fill: 'black', dy: '-0.5rem' }),
   formatX: formatXTicks,
   margin: margin
 }

@@ -53,7 +53,7 @@ const selectorList = [
 
 class IndexPage extends Component {
   state = {
-    active: 'stackedbar'
+    active: 'time'
   }
   render() {
     const { active } = this.state
