@@ -24,7 +24,8 @@ class ScatterPlot extends Component {
       height,
       margin,
       inheritedScale,
-      axisId
+      axisId,
+      ...rest
     } = this.props
     // Check if data exists
     if (data.map(item => item[dataKey]).includes(undefined)) {
@@ -65,6 +66,7 @@ class ScatterPlot extends Component {
             radius={radius}
             opacity={opacity}
             color={color}
+            {...rest}
           />
         ))}
       </Fragment>

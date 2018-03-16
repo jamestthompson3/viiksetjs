@@ -1,4 +1,3 @@
-// @flow
 import { scaleLinear } from 'd3-scale'
 import { flatten } from 'lodash'
 import moment from 'moment'

@@ -30,7 +30,8 @@ class LineChart extends Component {
       margin,
       nopattern,
       inheritedScale,
-      axisId
+      axisId,
+      ...rest
     } = this.props
     // Check if data exists
     if (data.map(item => item[dataKey]).includes(undefined)) {
@@ -80,6 +81,7 @@ class LineChart extends Component {
           yScale={getAxis()}
           xScale={xScale}
           curve={curveMonotoneX}
+          {...rest}
         />
         {!nofill && (
           <StyledAreaClosed
