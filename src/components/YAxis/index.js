@@ -14,9 +14,10 @@ const YAxis = ({
   label,
   labelProps,
   numYTicks,
-  tickLabels
+  tickLabels,
+  ...rest
 }) => {
-    // Check if data exists
+  // Check if data exists
   if (data.map(item => item[axisId]).includes(undefined)) {
     new ReferenceError(`YAxis: No data found with axisId ${axisId}`)
     return null
@@ -32,14 +33,19 @@ const YAxis = ({
       numTicks={numYTicks}
       hideTicks
       tickFormat={formatY}
-      tickLabels={tickLabels ? tickLabels : () => ({
-	  dy: '-0.25rem',
-	  dx: '-1.75rem',
-	  strokeWidth: '0.5px',
-	  fontWeight: '400',
-	  textAnchor: 'left',
-	  fontSize: 12
-      })}
+      tickLabels={
+        tickLabels
+          ? tickLabels
+          : () => ({
+              dy: '-0.25rem',
+              dx: '-1.75rem',
+              strokeWidth: '0.5px',
+              fontWeight: '400',
+              textAnchor: 'left',
+              fontSize: 12
+            })
+      }
+      {...rest}
     />
   ) : (
     <StyledRightAxis
@@ -48,14 +54,19 @@ const YAxis = ({
       numTicks={numYTicks}
       hideTicks
       tickFormat={formatY}
-      tickLabels={tickLabels ? tickLabels : () => ({
-	  dy: '-0.25rem',
-	  dx: '0rem',
-	  strokeWidth: '0.5px',
-	  fontWeight: '400',
-	  textAnchor: 'left',
-	  fontSize: 12
-      })}
+      tickLabels={
+        tickLabels
+          ? tickLabels
+          : () => ({
+              dy: '-0.25rem',
+              dx: '0rem',
+              strokeWidth: '0.5px',
+              fontWeight: '400',
+              textAnchor: 'left',
+              fontSize: 12
+            })
+      }
+      {...rest}
     />
   )
 }

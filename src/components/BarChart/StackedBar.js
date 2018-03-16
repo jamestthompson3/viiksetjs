@@ -60,7 +60,8 @@ class StackedBar extends Component {
       margin,
       notool,
       mouseMove,
-      mouseLeave
+      mouseLeave,
+      ...rest
     } = this.props
     if (!keys) {
       // eslint-disable-next-line
@@ -87,7 +88,7 @@ class StackedBar extends Component {
                 return (
                   <StyledBar
                     key={`bar-group-bar-${i}-${ii}-${s.key}`}
-                    x={isHorizontal ? width + margin.left - xScale(d[1]) : xPoint(d.data)}
+                    x={isHorizontal ? margin.left : xPoint(d.data)}
                     y={isHorizontal ? yPoint(d.data) : height + margin.top - yScale(d[1])}
                     width={isHorizontal ? barWidth : bandwidth}
                     height={isHorizontal ? bandwidth : barWidth}
@@ -98,6 +99,7 @@ class StackedBar extends Component {
                       return notool || mouseMove({ event, datum: set({}, key, data[key]) })
                     }}
                     onMouseLeave={() => event => mouseLeave()}
+                    {...rest}
                   />
                 )
               })}
