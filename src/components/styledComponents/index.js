@@ -23,6 +23,18 @@ const propsColorSetter = (func, p) => {
       return () => ({ ...exec, stroke: findColor(p), fill: findColor(p) })
   }
 }
+
+// FIXME SHOULD BE FOLDED INTO propsColorSetter
+const colorSetter = (formatProps, p) => {
+  switch (true) {
+    case get(formatProps, 'color') != null:
+      return { ...formatProps, stroke: findColor(p), fill: findColor(p) }
+    case get(formatProps, 'stroke') != null:
+      return { ...formatProps, stroke: findStroke(p), fill: findStroke(p) }
+    default:
+      return { ...formatProps, stroke: findColor(p), fill: findColor(p) }
+  }
+}
 export const StyledPoint = styled.circle.attrs({
   cx: p => p.x,
   cy: p => p.y,
@@ -55,21 +67,21 @@ export const StyledLeftAxis = styled(AxisLeft).attrs({
   numTicks: p => p.numTicks,
   stroke: p => findColor(p),
   tickLabelProps: p => propsColorSetter(p.tickLabels, p),
-  labelProps: p => propsColorSetter(p.labelProps, p)
+  labelProps: p => colorSetter(p.labelProps, p)
 })``
 export const StyledRightAxis = styled(AxisRight).attrs({
   strokeWidth: 2,
   numTicks: p => p.numTicks,
   stroke: p => findColor(p),
   tickLabelProps: p => propsColorSetter(p.tickLabels, p),
-  labelProps: p => propsColorSetter(p.labelProps, p)
+  labelProps: p => colorSetter(p.labelProps, p)
 })``
 export const StyledBottomAxis = styled(AxisBottom).attrs({
   top: p => p.height,
   numTicks: p => p.numTicks,
   stroke: p => findColor(p),
   tickLabelProps: p => propsColorSetter(p.tickLabels, p),
-  labelProps: p => propsColorSetter(p.labelProps, p)
+  labelProps: p => colorSetter(p.labelProps, p)
 })``
 export const StyledGradient = styled(LinearGradient).attrs({
   from: p => rgba(findColor(p), 0.35),
@@ -106,16 +118,6 @@ export const TooltipWrapper = styled.div`
     margin: 0;
     font-size: 12px;
   }
-`
-export const Corner = styled.div`
-  height: 16px;
-  width: 16px;
-  margin-top: -0.625rem;
-  z-index: 110;
-  border-right: 2px solid ${p => p.color || p.theme.primaryColor};
-  border-bottom: 2px solid ${p => p.color || p.theme.primaryColor};
-  border-right-bottom-radius: 5px;
-  background: #1a2e3c;
 `
 const TooltipContainer = styled.div.attrs({
   style: ({ bounds }) => ({

@@ -1,4 +1,3 @@
-// @flow
 import { scaleLinear } from 'd3-scale'
 import { flatten } from 'lodash'
 import moment from 'moment'
@@ -8,7 +7,7 @@ import moment from 'moment'
  * @param {Object} object - object which you wish to parse
  * @param {String} arg - one of the javascript types for variables
  */
-export const parseObject = (object: any, arg: string) =>
+export const parseObject = (object, arg) =>
   Object.values(object)
     .map(value => (typeof value === arg ? value : null))
     .filter(s => s != null)
@@ -18,7 +17,7 @@ export const parseObject = (object: any, arg: string) =>
  * @param {Object[]} data - an array of data objects
  * @param {String} xKey - a key for the xvalues, if they cannot be found by looking at the object itself
  */
-export const getX = (data: Array<any>, xKey: string) =>
+export const getX = (data, xKey) =>
   xKey
     ? data.map(datum => datum[xKey])
     : flatten(data.map(datum => parseObject(datum, 'string'))).filter(i => i != null)
@@ -28,7 +27,7 @@ export const getX = (data: Array<any>, xKey: string) =>
  * @param {Object[]} data - an array of data objects
  * @param {String} yKey - a key for the yvalue, if not using categorical or timeseries data
  */
-export const getY = (data: Array<any>, yKey: string) =>
+export const getY = (data, yKey) =>
   yKey
     ? data.map(datum => datum[yKey])
     : flatten(data.map(datum => parseObject(datum, 'number'))).filter(i => i != null)
@@ -38,7 +37,7 @@ export const getY = (data: Array<any>, yKey: string) =>
  * @param {Object} datum - the object which you want to extract the values from
  * @param {String} yKey - a key for the yvalue, if not using categorical or timeseries data
  */
-export const extractY = (datum: any, yKey: string) =>
+export const extractY = (datum, yKey) =>
   yKey ? [datum[yKey]] : flatten(parseObject(datum, 'number'))
 
 /**
@@ -46,7 +45,7 @@ export const extractY = (datum: any, yKey: string) =>
  * @param {Object} datum - the object which you want to extract the values from
  * @param {String} xKey - a key for the xvalue, if not using categorical or timeseries data
  */
-export const extractX = (datum: any, xKey: string) =>
+export const extractX = (datum, xKey) =>
   xKey
     ? [datum[xKey]]
     : flatten(parseObject(datum, 'string')).map(i => (moment(i).isValid() ? moment(i) : i))
@@ -55,7 +54,7 @@ export const extractX = (datum: any, xKey: string) =>
  * Takes a data object and extracts all Y labels
  * @param {Object} datum - the object which you want to extract the labels from
  */
-export const extractLabels = (datum: any) =>
+export const extractLabels = datum =>
   flatten(
     Object.entries(datum).map(value => {
       if (typeof value[1] === 'number') {
@@ -72,12 +71,7 @@ export const extractLabels = (datum: any) =>
  * @param {Number} height - the height of the svg container
  * @param {Object} margin - the margin object used in the chartArea
  */
-export const createScalarData = (
-  data: Array<any>,
-  dataKeys: string[],
-  height: number,
-  margin: { top: number, bottom: number, right: number, left: number }
-) => {
+export const createScalarData = (data, dataKeys, height, margin) => {
   const scalarObject = {}
   dataKeys.map(
     key =>

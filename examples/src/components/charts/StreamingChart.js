@@ -27,7 +27,7 @@ const StreamingChart = () => {
     <Fragment>
       <GraphContainer>
         <StreamableChart
-          connection="ws://wiki-update-sockets.herokuapp.com/"
+          connection="wss://wiki-update-sockets.herokuapp.com/"
           color="#331E38"
           stopPersist={200}
           stroke="grey"

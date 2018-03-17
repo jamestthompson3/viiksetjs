@@ -4,7 +4,7 @@ import { Group } from '@vx/group'
 import { Bar } from '@vx/shape'
 import { bisect } from 'd3-array'
 import moment from 'moment'
-import { flow, uniq, head, isEmpty } from 'lodash'
+import { flow, uniq, head, isEmpty, get } from 'lodash'
 
 import {
   getX,
@@ -90,12 +90,17 @@ class ChartArea extends Component {
   mouseMove = ({ event, datum }) => {
     const { xPoints, xScale, yScale, yScales, dataKeys } = this.state
     const { data, updateTooltip, xKey, type } = this.props
-    const svgPoint = localPoint(this.chart, event).x
+    const svgPoint = localPoint(this.chart, event)
     if (datum) {
-      return updateTooltip({ calculatedData: datum, x: svgPoint, mouseX: svgPoint })
+      return updateTooltip({
+        calculatedData: datum,
+        x: get(svgPoint, 'x'),
+        mouseX: get(svgPoint, 'x'),
+        mouseY: get(svgPoint, 'y')
+      })
     }
-    const xValue = xScale.invert(svgPoint)
-    flow(
+    const xValue = xScale.invert(get(svgPoint, 'x'))
+    return flow(
       xValue => bisect(xPoints, xValue),
       index => {
         const bounds = { dLeft: data[index - 1], dRight: data[index] }
@@ -109,7 +114,13 @@ class ChartArea extends Component {
         const yCoords = yScales
           ? dataKeys.map(key => yScales[key](calculatedData[key]))
           : extractY(calculatedData).map(item => yScale(item))
-        return updateTooltip({ calculatedData, x, mouseX: svgPoint, yCoords })
+        return updateTooltip({
+          calculatedData,
+          x,
+          mouseX: get(svgPoint, 'x'),
+          mouseY: get(svgPoint, 'y'),
+          yCoords
+        })
       }
     )(xValue)
   }
@@ -130,8 +141,8 @@ class ChartArea extends Component {
       size,
       children,
       viewBox,
-	data,
-	noYAxis,
+      data,
+      noYAxis,
       xKey,
       formatY,
       formatX,
@@ -252,7 +263,7 @@ ChartArea.propTypes = {
   /**
    * A string indicating the type of scale the type should have, defaults to timeseries
    */
-  type: PropTypes.oneOf(['ordinal', 'linear']),
+  type: PropTypes.oneOf(['ordinal', 'linear', 'horizontal']),
   /**
    * A string indicating which data values should be used to create the x-axis
    */
@@ -284,7 +295,7 @@ ChartArea.propTypes = {
   /**
    * Label props for y ticks
    */
-  yTickLabelProps: PropTypes.function,
+  yTickLabelProps: PropTypes.func,
   /**
    * A label for the xAxis
    */
@@ -296,7 +307,7 @@ ChartArea.propTypes = {
   /**
    * Label props for x ticks
    */
-  xTickLabelProps: PropTypes.function,
+  xTickLabelProps: PropTypes.func,
   /**
    * Number of ticks for xAxis
    */
@@ -332,8 +343,8 @@ ChartArea.defaultProps = {
   color: '#000',
   stroke: '#000',
   tooltip: TooltipComponent,
-    nogrid: false,
-    noYAxis: false,
+  nogrid: false,
+  noYAxis: false,
   indicator: Indicator,
   formatY: formatTicks,
   labelY: '',
@@ -355,8 +366,8 @@ ChartArea.defaultProps = {
     textAnchor: 'left',
     fontSize: 12
   }),
-  labelYProps: () => ({ fontSize: 12, textAnchor: 'middle', fill: 'black' }),
-  labelXProps: () => ({ fontSize: 12, textAnchor: 'middle', fill: 'black', dy: '-0.5rem' }),
+  labelYProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' },
+  labelXProps: { fontSize: 12, textAnchor: 'middle', fill: 'black', dy: '-0.5rem' },
   formatX: formatXTicks,
   margin: margin
 }

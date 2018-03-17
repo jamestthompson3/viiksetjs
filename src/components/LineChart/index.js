@@ -31,7 +31,8 @@ class LineChart extends Component {
       nopattern,
       inheritedScale,
       axisId,
-      ...rest
+      areaProps,
+      lineProps
     } = this.props
     // Check if data exists
     if (data.map(item => item[dataKey]).includes(undefined)) {
@@ -81,7 +82,7 @@ class LineChart extends Component {
           yScale={getAxis()}
           xScale={xScale}
           curve={curveMonotoneX}
-          {...rest}
+          {...lineProps}
         />
         {!nofill && (
           <StyledAreaClosed
@@ -92,6 +93,7 @@ class LineChart extends Component {
             yScale={getAxis()}
             xScale={xScale}
             curve={curveMonotoneX}
+            {...areaProps}
           />
         )}
         {!nopattern ||
@@ -104,6 +106,7 @@ class LineChart extends Component {
               fill={findFill()}
               x={xPoints}
               curve={curveMonotoneX}
+              {...areaProps}
             />
           ))}
       </Fragment>

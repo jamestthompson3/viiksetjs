@@ -23,7 +23,7 @@ class BarChart extends Component {
       mouseLeave,
       nofill,
       inheritedScale,
-      ...rest
+      barProps
     } = this.props
     if (data.map(item => item[dataKey]).includes(undefined)) {
       // eslint-disable-next-line
@@ -46,7 +46,7 @@ class BarChart extends Component {
               fill={!nofill && `url(#gradient${xKey})`}
               onMouseMove={d => event => notool || mouseMove({ event, datum: d })}
               onMouseLeave={() => event => mouseLeave()}
-              {...rest}
+              {...barProps}
             />
           </Group>
         ))}
