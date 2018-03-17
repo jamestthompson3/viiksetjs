@@ -50,16 +50,17 @@ class StackedBarExample extends Component {
           {`
         <ChartArea
             data={stackedData.data}
-            type="ordinal"
+            type={orientation}
             color="grey"
             xKey="activity"
             stroke="grey"
             nogrid
-            labelY="Participation Rate"
+            yKey={orientation === 'horizontal' && 'activity'}
+            yTickLabelProps={() => ({ dx: '-3rem', fontSize: 10, strokeWidth: '0.5px' })}
+            noYaxis={orientation !== 'horizontal'}
           >
             <StackedBar
               colors={['#51344D', '#6F5060', '#A78682']}
-              orientation={orientation}
               keys={['often', 'sometimes', 'never']}
             />
           </ChartArea>

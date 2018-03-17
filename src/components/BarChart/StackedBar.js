@@ -52,16 +52,15 @@ class StackedBar extends Component {
       data,
       type,
       colors,
-      xKey,
       keys,
       yKey,
-      width,
+      xKey,
       height,
       margin,
       notool,
       mouseMove,
       mouseLeave,
-      ...rest
+      barProps
     } = this.props
     if (!keys) {
       // eslint-disable-next-line
@@ -76,8 +75,8 @@ class StackedBar extends Component {
     const isHorizontal = type === 'horizontal'
     const series = stack().keys(keys || extractLabels(data[0]))(data)
     const bandwidth = isHorizontal ? yScale.bandwidth() : xScale.bandwidth()
-    const xPoint = d => xScale(d[xKey])
     const yPoint = d => yScale(d[yKey])
+    const xPoint = d => xScale(d[xKey])
     return (
       <Group>
         {series &&
@@ -88,7 +87,7 @@ class StackedBar extends Component {
                 return (
                   <StyledBar
                     key={`bar-group-bar-${i}-${ii}-${s.key}`}
-                    x={isHorizontal ? margin.left : xPoint(d.data)}
+                    x={isHorizontal ? xScale(d[0]) : xPoint(d.data)}
                     y={isHorizontal ? yPoint(d.data) : height + margin.top - yScale(d[1])}
                     width={isHorizontal ? barWidth : bandwidth}
                     height={isHorizontal ? bandwidth : barWidth}
@@ -99,7 +98,7 @@ class StackedBar extends Component {
                       return notool || mouseMove({ event, datum: set({}, key, data[key]) })
                     }}
                     onMouseLeave={() => event => mouseLeave()}
-                    {...rest}
+                    {...barProps}
                   />
                 )
               })}
@@ -113,9 +112,7 @@ class StackedBar extends Component {
 StackedBar.propTypes = {
   xScale: PropTypes.func,
   inheritedScale: PropTypes.func,
-  colors: PropTypes.array,
-  top: PropTypes.number,
-  left: PropTypes.number
+  colors: PropTypes.array
 }
 
 export default StackedBar

@@ -8,9 +8,18 @@ A lightweight Javascript graphing library for React based on styled-components a
 
 Viikset is the halfway point between visualization libraries with atomic control like d3 and out of the box solutions like recharts or chartjs. Big shout out to Harrision Shoff [@hshoff](https://github.com/hshoff) and the people over at [vx](https://github.com/hshoff/vx) who helped shape the thinking for this type of visualization library.
 
+It is meant to serve both those who want a high level of control (see the 'Interop with vx' section) and those who want throw together charts quickly with little to no configuration. If you like this library and want to have more granular control over your chart components, I would strongly suggest checking out the [vx]((https://github.com/hshoff/vx) repo and familiarizing yourself with it, as any vx components can be used in tandem with Viikset.
+
 ### Getting started
 
 `npm install viiksetjs`
+
+### Interop with vx
+
+Since Viikset is built on top of vx, you can use any vx components with any Viikset components. The `ChartArea` component will supply your custom vx components with the following props:
+
+`xScale, yScale (as inheritedScale), data, margin, height, width, type, xKey, yKey, formatY, formatX, numYTicks` as well as the `mouseMove` and `mouseLeave` functions for tooltips.
+
 
 ## Data structure
 
@@ -46,7 +55,7 @@ The `ChartArea` component will construct a grid and axes on which it will render
 | Prop        | Default                                                 | Type                               | Desc                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | :---------- | :------------------------------------------------------ | :--------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | data        | []                                                      | Array                              | An array containing data objects.                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| type        | ''                                                      | `oneOf(['ordinal', 'linear', ''])` | A string indicating the type of scale the type should have, defaults to timeseries                                                                                                                                                                                                                                                                                                                                                                       |
+| type        | ''                                                      | `oneOf(['ordinal', 'linear', 'horizontal'])` | A string indicating the type of scale the type should have, defaults to timeseries                                                                                                                                                                                                                                                                                                                                                                       |
 | color       | #000                                                    | String                             | color applied to the axes                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | stroke      | #000                                                    | String                             | color applied to the gridlines and to the default indicator line                                                                                                                                                                                                                                                                                                                                                                                         |
 | xKey        | ''                                                      | String                             | Optional key delimiting the xValues                                                                                                                                                                                                                                                                                                                                                                                                                      |
@@ -54,11 +63,13 @@ The `ChartArea` component will construct a grid and axes on which it will render
 | indicator   | \*see tooltip section below for examples                | Function                           | React component that gets passed the following props: `yCoords, x, stroke, color, height`. `yCoords` are the calculated yCoordinates for all datapoints in the chart at the given mouse position. is the x coordinate of the closest estimated data point to the current mouse position.`mouseX` is the current position of the mouse. `height` is the height of the `ChartArea`. `stroke` and `color` are inherited from `ChartArea`.                   |
 | nogrid      | false                                                   | Boolean                            | If `true`, then no gridlines will be shown on `ChartArea`                                                                                                                                                                                                                                                                                                                                                                                                |
 | notool      | false                                                   | Boolean                            | If `true` then no tooltip will be shown                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| noYAxis      | false                                                   | Boolean                            | If `true` then no yAxis will be shown                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | labelX      | ''                                                      | String                             | Label for xAxis                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | labelY      | ''                                                      | String                             | Label for yAxis                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | labelXProps | `{ fontSize: 12, textAnchor: 'middle', fill: 'black' }` | Object                             | Lablel Props for labelX                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| labelYProps | `{ fontSize: 12, textAnchor: 'middle', fill: 'black', dy: '-0.5rem' }` | Object                             | Lablel Props for labelY                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | formatX     | \*see example below                                     | Function                           | A function for formatting the xAxis passed the argument `d` which represents the data point                                                                                                                                                                                                                                                                                                                                                              |
+| labelYProps | `{ fontSize: 12, textAnchor: 'middle', fill: 'black', dy: '-0.5rem' }` | Object | Label Props for labelY                                                       |
+|xTickLabelProps | `xTickLabelProps: () => ({ dy: '-0.25rem', fontWeight: '400', strokeWidth: '0.5px', textAnchor: 'left', fontSize: 12})` | Function | Function that returns the labelProps for the xLabels|
 | formatY     | \*see example below                                     | Function                           | A function for formatting the yAxis passed the argument `d` which represents the data point                                                                                                                                                                                                                                                                                                                                                              |
 | numXTicks   | 6                                                       | Integer                            | Number of ticks for the xAxis                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | numYTicks   | 4                                                       | Integer                            | Number of ticks for the yAxis                                                                                                                                                                                                                                                                                                                                                                                                                            |
@@ -135,6 +146,8 @@ The `LineChart` component inherits the data from the `ChartArea` which wraps it.
 | color     |  #000   | String  | Color string. Supports colors from styled-components' `themeProvider`.                        |
 | nofill    |  false  | Boolean | If `true`, the LineChart will have no fill                                                    |
 | nopattern |  false  | Boolean | If `true`, the LineChart will have no pattern                                                 |
+| lineProps |  {}  | Object | vx props applied to the line path                                                 |
+| areaProps |  {}  | Object | vx props applied to the area fill                                                |
 
 ```js
 <LineChart dataKey="count_messages" color="rgb(0, 157, 253)" />
@@ -167,6 +180,7 @@ const data = [
 ## BarChart
 
 The `BarChart` component inherits the data from the `ChartArea` which wraps it. Using this data, it scales itself accordingly. When creating a categorical `BarChart` component, it is necessary to pass `type='ordinal'` to the parent `ChartArea`. A `dataKey` prop must be provided in order for the component to know which data points it should render. Passing an `xKey` prop to the `ChartArea` component is also required to denote which values should be graphed across the xValue, as is passing a `yKey` if there is more than one item in the data object that is an integer or float.
+
 
 ### Props
 
@@ -202,6 +216,53 @@ The `BarChart` component inherits the data from the `ChartArea` which wraps it. 
   <BarChart dataKey="score" color="#dc7d5b" />
 </ChartArea>
 ```
+
+## StackedBar
+
+The `StackedBar` component is nearly identical to the `Barchart` in the props that it inherits from the `ChartArea`. It takes an two additional props, `colors` and `keys` which corresponde to the data you want displayed in the stack. You may also pass a boolean prop called `horizontal` to flip the `StackedBar` on its side.
+
+### Props
+
+| Prop    | Default | Type    | Desc                                                                   |
+| :------ | :-----: | :------ | :--------------------------------------------------------------------- |
+| keys    |   []    | Array  | Keys for data to be graphed                                             |
+| colors   |  []   | Arra  | Array of colors that correspond to the given keys. Supports colors from styled-components' `themeProvider`. |
+| horizontal | false | Boolean | If `true`, the StackedBar will be horizontal |
+
+
+### data
+
+```json
+{
+  "data": [
+    {"activity": "skiing", "often": 20, "sometimes": 30, "never": 50},
+    {"activity": "golfing", "often": 50, "sometimes": 30, "never": 20},
+    {"activity": "hiking", "often": 60, "sometimes": 30, "never": 10},
+    {"activity": "bicycling", "often": 40, "sometimes": 40, "never": 20}
+  ]
+}
+```
+
+```js
+      <ChartArea
+          data={stackedData.data}
+          type={orientation}
+          color="grey"
+          xKey="activity"
+          stroke="grey"
+          nogrid
+          yKey='activity'
+          yTickLabelProps={() => ({ dx: '-3rem', fontSize: 10, strokeWidth: '0.5px' })}
+          noYaxis='horizontal'
+         >
+           <StackedBar
+             colors={['#51344D', '#6F5060', '#A78682']}
+             keys={['often', 'sometimes', 'never']}
+           />
+      </ChartArea>
+```
+
+
 
 ## ScatterPlot
 The `ScatterPlot` component inherits the data from the `ChartArea` which wraps it. Using this data, it scales itself accordingly. A `dataKey` prop must be provided in order for the component to know which data points it should render.

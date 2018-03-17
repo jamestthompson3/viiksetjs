@@ -1,0 +1,15 @@
+{
+  "libs": [
+  ],
+  "loadEagerly": [
+    "./**/*.js"
+  ],
+  "dontLoad": [
+    "./node_modules/"
+  ],
+  "plugins": {
+    "es_modules": {
+      "baseURL": "./"
+    }
+  }
+}
