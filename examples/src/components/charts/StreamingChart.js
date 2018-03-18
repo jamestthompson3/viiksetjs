@@ -5,6 +5,8 @@ import moment from 'moment'
 import { LineChart, StreamableChart } from 'viiksetjs'
 import { GraphContainer, Snippet, LabelContainer, LabelBlock, Label } from '../styledComponents'
 
+const isMobile = window.innerWidth <= 500
+
 const streamParser = message => JSON.parse(message.data)
 const streamedData = {
   special: 0,
@@ -32,6 +34,7 @@ const StreamingChart = () => {
           stopPersist={200}
           stroke="grey"
           nogrid
+          numXTicks={isMobile ? 1 : 4}
           labelY="Type Count"
           streamParser={streamParser}
           mapStream={streamMap}

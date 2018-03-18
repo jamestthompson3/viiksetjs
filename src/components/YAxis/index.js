@@ -72,7 +72,7 @@ const YAxis = ({
 }
 
 YAxis.defaultProps = {
-  labelProps: () => ({ fontSize: 12, textAnchor: 'middle', fill: 'black' })
+  labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' }
 }
 
 export default YAxis

@@ -2,6 +2,7 @@
   "name": "viiksetjs",
   "version": "0.0.1",
   "description": "Javascript graphing utility based on SVG",
+  "homepage": "https://jamestthompson3.github.io/viiksetjs",
   "main": "lib/index.js",
   "repository": "https://github.com/jamestthompson3/viiksetjs.git",
   "author": "Taylor Thompson <taylor@easyanticheat.net>",
@@ -10,7 +11,8 @@
   "scripts": {
     "build": "babel src --out-dir lib",
     "watch": "babel --watch src --out-dir lib",
-    "precommit": "lint-staged"
+      "precommit": "lint-staged",
+      "prepublish": "babel src --out-dir lib"
   },
   "lint-staged": {
     "*.{js}": [
@@ -57,12 +59,10 @@
     "d3-scale": "^2.0.0",
     "d3-shape": "^1.2.0",
     "lodash": "^4.17.5",
-    "moment": "^2.21.0",
     "polished": "^1.9.2",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "react-sizeme": "^2.3.6",
-    "styled-components": "^3.2.1"
+    "react-sizeme": "^2.3.6"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -77,5 +77,10 @@
     "jest": "^22.3.0",
     "lint-staged": "^6.1.1",
     "prettier": "^1.11.1"
-  }
+  },
+"peerDependencies": {
+  "styled-components": "^3.2.1",
+  "moment": "^2.21.0"
+
+}
 }
