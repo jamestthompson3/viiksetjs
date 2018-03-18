@@ -11,6 +11,7 @@ const InputContainer = styled.div`
   justify-content: center;
   width: 200px;
 `
+const isMobile = window.innerWidth <= 500
 
 class StackedBarExample extends Component {
   state = {
@@ -32,6 +33,7 @@ class StackedBarExample extends Component {
           <ChartArea
             data={stackedData.data}
             type={orientation}
+            numXTicks={isMobile ? 1 : 4}
             color="grey"
             xKey="activity"
             stroke="grey"

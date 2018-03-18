@@ -25,6 +25,13 @@ export const Wrapper = styled.div`
   background: #fff;
   width: 95%;
   display: flex;
+  flex-wrap: wrap;
+  @media (max-width: 500px) {
+    margin: 0;
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+}
 `
 
 export const Selector = styled.h4`
@@ -38,7 +45,7 @@ export const Selector = styled.h4`
   box-shadow: ${p => p.active && '0px 0px 0px 1px #49484f'};
 `
 export const FilterBox = styled.div`
-  flex: 1 1 120px;
+  flex: 1 0 120px;
   height: 300px;
   max-height: 300px;
   display: flex;
@@ -48,6 +55,11 @@ export const FilterBox = styled.div`
 
 export const ChartBox = styled.div`
   flex: 2 0 80%;
+  max-width: 80%;
+  @media (max-width: 500px) {
+     width: 100%;
+     max-width: 100%;
+}
 `
 
 export const GraphContainer = styled.div`
@@ -80,6 +92,12 @@ export const Snippet = styled.pre`
   margin-top: 1rem;
   padding-bottom: 2rem;
   box-shadow: 6px 6px 27px -12px rgba(0, 0, 0, 0.75);
+  @media (max-width: 500px) {
+   width: 90%;
+   height: 150px;
+   padding: 1rem;
+   overflow-y: auto;
+}
 `
 const TooltipContainer = styled.span.attrs({
   style: p => ({

@@ -134,15 +134,14 @@ const TooltipContainer = styled.div.attrs({
   align-items: center;
 `
 
-const boundsSetter = ({ left, rect, parentRect }) => {
-  if (left + rect.width > parentRect.width) {
-    return left - rect.width / 2 // case for shifting to the right
-  } else if (left + rect.width < parentRect.left) {
-    return left + rect.width / 4 // case for shifting to the left
-  } else {
-    return left - rect.width / 4 // default case
-  }
-}
+const boundsSetter = ({ left, rect, parentRect }) => left - get(rect, 'width', 0) / 4
+// if (left + rect.width > parentRect.width) {
+//   return left - rect.width / 3 // case for shifting to the right
+// } else if (left + rect.width < parentRect.left) {
+//   return left + rect.width / 6 // case for shifting to the left
+// } else {
+//   return left - rect.width / 4 // default case
+// }
 const TooltipBucket = ({ children, getRects, left }) => {
   const { rect, parentRect } = getRects()
   const getBounds = () => {

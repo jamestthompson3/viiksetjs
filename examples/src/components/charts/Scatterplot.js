@@ -5,12 +5,15 @@ import { GraphContainer, Snippet, Indicator, LinearTooltip } from '../styledComp
 
 import { ChartArea, ScatterPlot } from 'viiksetjs'
 
+const isMobile = window.innerWidth <= 500
+
 const Scatterplot = () => {
   return (
     <Fragment>
       <GraphContainer>
         <ChartArea
           data={numericSeries.data}
+          numXTicks={isMobile ? 1 : 4}
           color="#42f4c2"
           stroke="grey"
           xKey="x"

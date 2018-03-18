@@ -6,7 +6,8 @@ import {
   Scatterplot,
   StackedLine,
   StreamingChart,
-  TimeSeries
+  TimeSeries,
+  WithVX
 } from './charts'
 const ChartRenderer = ({ active }) => {
   switch (active) {
@@ -24,6 +25,8 @@ const ChartRenderer = ({ active }) => {
       return <Biaxial />
     case 'stackedbar':
       return <StackedBarExample />
+    case 'interop':
+      return <WithVX />
     default:
       return null
   }

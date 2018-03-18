@@ -20,10 +20,13 @@ Since Viikset is built on top of vx, you can use any vx components with any Viik
 
 `xScale, yScale (as inheritedScale), data, margin, height, width, type, xKey, yKey, formatY, formatX, numYTicks` as well as the `mouseMove` and `mouseLeave` functions for tooltips.
 
+### Use with styled-components
 
-## Data structure
+In order to use Viikset with the styled-components, you need to have your components wrapped in a [theme provider](https://www.styled-components.com/docs/advanced#theming). This will give your chart components access to the theming api and allow to pass your predefined theme colors to your charts.
 
-#### The components are built to take the data like this:
+### Data structure
+
+#### The components are built to take an array of data objects:
 
 ```json
 "chartData":[

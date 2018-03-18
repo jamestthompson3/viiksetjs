@@ -48,7 +48,9 @@ const selectorList = [
   { title: 'Streaming Chart', label: 'streaming' },
   { title: 'Stacked Line', label: 'stackedline' },
   { title: 'Biaxial Line', label: 'biaxial' },
-  { title: 'Stacked Bar', label: 'stackedbar' }
+  { title: 'Stacked Bar', label: 'stackedbar' },
+  { title: 'Interop with vx', label: 'interop' }
+
 ]
 
 class IndexPage extends Component {

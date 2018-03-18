@@ -6,9 +6,7 @@ import { StyledGradient, StyledBar } from '../styledComponents'
 
 class BarChart extends Component {
   shouldComponentUpdate(prevProps) {
-    return (
-      !(prevProps.yPoints === this.props.yPoints) || !(prevProps.dataKey === this.props.dataKey)
-    )
+    return prevProps.yPoints !== this.props.yPoints || prevProps.dataKey !== this.props.dataKey
   }
   render() {
     const {

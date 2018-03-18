@@ -8,9 +8,7 @@ import { StyledPoint } from '../styledComponents'
 
 class ScatterPlot extends Component {
   shouldComponentUpdate(prevProps) {
-    return (
-      !(this.props.yPoints === prevProps.yPoints) || !(prevProps.dataKey === this.props.dataKey)
-    )
+    return this.props.yPoints !== prevProps.yPoints || prevProps.dataKey !== this.props.dataKey
   }
   render() {
     const {
