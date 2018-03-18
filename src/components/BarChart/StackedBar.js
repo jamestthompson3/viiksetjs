@@ -9,6 +9,9 @@ import { extractLabels } from '../../utils/dataUtils'
 import { StyledBar } from '../styledComponents'
 
 class StackedBar extends Component {
+  componentDidMount() {
+    this.props.declareBar()
+  }
   shouldComponentUpdate(prevProps) {
     return !(prevProps.yPoints === this.props.yPoints) || !(prevProps.keys === this.props.keys)
   }
@@ -95,7 +98,8 @@ class StackedBar extends Component {
                     data={d.data}
                     onMouseMove={data => event => {
                       const key = s.key
-                      return notool || mouseMove({ event, datum: set({}, key, data[key]) })
+                      const datum = set({}, key, data[key])
+                      return notool || mouseMove(event, datum)
                     }}
                     onMouseLeave={() => event => mouseLeave()}
                     {...barProps}

@@ -322,6 +322,15 @@ A simple line component.
 | strokeDasharray | - | String |  Pattern of stroke. |
 | width | - | Number |  Width of the line. |
 
+## StyledBar
+Styled components implementation of [vx bar](https://github.com/hshoff/vx/blob/master/packages/vx-shape/Readme.md#bar-)
+
+## StyledLinePath
+Styled components implementation of [vx line path](https://github.com/hshoff/vx/blob/master/packages/vx-shape/Readme.md#linepath-)
+
+## StyledAreaClosed
+Styled componenets implementation of [vx area closed](https://github.com/hshoff/vx/blob/master/packages/vx-shape/Readme.md#areaclosed-)
+
 ## Tooltips
 
 Included in Viikset are some tooltip utilties. Most notably the `withBounds` wrapper function which takes a component and gives you back its and its parent's bounds as `rect` and `parentRect`. This also returns the `getRects` function which calculates the bounds and current position of both the current node and the parent.
