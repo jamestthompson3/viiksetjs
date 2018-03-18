@@ -5,6 +5,10 @@ import PropTypes from 'prop-types'
 import { StyledGradient, StyledBar } from '../styledComponents'
 
 class BarChart extends Component {
+  componentDidMount() {
+    this.props.declareBar()
+  }
+
   shouldComponentUpdate(prevProps) {
     return prevProps.yPoints !== this.props.yPoints || prevProps.dataKey !== this.props.dataKey
   }
@@ -39,10 +43,11 @@ class BarChart extends Component {
               width={xScale.bandwidth()}
               height={barHeight(d)}
               x={xPoint(d)}
+              key="BarChart"
               y={height - barHeight(d)}
               data={d}
               fill={!nofill && `url(#gradient${xKey})`}
-              onMouseMove={d => event => notool || mouseMove({ event, datum: d })}
+              onMouseMove={() => event => notool || mouseMove(event, d)}
               onMouseLeave={() => event => mouseLeave()}
               {...barProps}
             />

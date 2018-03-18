@@ -71,16 +71,6 @@ export const biaxial = children =>
   children && Children.map(children, child => child.props.hasOwnProperty('axisId')).includes(true)
 
 /**
- * Takes React Chilren and returns true or false if BarChart element is found
- * @param {Object} Children - React Children through which it maps
- */
-export const barChart = children =>
-  children &&
-  Children.map(
-    children,
-    child => child.type.name === 'BarChart' || child.type.name === 'StackedBar'
-  ).includes(true)
-/**
  * Own implementation of localPoint from VX. Makes it work on Firefox
  * @param {event} event - Event from which to extract svg canvas points
  * @param {node} node - Node from which to base bounding rects on

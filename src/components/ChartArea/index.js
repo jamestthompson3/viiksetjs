@@ -21,7 +21,6 @@ import {
   localPoint,
   determineViewBox,
   determineYScale,
-  barChart,
   findTooltipX
 } from '../../utils/chartUtils'
 import withTooltip from '../Tooltip/withTooltip'
@@ -38,7 +37,8 @@ const margin = { top: 18, right: 15, bottom: 15, left: 30 }
 
 class ChartArea extends Component {
   state = {
-    chartData: false
+    chartData: false,
+    bar: false
   }
   componentDidMount() {
     this.calculateData()
@@ -53,6 +53,11 @@ class ChartArea extends Component {
       return this.calculateData()
     }
   }
+
+  // To prevent tooltips from not showing on bar chart due to minification changing names
+
+  declareBar = () => this.setState({ bar: true })
+
   // TODO WORK WITH DT OBJECTS
   calculateData = () => {
     this.setState({ chartData: false })
@@ -87,7 +92,7 @@ class ChartArea extends Component {
       chartData: true
     })
   }
-  mouseMove = ({ event, datum }) => {
+  mouseMove = (event, datum) => {
     const { xPoints, xScale, yScale, yScales, dataKeys } = this.state
     const { data, updateTooltip, xKey, type } = this.props
     const svgPoint = localPoint(this.chart, event)
@@ -134,6 +139,7 @@ class ChartArea extends Component {
       yScale,
       biaxialChildren,
       chartData,
+      bar,
       yPoints,
       xPoints
     } = this.state
@@ -187,6 +193,7 @@ class ChartArea extends Component {
                 xPoints,
                 width,
                 notool,
+                declareBar: this.declareBar,
                 type,
                 mouseMove: this.mouseMove,
                 mouseLeave: this.mouseLeave,
@@ -199,13 +206,13 @@ class ChartArea extends Component {
               })
             )}
             <Group left={margin.left}>
-              {barChart(children) || (
+              {bar || (
                 <Bar
                   width={width - margin.left}
                   height={height}
                   fill="transparent"
                   onMouseMove={() => event => {
-                    notool || this.mouseMove({ event })
+                    notool || this.mouseMove(event)
                   }}
                   onMouseLeave={() => this.mouseLeave}
                 />
@@ -238,10 +245,7 @@ class ChartArea extends Component {
               label={labelX || ''}
               labelProps={labelXProps}
             />
-            {x &&
-              !barChart(children) && (
-                <Indicator {...{ yCoords, x, stroke, color, height, mouseX }} />
-              )}
+            {x && !bar && <Indicator {...{ yCoords, x, stroke, color, height, mouseX }} />}
           </svg>
           {x && <Tooltip tooltipData={calculatedData} {...{ x, color, yCoords, mouseX, height }} />}
         </Fragment>
@@ -344,6 +348,7 @@ ChartArea.defaultProps = {
   stroke: '#000',
   tooltip: TooltipComponent,
   nogrid: false,
+  notool: false,
   noYAxis: false,
   indicator: Indicator,
   formatY: formatTicks,

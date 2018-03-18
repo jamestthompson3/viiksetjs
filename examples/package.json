@@ -1,9 +1,9 @@
 {
   "name": "examples",
-  "version": "0.1.0",
+   "version": "0.1.0",
+   "homepage": "https://jamestthompson3.github.io/viiksetjs/",
   "private": true,
-    "homepage":"https://jamestthompson3.github.io/viiksetjs",
-  "dependencies": {
+    "dependencies": {
     "@vx/shape": "^0.0.158",
     "lodash": "^4.17.5",
     "moment": "^2.21.0",
