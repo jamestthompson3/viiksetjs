@@ -361,14 +361,14 @@ ChartArea.defaultProps = {
     dx: '-1.75rem',
     strokeWidth: '0.5px',
     fontWeight: '400',
-    textAnchor: 'left',
+    textAnchor: 'end',
     fontSize: 12
   }),
   xTickLabelProps: () => ({
     dy: '-0.25rem',
     fontWeight: '400',
     strokeWidth: '0.5px',
-    textAnchor: 'left',
+    textAnchor: 'end',
     fontSize: 12
   }),
   labelYProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' },
