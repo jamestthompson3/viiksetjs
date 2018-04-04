@@ -41,7 +41,7 @@ const YAxis = ({
               dx: '-1.75rem',
               strokeWidth: '0.5px',
               fontWeight: '400',
-              textAnchor: 'left',
+              textAnchor: 'end',
               fontSize: 12
             })
       }
@@ -62,7 +62,7 @@ const YAxis = ({
               dx: '0rem',
               strokeWidth: '0.5px',
               fontWeight: '400',
-              textAnchor: 'left',
+              textAnchor: 'end',
               fontSize: 12
             })
       }
