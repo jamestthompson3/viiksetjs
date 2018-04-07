@@ -4,3 +4,4 @@ src/
 .prettierrc
 .tern-project
 .flow-config
+.dumbjumpignore
