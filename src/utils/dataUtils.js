@@ -3,24 +3,45 @@ import { flatten } from 'lodash'
 import moment from 'moment'
 
 /**
- * Takes an object and arguement and returns the values of the object according to the argument type
+ * Checks for moment objects
+ * @param {Object} data - object to check for moment instances
+ * @returns {String} date - date string
+ */
+export const checkMoment = data => {
+  switch (true) {
+    case typeof data === 'string' && moment(data).isValid():
+      return moment(data).format()
+    case moment.isMoment(data):
+      return data.format()
+    case data instanceof Date:
+      return data.toString()
+    default:
+      return data
+  }
+}
+/**
+ * Takes an object and argument and returns the values of the object according to the argument type and optional
+ * applicator function
  * @param {Object} object - object which you wish to parse
  * @param {String} arg - one of the javascript types for variables
+ * @param {Function} app - applicator function
+ * @returns {Any[]} values - values of the object accordingt argument type and result of applicator function
  */
-export const parseObject = (object, arg) =>
+export const parseObject = (object, arg, app) =>
   Object.values(object)
-    .map(value => (typeof value === arg ? value : null))
-    .filter(s => s != null)
+    .map(value => (app ? app(value) : value))
+    .filter(value => typeof value === arg)
 
 /**
  * Takes an array of objects and a datakey and returns an array of x-value points
  * @param {Object[]} data - an array of data objects
  * @param {String} xKey - a key for the xvalues, if they cannot be found by looking at the object itself
+ * @returns {String[]} xValues - xValue points
  */
 export const getX = (data, xKey) =>
   xKey
     ? data.map(datum => datum[xKey])
-    : flatten(data.map(datum => parseObject(datum, 'string'))).filter(i => i != null)
+    : flatten(data.map(datum => parseObject(datum, 'string', checkMoment)).map(i => new Date(i)))
 
 /**
  * Takes an array of objects and returns an array of y-value points
@@ -28,9 +49,7 @@ export const getX = (data, xKey) =>
  * @param {String} yKey - a key for the yvalue, if not using categorical or timeseries data
  */
 export const getY = (data, yKey) =>
-  yKey
-    ? data.map(datum => datum[yKey])
-    : flatten(data.map(datum => parseObject(datum, 'number'))).filter(i => i != null)
+  yKey ? data.map(datum => datum[yKey]) : flatten(data.map(datum => parseObject(datum, 'number')))
 
 /**
  * Takes a data object and extracts all Y values
@@ -46,9 +65,7 @@ export const extractY = (datum, yKey) =>
  * @param {String} xKey - a key for the xvalue, if not using categorical or timeseries data
  */
 export const extractX = (datum, xKey) =>
-  xKey
-    ? [datum[xKey]]
-    : flatten(parseObject(datum, 'string')).map(i => (moment(i).isValid() ? moment(i) : i))
+  xKey ? [datum[xKey]] : flatten(parseObject(datum, 'string')).map(i => checkMoment(i))
 
 /**
  * Takes a data object and extracts all Y labels
@@ -56,12 +73,12 @@ export const extractX = (datum, xKey) =>
  */
 export const extractLabels = datum =>
   flatten(
-    Object.entries(datum).map(value => {
+    Object.entries(datum).filter(value => {
       if (typeof value[1] === 'number') {
         return value[0]
       }
     })
-  ).filter(i => i != null)
+  )
 
 /**
  * Takes four parameters and produces and object with a scale for each column

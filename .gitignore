@@ -49,7 +49,7 @@ dist/
 # Editor stuff
 .vscode
 .dir-locals.el
-.dumbjumpignore
+.dumbjump
 
 # Optional eslint cache
 .eslintcache
