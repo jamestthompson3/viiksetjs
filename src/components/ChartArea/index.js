@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { Group } from '@vx/group'
 import { Bar } from '@vx/shape'
 import { bisect } from 'd3-array'
-import moment from 'moment'
 import { flow, uniq, head, isEmpty, get } from 'lodash'
 
 import {
@@ -58,7 +57,6 @@ class ChartArea extends Component {
 
   declareBar = () => this.setState({ bar: true })
 
-  // TODO WORK WITH DT OBJECTS
   calculateData = () => {
     this.setState({ chartData: false })
     const { data, children, size, xKey, yKey, type, margin } = this.props
@@ -71,10 +69,7 @@ class ChartArea extends Component {
     const dataKeys = extractLabels(data[0])
     const width = size.width - margin.left - margin.right
     const height = size.height - margin.top - margin.bottom
-    const xPoints = uniq(getX(data, xKey)).map(
-      datum =>
-        typeof datum === 'string' && moment(datum).isValid() ? moment(datum).toDate() : datum
-    )
+    const xPoints = uniq(getX(data, xKey))
     const yPoints = getY(data, yKey)
     const yScale = determineYScale({ type, yPoints, height, margin })
     const yScales = biaxialChildren && createScalarData(data, dataKeys, height, margin)

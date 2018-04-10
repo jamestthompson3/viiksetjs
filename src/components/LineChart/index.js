@@ -11,6 +11,7 @@ import {
   StyledLinePath,
   StyledAreaClosed
 } from '../styledComponents'
+import { parseObject, checkMoment } from '../../utils/dataUtils'
 
 class LineChart extends Component {
   shouldComponentUpdate(prevProps) {
@@ -44,27 +45,15 @@ class LineChart extends Component {
       return null
     }
     const yPoints = d => d[dataKey]
-    const xPoints = d =>
-      xKey
-        ? d[xKey]
-        : flatten(
-            Object.values(d).map(value => {
-              if (typeof value === 'string') {
-                return moment(value)
-              }
-            })
-          ).filter(i => i != null)[0]
+    const xPoints = d => (xKey ? d[xKey] : new Date(parseObject(d, 'string', checkMoment)))
     const dataPoints = data.map(item => item[dataKey])
     const yScale = scaleLinear()
       .domain([0, Math.max(...dataPoints)])
       .range([height, margin.top + margin.top])
     const getAxis = () => (axisId == null ? inheritedScale : yScale)
-    const findFill = gradient => {
-      if (nofill) {
-        return
-      }
-      return gradient ? `url(#gradient${dataKey})` : `url(#dlines${dataKey})`
-    }
+    const findFill = gradient =>
+      nofill || gradient ? `url(#gradient${dataKey})` : `url(#dlines${dataKey})`
+
     return (
       <Fragment>
         {!nofill && (
