@@ -38,7 +38,7 @@ const YAxis = ({
           ? tickLabels
           : () => ({
               dy: '-0.25rem',
-              dx: '-1.75rem',
+              dx: '-0.75rem',
               strokeWidth: '0.5px',
               fontWeight: '400',
               textAnchor: 'end',
@@ -59,7 +59,7 @@ const YAxis = ({
           ? tickLabels
           : () => ({
               dy: '-0.25rem',
-              dx: '0rem',
+              dx: '0.5rem',
               strokeWidth: '0.5px',
               fontWeight: '400',
               textAnchor: 'end',

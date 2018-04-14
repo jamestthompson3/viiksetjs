@@ -7,7 +7,8 @@ import {
   StackedLine,
   StreamingChart,
   TimeSeries,
-  WithVX
+  WithVX,
+  PieExample
 } from './charts'
 const ChartRenderer = ({ active }) => {
   switch (active) {
@@ -27,6 +28,8 @@ const ChartRenderer = ({ active }) => {
       return <StackedBarExample />
     case 'interop':
       return <WithVX />
+    case 'pie':
+      return <PieExample />
     default:
       return null
   }

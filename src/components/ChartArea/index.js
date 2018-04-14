@@ -30,7 +30,7 @@ import {
   StyledGridRows,
   StyledLeftAxis,
   StyledBottomAxis
-} from '../styledComponents/index'
+} from '../styledComponents'
 
 const margin = { top: 18, right: 15, bottom: 15, left: 30 }
 

@@ -14,10 +14,11 @@ export default function withTooltip(BaseComponent) {
       calculatedData: null,
       yCoords: null,
       x: null,
-      mouseX: null
+      mouseX: null,
+      mouseY: null
     }
-    updateTooltip = ({ calculatedData, x, mouseX, yCoords }) =>
-      this.setState({ yCoords, calculatedData, x, mouseX })
+    updateTooltip = ({ calculatedData, x, mouseX, yCoords, mouseY }) =>
+      this.setState({ yCoords, calculatedData, x, mouseX, mouseY })
 
     render() {
       return <BaseComponent updateTooltip={this.updateTooltip} {...this.state} {...this.props} />
