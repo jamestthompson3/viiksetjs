@@ -49,8 +49,8 @@ const selectorList = [
   { title: 'Stacked Line', label: 'stackedline' },
   { title: 'Biaxial Line', label: 'biaxial' },
   { title: 'Stacked Bar', label: 'stackedbar' },
-  { title: 'Interop with vx', label: 'interop' }
-
+  { title: 'Interop with vx', label: 'interop' },
+  { title: 'Pie Chart', label: 'pie' }
 ]
 
 class IndexPage extends Component {

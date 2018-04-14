@@ -1,9 +1,7 @@
 import React, { Fragment, Component } from 'react'
 import { scaleLinear } from 'd3-scale'
 import { curveMonotoneX } from '@vx/curve'
-import moment from 'moment'
 import PropTypes from 'prop-types'
-import { flatten } from 'lodash'
 
 import {
   StyledGradient,

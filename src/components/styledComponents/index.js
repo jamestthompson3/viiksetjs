@@ -10,8 +10,8 @@ import { AxisBottom, AxisLeft, AxisRight } from '@vx/axis'
 import { rgba } from 'polished'
 
 const findStroke = p => p.theme[p.stroke] || p.stroke || p.theme.primaryColor
-const findColor = p => p.theme[p.color] || p.color || p.theme.primaryColor
-const findFill = p => p.theme[p.color] || p.color || p.theme.primaryColor
+export const findColor = p => p.theme[p.color] || p.color || p.theme.primaryColor
+const findFill = p => p.theme[p.fill] || p.fill || p.theme.primaryColor
 const propsColorSetter = (func, p) => {
   const exec = func()
   switch (true) {
@@ -35,6 +35,17 @@ const colorSetter = (formatProps, p) => {
       return { ...formatProps, stroke: findColor(p), fill: findColor(p) }
   }
 }
+export const StyledText = styled.text.attrs({
+  x: p => p.x,
+  y: p => p.y,
+  fill: p => findFill(p),
+  textAnchor: p => p.textAnchor,
+  dy: p => p.dy,
+  dx: p => p.dx,
+  fontSize: p => p.fontSize
+})`
+  pointer-events: none;
+`
 export const StyledPoint = styled.circle.attrs({
   cx: p => p.x,
   cy: p => p.y,
