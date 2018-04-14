@@ -46,7 +46,8 @@ class ChartArea extends Component {
   componentDidUpdate(prevProps) {
     const dataWasChanged = prevProps.data !== this.props.data
     const widthWasChanged = prevProps.size && prevProps.size.width !== this.props.size.width
-    const heightWasChanged = prevProps.size && prevProps.size.height !== this.props.size.height
+    const heightWasChanged =
+      prevProps.size.height !== 0 && prevProps.size.height !== this.props.size.height
     const typeWasChanged = prevProps.type !== this.props.type
     if (dataWasChanged || widthWasChanged || heightWasChanged || typeWasChanged) {
       return this.calculateData()
@@ -68,7 +69,7 @@ class ChartArea extends Component {
     const biaxialChildren = biaxial(children)
     const dataKeys = extractLabels(data[0])
     const width = size.width - margin.left - margin.right
-    const height = size.height - margin.top - margin.bottom
+    const height = size.height === 0 ? 300 : size.height - margin.top - margin.bottom
     const xPoints = uniq(getX(data, xKey))
     const yPoints = getY(data, yKey)
     const yScale = determineYScale({ type, yPoints, height, margin })
@@ -173,7 +174,7 @@ class ChartArea extends Component {
         <Fragment>
           <svg
             width={size.width}
-            height={size.height}
+            height={height + margin.top + margin.bottom}
             preserveAspectRatio="none"
             viewBox={viewBox || determineViewBox(biaxialChildren, margin, size.width, size.height)}
             ref={svg => (this.chart = svg)}
@@ -353,7 +354,7 @@ ChartArea.defaultProps = {
   numYTicks: 4,
   yTickLabelProps: () => ({
     dy: '-0.25rem',
-    dx: '-1.75rem',
+    dx: '-0.75rem',
     strokeWidth: '0.5px',
     fontWeight: '400',
     textAnchor: 'end',
