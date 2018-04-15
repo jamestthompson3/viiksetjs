@@ -1,11 +1,9 @@
 import React, { Component, Fragment } from 'react'
 import PropTypes from 'prop-types'
-import { Pie } from '@vx/shape'
 import { Group } from '@vx/group'
-import { get } from 'lodash'
 import styled from 'styled-components'
 
-import { StyledText, findColor } from '../styledComponents'
+import { StyledText, StyledPie, findColor } from '../styledComponents'
 import withParentSize from '../Responsive/withParentSize'
 import withTooltip from '../Tooltip/withTooltip'
 
@@ -47,15 +45,15 @@ const TooltipComponent = ({ tooltipData, height, width, mouseX, mouseY, color })
 
 class PieChart extends Component {
   // shouldComponentUpdate(prevProps) {
-  //   // return prevProps.data !== this.props.data || prevProps.dataKey !== this.props.dataKey
-  //   // const widthWasChanged = prevProps.size && prevProps.size.width !== this.props.size.width
-  //   // const heightWasChanged =
-  //   //   prevProps.size.height !== 0 && prevProps.size.height !== this.props.size.height
-  //   // if (dataWasChanged || widthWasChanged || heightWasChanged || dataKeyWasChanged) {
-  //   //   return true
-  //   // } else {
-  //   //   return false
-  //   // }
+     // return prevProps.data !== this.props.data || prevProps.dataKey !== this.props.dataKey
+     // const widthWasChanged = prevProps.size && prevProps.size.width !== this.props.size.width
+     // const heightWasChanged =
+     //   prevProps.size.height !== 0 && prevProps.size.height !== this.props.size.height
+     // if (dataWasChanged || widthWasChanged || heightWasChanged || dataKeyWasChanged) {
+     //   return true
+     // } else {
+     //   return false
+     // }
   // }
   mouseMove = ({ d: { data, centroid } }) => {
     const { updateTooltip } = this.props
@@ -87,7 +85,7 @@ class PieChart extends Component {
       <Fragment>
         <svg width={width} height={height}>
           <Group top={height / 2} left={width / 2}>
-            <Pie
+            <StyledPie
               data={data}
               pieValue={d => d[dataKey]}
               innerRadius={radius - innerRadius}
@@ -113,7 +111,7 @@ class PieChart extends Component {
 }
 
 PieChart.propTypes = {
-  data: PropTypes.array,
+  data: PropTypes.array.isRequired,
   color: PropTypes.string,
   /**
    * Prop for the key containing the label names
@@ -123,6 +121,10 @@ PieChart.propTypes = {
    * Prop for the key containing the data
    */
   dataKey: PropTypes.string.isRequired,
+  /**
+   * Prop for determining the opacity of the pie pieces
+   */
+  determineOpacity: PropTypes.function,
   /**
    * innerRadius offset
    */

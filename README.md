@@ -4,11 +4,15 @@
 
 A lightweight Javascript graphing library for React based on styled-components and vx
 
+|[ChartArea](https://github.com/jamestthompson3/viiksetjs#chartarea) | [StreamableChart](https://github.com/jamestthompson3/viiksetjs#streamablechart) | [LineChart](https://github.com/jamestthompson3/viiksetjs#linechart) |
+|[BarChart](https://github.com/jamestthompson3/viiksetjs#barchart) | [StackedBar](https://github.com/jamestthompson3/viiksetjs#stackedbar) | [ScatterPlot](https://github.com/jamestthompson3/viiksetjs#scatterplot) |
+|[PieChart](https://github.com/jamestthompson3/viiksetjs#piechart) | [StyledPoint](https://github.com/jamestthompson3/viiksetjs#styledpoint) | [StyledLine](https://github.com/jamestthompson3/viiksetjs#styledline) | [Tooltips](https://github.com/jamestthompson3/viiksetjs#tooltips)
+
 ## About
 
 Viikset is the halfway point between visualization libraries with atomic control like d3 and out of the box solutions like recharts or chartjs. Big shout out to Harrision Shoff [@hshoff](https://github.com/hshoff) and the people over at [vx](https://github.com/hshoff/vx) who helped shape the thinking for this type of visualization library.
 
-It is meant to serve both those who want a high level of control (see the 'Interop with vx' section) and those who want throw together charts quickly with little to no configuration. If you like this library and want to have more granular control over your chart components, I would strongly suggest checking out the [vx]((https://github.com/hshoff/vx) repo and familiarizing yourself with it, as any vx components can be used in tandem with Viikset.
+It is meant to serve both those who want a high level of control (see the 'Interop with vx' section) and those who want throw together charts quickly with little to no configuration. If you like this library and want to have more granular control over your chart components, I would strongly suggest checking out the [vx](https://github.com/hshoff/vx) repo and familiarizing yourself with it, as any vx components can be used in tandem with Viikset.
 
 ### Getting started
 
@@ -295,7 +299,34 @@ The `ScatterPlot` component inherits the data from the `ChartArea` which wraps i
           <ScatterPlot dataKey="y" color="#42f4c2" />
         </ChartArea>
 ```
+## PieChart
+The `PieChart` component is independent of the `ChartArea`. It takes it's own
+data prop and exposes the following props to `Tooltip` components:
+`tooltipData`, `height`, `width`, `mouseX`, `mouseY`, `color`
 
+### Props
+
+| Prop
+| Default  | Type     | Desc   |                                                                        |
+| :------- | :-----: | :------ | :--------------------------------------------------------------------- |
+| data     |    []   |  Array  | An array of data objects to be visualized                              |
+| color    |  #000   | String  | Color string. Supports colors from styled-components' `themeProvider`. |
+| dataKey  |    ''   | String  | A key for denoting which data should be charted     |
+| labelKey |    ''   | String  | A key for denoting data labels     |
+| innerRadius |  0  | Number | The radius of the inner part of the `PieChart`     |
+| outerRadius |  0  | Number | The radius of the outer part of the `PieChart`     |
+| determineOpacity |  d => 0.5  | Function | A function that determines the opacity of the pie slices |
+
+```js
+  <PieChart
+    dataKey="score"
+    determineOpacity={d => d.score / 5}
+    data={categoricalSeries.data}
+    color="#5042f4"
+    labelKey="company"
+    innerRadius={80}
+   />
+```
 ## StyledPoint
 A simple point component.
 
