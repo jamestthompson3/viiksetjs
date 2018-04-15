@@ -11,8 +11,8 @@
   "scripts": {
     "build": "babel src --out-dir lib",
     "watch": "babel --watch src --out-dir lib",
-      "precommit": "lint-staged",
-      "prepublish": "babel src --out-dir lib"
+    "precommit": "lint-staged",
+    "prepublish": "babel src --out-dir lib"
   },
   "lint-staged": {
     "*.{js}": [
@@ -78,9 +78,8 @@
     "lint-staged": "^6.1.1",
     "prettier": "^1.11.1"
   },
-"peerDependencies": {
-  "styled-components": "^3.2.1",
-  "moment": "^2.21.0"
-
-}
+  "peerDependencies": {
+    "moment": "^2.21.0",
+    "styled-components": "^3.2.1"
+  }
 }
