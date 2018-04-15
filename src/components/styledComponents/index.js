@@ -5,7 +5,7 @@ import { withBoundingRects } from '@vx/bounds'
 import { LinearGradient } from '@vx/gradient'
 import { PatternLines } from '@vx/pattern'
 import { GridRows } from '@vx/grid'
-import { AreaClosed, LinePath, Bar, Line } from '@vx/shape'
+import { AreaClosed, LinePath, Bar, Line, Pie } from '@vx/shape'
 import { AxisBottom, AxisLeft, AxisRight } from '@vx/axis'
 import { rgba } from 'polished'
 
@@ -115,7 +115,11 @@ export const StyledAreaClosed = styled(AreaClosed).attrs({
   stroke: p => findColor(p),
   strokeWidth: 1
 })``
-
+export const StyledPie = styled(Pie).attrs({
+  fill: p => findColor(p),
+  fillOpacity: p => p.fillOpacity,
+  data: p => p.data
+})``
 export const TooltipWrapper = styled.div`
   display: block;
   color: #fff;
