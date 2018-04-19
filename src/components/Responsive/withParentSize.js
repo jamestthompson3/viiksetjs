@@ -3,12 +3,13 @@ import sizeMe from 'react-sizeme'
 import styled from 'styled-components'
 
 const Container = styled.div.attrs({
-  style: ({ x }) => ({
+  style: {
     width: '100%',
-    height: '100%',
-    position: x ? 'static' : 'relative'
-  })
-})``
+    height: '100%'
+  }
+})`
+  position: ${p => (p.x ? 'static' : 'relative')} !important;
+`
 export default function withParentSize(BaseComponent) {
   class WrappedComponent extends React.PureComponent {
     render() {
@@ -26,5 +27,8 @@ export default function withParentSize(BaseComponent) {
     }
   }
 
-  return sizeMe({ monitorHeight: true, refreshMode: 'debounce', refreshRate: 30 })(WrappedComponent)
+  return sizeMe({ monitorHeight: true, refreshMode: 'debounce', refreshRate: 100 })(
+    WrappedComponent
+  )
 }
+
