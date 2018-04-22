@@ -18,7 +18,6 @@ import {
   determineXScale,
   biaxial,
   localPoint,
-  determineViewBox,
   determineYScale,
   findTooltipX
 } from '../../utils/chartUtils'
@@ -29,7 +28,8 @@ import {
   Indicator,
   StyledGridRows,
   StyledLeftAxis,
-  StyledBottomAxis
+  StyledBottomAxis,
+  withBounds
 } from '../styledComponents'
 
 const margin = { top: 18, right: 15, bottom: 15, left: 30 }
@@ -161,14 +161,20 @@ class ChartArea extends Component {
       stroke,
       nogrid,
       notool,
+      gridStroke,
       color,
       yCoords,
       calculatedData,
-      tooltip: Tooltip,
+      tooltipRenderer,
+      tooltipContent,
       indicator: Indicator,
       mouseX,
+      mouseY,
       x
     } = this.props
+
+    const Tooltip = tooltipRenderer && withBounds(tooltipRenderer)
+
     return (
       chartData && (
         <Fragment>
@@ -176,7 +182,7 @@ class ChartArea extends Component {
             width={size.width}
             height={height + margin.top + margin.bottom}
             preserveAspectRatio="none"
-            viewBox={viewBox || determineViewBox(biaxialChildren, margin, size.width, size.height)}
+            viewBox={viewBox || `-10 0 ${size.width} ${height}`}
             ref={svg => (this.chart = svg)}
           >
             {Children.map(children, child =>
@@ -204,7 +210,7 @@ class ChartArea extends Component {
             <Group left={margin.left}>
               {bar || (
                 <Bar
-                  width={width - margin.left}
+                  width={width}
                   height={height}
                   fill="transparent"
                   onMouseMove={() => event => {
@@ -214,7 +220,11 @@ class ChartArea extends Component {
                 />
               )}
               {!nogrid && (
-                <StyledGridRows scale={yScale} {...{ stroke }} width={width - margin.left} />
+                <StyledGridRows
+                  scale={yScale}
+                  stroke={gridStroke || stroke}
+                  width={width - margin.left}
+                />
               )}
               {biaxialChildren ||
                 noYAxis || (
@@ -243,7 +253,25 @@ class ChartArea extends Component {
             />
             {x && !bar && <Indicator {...{ yCoords, x, stroke, color, height, mouseX }} />}
           </svg>
-          {x && <Tooltip tooltipData={calculatedData} {...{ x, color, yCoords, mouseX, height }} />}
+          {x ? (
+            Tooltip ? (
+              <Tooltip
+                {...{
+                  tooltipData: calculatedData,
+                  yCoords,
+                  x,
+                  mouseX,
+                  mouseY,
+                  height,
+                  color
+                }}
+              />
+            ) : (
+              <TooltipComponent color={color} tooltipData={calculatedData} x={x}>
+                {tooltipContent}
+              </TooltipComponent>
+            )
+          ) : null}
         </Fragment>
       )
     )
@@ -257,9 +285,13 @@ ChartArea.propTypes = {
    */
   color: PropTypes.string,
   /**
-   * Optional prop to apply color gridlines
+   * Optional prop to apply color gridlines and/or indicator
    */
   stroke: PropTypes.string,
+  /**
+   * Optional prop to apply color gridlines
+   */
+  gridStroke: PropTypes.string,
   /**
    * A string indicating the type of scale the type should have, defaults to timeseries
    */
@@ -269,9 +301,22 @@ ChartArea.propTypes = {
    */
   xKey: PropTypes.string,
   /**
-   * A React component to return as a tooltip
+   * A React component to return as a tooltip receives as props the following:
+   * @param {Object} tooltipData - calculated data returned from tooltip calculations
+   * @param {Number} x - x coordinate of closest data point
+   * @param {Number} mouseX - x coordinate of mouse position
+   * @param {Number} mouseY - y coordinate of mouse position
+   * @param {Object[]} yCoords - array of y coordinates of closest data point(s)
+   * @param {String} color - string of color inherited from ChartArea
+   * @returns {ReactElement} Tooltip - TooltipComponent
    */
-  tooltip: PropTypes.func,
+  tooltipRender: PropTypes.element,
+  /**
+   * A React Component that renders inside the default tooltip container
+   * @param {Object} tooltipData - calculated data returned from tooltip calculations
+   * @returns {ReactElement} TooltipContent
+   */
+  tooltipContent: PropTypes.element,
   /**
    * A React component made with SVG to indicate the tooltip position
    */
@@ -342,7 +387,6 @@ ChartArea.defaultProps = {
   data: [],
   color: '#000',
   stroke: '#000',
-  tooltip: TooltipComponent,
   nogrid: false,
   notool: false,
   noYAxis: false,

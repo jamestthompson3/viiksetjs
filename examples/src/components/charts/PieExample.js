@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import { PieChart, ChartArea } from 'viiksetjs'
+import { PieChart } from 'viiksetjs'
 
 import { GraphContainer, Snippet } from '../styledComponents'
 import categoricalSeries from '../../data/categoricalSeries.json'

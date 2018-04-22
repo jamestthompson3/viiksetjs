@@ -24,6 +24,7 @@ export const Wrapper = styled.div`
   padding: 2rem;
   background: #fff;
   width: 95%;
+  height: 100%;
   display: flex;
   flex-wrap: wrap;
   @media (max-width: 500px) {
@@ -31,7 +32,7 @@ export const Wrapper = styled.div`
     width: 100%;
     padding-left: 0;
     padding-right: 0;
-}
+  }
 `
 
 export const Selector = styled.h4`
@@ -45,6 +46,8 @@ export const Selector = styled.h4`
   box-shadow: ${p => p.active && '0px 0px 0px 1px #49484f'};
 `
 export const FilterBox = styled.div`
+  margin-top: 1rem;
+  margin-bottom: 1rem;
   flex: 1 0 120px;
   height: 300px;
   max-height: 300px;
@@ -57,9 +60,9 @@ export const ChartBox = styled.div`
   flex: 2 0 80%;
   max-width: 80%;
   @media (max-width: 500px) {
-     width: 100%;
-     max-width: 100%;
-}
+    width: 100%;
+    max-width: 100%;
+  }
 `
 
 export const GraphContainer = styled.div`
@@ -93,11 +96,11 @@ export const Snippet = styled.pre`
   padding-bottom: 2rem;
   box-shadow: 6px 6px 27px -12px rgba(0, 0, 0, 0.75);
   @media (max-width: 500px) {
-   width: 90%;
-   height: 150px;
-   padding: 1rem;
-   overflow-y: auto;
-}
+    width: 90%;
+    height: 150px;
+    padding: 1rem;
+    overflow-y: auto;
+  }
 `
 const TooltipContainer = styled.span.attrs({
   style: p => ({
@@ -161,29 +164,17 @@ export const Indicator = ({ x, color, yCoords, height }) => (
 )
 const BoundedTooltip = withBounds(TooltipContainer)
 export const LinearTooltip = ({ tooltipData, x, yCoords }) => (
-  <BoundedTooltip left={x} yCoord={yCoords[1] - 15}>
-    {tooltipData.y < 300 ? (
-      <span role="img" arialLabel="cold">
-        ❄️
-      </span>
-    ) : (
-      <span role="img" arialLabel="hot">
-        🔥
-      </span>
-    )}
+  <BoundedTooltip left={x - 15} yCoord={yCoords[1] - 15}>
+    {tooltipData.y < 300 ? <span role="img">❄️</span> : <span role="img">🔥</span>}
   </BoundedTooltip>
 )
 export const BiaxialTooltip = ({ tooltipData, x, yCoords }) => (
   <BoundedContainer left={x - 10} yCoord={yCoords[1]}>
     <p>
-      <span role="img" arialLabel="user">
-        👩‍💻
-      </span>: {tooltipData.users}
+      <span role="img">👩‍💻</span>: {tooltipData.users}
     </p>
     <p>
-      <span role="img" arialLabel="post">
-        📝
-      </span>: {tooltipData.posts}
+      <span role="img">📝</span>: {tooltipData.posts}
     </p>
   </BoundedContainer>
 )

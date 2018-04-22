@@ -1,5 +1,5 @@
 import { scaleLinear } from 'd3-scale'
-import { flatten } from 'lodash'
+import { flatten, head, last } from 'lodash'
 import moment from 'moment'
 
 /**
@@ -68,17 +68,18 @@ export const extractX = (datum, xKey) =>
   xKey ? [datum[xKey]] : flatten(parseObject(datum, 'string')).map(i => checkMoment(i))
 
 /**
- * Takes a data object and extracts all Y labels
+ * Takes a data object and extracts all Y labels by parsing which values contain numbers
  * @param {Object} datum - the object which you want to extract the labels from
+ * @returns {String[]} labels - an array of the labels
  */
 export const extractLabels = datum =>
   flatten(
-    Object.entries(datum).filter(value => {
-      if (typeof value[1] === 'number') {
-        return value[0]
+    Object.entries(datum).map(value => {
+      if (typeof last(value) === 'number') {
+        return head(value)
       }
     })
-  )
+  ).filter(i => i != null)
 
 /**
  * Takes four parameters and produces and object with a scale for each column
