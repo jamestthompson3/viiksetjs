@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { Group } from '@vx/group'
 
 import { formatTicks, formatXTicks } from '../../utils/formatUtils'
-import { biaxial, determineViewBox, determineYScale } from '../../utils/chartUtils'
+import { biaxial, determineYScale } from '../../utils/chartUtils'
 import withStream from '../Streaming/withStream'
 import withParentSize from '../Responsive/withParentSize'
 import { StyledGridRows, StyledLeftAxis, StyledBottomAxis } from '../styledComponents/index'
@@ -107,9 +107,7 @@ class StreamableChart extends Component {
         width={size.width}
         height={size.height}
         preserveAspectRatio="none"
-        viewBox={
-          viewBox ? viewBox : determineViewBox(biaxialChildren, margin, size.width, size.height)
-        }
+        viewBox={viewBox ? viewBox : `-10 0 ${size.width} ${height}`}
         ref={svg => (this.chart = svg)}
       >
         {Children.map(children, child =>

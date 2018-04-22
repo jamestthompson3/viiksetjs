@@ -21,7 +21,7 @@ const Scatterplot = () => {
           type="linear"
           labelY="Heat (K)"
           labelX="Observation No."
-          tooltip={LinearTooltip}
+          tooltipRenderer={LinearTooltip}
           indicator={Indicator}
         >
           <ScatterPlot dataKey="y" color="#42f4c2" />

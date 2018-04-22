@@ -1,17 +1,20 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, Children, cloneElement } from 'react'
 import styled from 'styled-components'
 import { get } from 'lodash'
 import { withBoundingRects } from '@vx/bounds'
-import { LinearGradient } from '@vx/gradient'
 import { PatternLines } from '@vx/pattern'
+import { LinearGradient } from '@vx/gradient'
 import { GridRows } from '@vx/grid'
 import { AreaClosed, LinePath, Bar, Line, Pie } from '@vx/shape'
 import { AxisBottom, AxisLeft, AxisRight } from '@vx/axis'
 import { rgba } from 'polished'
 
 const findStroke = p => p.theme[p.stroke] || p.stroke || p.theme.primaryColor
+
 export const findColor = p => p.theme[p.color] || p.color || p.theme.primaryColor
+
 const findFill = p => p.theme[p.fill] || p.fill || p.theme.primaryColor
+
 const propsColorSetter = (func, p) => {
   const exec = func()
   switch (true) {
@@ -35,6 +38,7 @@ const colorSetter = (formatProps, p) => {
       return { ...formatProps, stroke: findColor(p), fill: findColor(p) }
   }
 }
+
 export const StyledText = styled.text.attrs({
   x: p => p.x,
   y: p => p.y,
@@ -46,6 +50,7 @@ export const StyledText = styled.text.attrs({
 })`
   pointer-events: none;
 `
+
 export const StyledPoint = styled.circle.attrs({
   cx: p => p.x,
   cy: p => p.y,
@@ -55,6 +60,7 @@ export const StyledPoint = styled.circle.attrs({
   fill: p => findColor(p),
   r: p => p.radius
 })``
+
 export const StyledLine = styled(Line).attrs({
   from: p => p.from,
   to: p => p.to,
@@ -62,17 +68,20 @@ export const StyledLine = styled(Line).attrs({
   strokeWidth: p => p.width,
   strokeDasharray: p => p.strokeDasharray
 })``
+
 export const StyledBar = styled(Bar).attrs({
   rx: 5,
   ry: 0,
   stroke: p => findColor(p),
   strokeWidth: 1
 })``
+
 export const StyledGridRows = styled(GridRows).attrs({
   pointerEvents: 'none',
   width: p => p.width,
   stroke: p => findStroke(p)
 })``
+
 export const StyledLeftAxis = styled(AxisLeft).attrs({
   strokeWidth: 2,
   numTicks: p => p.numTicks,
@@ -80,6 +89,7 @@ export const StyledLeftAxis = styled(AxisLeft).attrs({
   tickLabelProps: p => propsColorSetter(p.tickLabels, p),
   labelProps: p => colorSetter(p.labelProps, p)
 })``
+
 export const StyledRightAxis = styled(AxisRight).attrs({
   strokeWidth: 2,
   numTicks: p => p.numTicks,
@@ -87,6 +97,7 @@ export const StyledRightAxis = styled(AxisRight).attrs({
   tickLabelProps: p => propsColorSetter(p.tickLabels, p),
   labelProps: p => colorSetter(p.labelProps, p)
 })``
+
 export const StyledBottomAxis = styled(AxisBottom).attrs({
   top: p => p.height,
   numTicks: p => p.numTicks,
@@ -94,10 +105,7 @@ export const StyledBottomAxis = styled(AxisBottom).attrs({
   tickLabelProps: p => propsColorSetter(p.tickLabels, p),
   labelProps: p => colorSetter(p.labelProps, p)
 })``
-export const StyledGradient = styled(LinearGradient).attrs({
-  from: p => rgba(findColor(p), 0.35),
-  to: p => rgba(findColor(p), 0.05)
-})``
+
 export const StyledPatternLines = styled(PatternLines).attrs({
   stroke: p => rgba(findColor(p), 0.15),
   strokeWidth: 1,
@@ -105,25 +113,33 @@ export const StyledPatternLines = styled(PatternLines).attrs({
   height: 6,
   orientation: ['diagonal']
 })``
+
+export const StyledGradient = styled(LinearGradient).attrs({
+  from: p => rgba(findColor(p), 0.35),
+  to: p => rgba(findColor(p), 0.05)
+})``
+
 export const StyledLinePath = styled(LinePath).attrs({
   data: p => p.data,
   stroke: p => findColor(p),
   strokeWidth: '1.5px'
 })``
+
 export const StyledAreaClosed = styled(AreaClosed).attrs({
   data: p => p.data,
   stroke: p => findColor(p),
   strokeWidth: 1
 })``
+
 export const StyledPie = styled(Pie).attrs({
   fill: p => findColor(p),
   fillOpacity: p => p.fillOpacity,
   data: p => p.data
 })``
+
 export const TooltipWrapper = styled.div`
   display: block;
   color: #fff;
-  width: 125px;
   border: 2px solid ${p => p.color || p.theme.primaryColor};
   border-radius: 5px;
   background: #1a2e3c;
@@ -135,10 +151,12 @@ export const TooltipWrapper = styled.div`
   }
 `
 const TooltipContainer = styled.div.attrs({
-  style: ({ bounds }) => ({
-    left: `${bounds.left}px`,
-    top: `${bounds.top}px`
-  })
+  style: ({ bounds }) => {
+    return {
+      left: `${bounds.left}px`,
+      top: `${bounds.top}px`
+    }
+  }
 })`
   display: inline-flex;
   position: relative;
@@ -149,15 +167,23 @@ const TooltipContainer = styled.div.attrs({
   align-items: center;
 `
 
-const boundsSetter = ({ left, rect, parentRect }) => left - get(rect, 'width', 0) / 4
-// if (left + rect.width > parentRect.width) {
-//   return left - rect.width / 3 // case for shifting to the right
-// } else if (left + rect.width < parentRect.left) {
-//   return left + rect.width / 6 // case for shifting to the left
-// } else {
-//   return left - rect.width / 4 // default case
-// }
-const TooltipBucket = ({ children, getRects, left }) => {
+const boundsSetter = ({ left, rect, parentRect }) => {
+  if (left + rect.width > parentRect.width) {
+    return left - rect.width // case for shifting to the right
+  } else if (rect.width + rect.left < parentRect.left) {
+    return left + rect.width / 3 // case for shifting to the left
+  } else {
+    return left - rect.width / 3 // default case
+  }
+}
+
+/**
+ * TooltipBounder sets bounds for the tooltip and passes them down
+ * @param {ReactElement} children - children to be rendered
+ * @param {Function} getRects - function for calcuating the bounding rects of the tooltip
+ * @param {Number} left - x coordinate of the mouse
+ */
+const TooltipBounder = ({ children, getRects, left }) => {
   const { rect, parentRect } = getRects()
   const getBounds = () => {
     if (rect && parentRect) {
@@ -174,42 +200,66 @@ const TooltipBucket = ({ children, getRects, left }) => {
   return <TooltipContainer bounds={getBounds()}>{children}</TooltipContainer>
 }
 
-const BoundedTooltip = withBoundingRects(TooltipBucket)
+const BoundedTooltip = withBoundingRects(TooltipBounder)
 
+/**
+ * Wraps a React component and passes the `getRects` function,
+ * allowing the wrapped component to have access to both its own bounding rect
+ * and the it's parent's bouding rect
+ * @param {ReactElement} component
+ */
 export const withBounds = component => withBoundingRects(component)
 
-export const TooltipComponent = ({ tooltipData, color, x }) => {
+/**
+ * Wrapper component for default tooltip
+ * @param {Object} tooltipData - data calculated from ChartArea
+ * @param {String} color - color from ChartArea
+ * @param {Number} x - svg x coordinate
+ * @param {ReactElement} tooltipContent - prop passed from user
+ */
+export const TooltipComponent = ({ tooltipData, color, x, children }) => {
   return (
     <BoundedTooltip left={x}>
       <TooltipWrapper color={color}>
-        {Object.entries(tooltipData).map((entry, i) => <p key={i}>{`${entry[0]}: ${entry[1]}`}</p>)}
+        {children
+          ? Children.map(children, child =>
+              cloneElement(child, {
+                tooltipData,
+                color
+              })
+            )
+          : Object.entries(tooltipData).map((entry, i) => (
+              <p key={i}>{`${entry[0]}: ${entry[1]}`}</p>
+            ))}
       </TooltipWrapper>
     </BoundedTooltip>
   )
 }
 
-export const Indicator = ({ yCoords, x, stroke, color }) => (
-  <Fragment>
-    <Line
-      from={{ x: x, y: 0 }}
-      to={{ x: x, y: Math.max(...yCoords) }}
-      stroke={stroke}
-      strokeWidth={1}
-      strokeOpacity={0.5}
-      style={{ pointerEvents: 'none' }}
-    />
-    {yCoords.map((coord, i) => (
-      <circle
-        key={i}
-        cx={x}
-        cy={coord}
-        fill="rgb(28, 42, 44)"
-        stroke={color}
+export const Indicator = ({ yCoords, x, stroke, color }) => {
+  return (
+    <Fragment>
+      <Line
+        from={{ x: x, y: 0 }}
+        to={{ x: x, y: Math.max(...yCoords) }}
+        stroke={stroke}
         strokeWidth={1}
+        strokeOpacity={0.5}
         style={{ pointerEvents: 'none' }}
-        fillOpacity={1}
-        r={4}
       />
-    ))}
-  </Fragment>
-)
+      {yCoords.map((coord, i) => (
+        <circle
+          key={i}
+          cx={x}
+          cy={coord}
+          fill="rgb(28, 42, 44)"
+          stroke={color}
+          strokeWidth={1}
+          style={{ pointerEvents: 'none' }}
+          fillOpacity={1}
+          r={4}
+        />
+      ))}
+    </Fragment>
+  )
+}

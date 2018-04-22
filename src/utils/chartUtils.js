@@ -3,6 +3,14 @@ import { Point } from '@vx/point'
 import { scaleLinear, scaleTime, scaleBand } from 'd3-scale'
 import moment from 'moment'
 
+/**
+ * Determines the xScale of the chart based on chart type
+ * @param {String} type - Type of chart
+ * @param {Number[]} xPoints - array of xPoints
+ * @param {Number} height - height of ChartArea
+ * @param {Object} margin - margin passed to ChartArea
+ * @returns {Object} xScale - xScale
+ */
 export const determineXScale = ({ type, xPoints, width, margin }) => {
   const range = [margin.left, width]
   switch (type) {
@@ -22,6 +30,14 @@ export const determineXScale = ({ type, xPoints, width, margin }) => {
   }
 }
 
+/**
+ * Determines the yScale of the chart based on chart type
+ * @param {String} type - Type of chart
+ * @param {Number[]} yPoints - array of yPoints
+ * @param {Number} height - height of ChartArea
+ * @param {Object} margin - margin passed to ChartArea
+ * @returns {Object} yScale - yScale
+ */
 export const determineYScale = ({ type, yPoints, height, margin }) => {
   const range = [height, margin.top]
   switch (type) {
@@ -41,18 +57,6 @@ export const determineYScale = ({ type, yPoints, height, margin }) => {
   }
 }
 
-/**
- * Determines the viewbox of the chart container based on chart type and manual override
- * @param {String} viewBox - Optional prop passed to chartArea if custom viewbox is wanted
- * @param {Bool} biaxialChildren - Bool based on whether or not the chart has biaxial children
- * @param {Object} margin - Margin object
- * @param {Int} width - Width of parent container
- * @param {Int} height - Height of parent container
- */
-
-export const determineViewBox = (biaxialChildren, margin, width, height) =>
-  biaxialChildren ? `-10 0 ${width} ${height}` : `${-margin.left} 0 ${width} ${height}`
-
 export const findTooltipX = ({ type, calculatedX, xScale }) => {
   switch (type) {
     case 'ordinal':
@@ -66,6 +70,7 @@ export const findTooltipX = ({ type, calculatedX, xScale }) => {
 /**
  * Takes React Chilren and returns true or false if unique axis Id is found
  * @param {Object} Children - React Children through which it maps
+ * @returns {Boolean} - Indicates whether the chart should be biaxial
  */
 export const biaxial = children =>
   children && Children.map(children, child => child.props.hasOwnProperty('axisId')).includes(true)
@@ -74,6 +79,7 @@ export const biaxial = children =>
  * Own implementation of localPoint from VX. Makes it work on Firefox
  * @param {event} event - Event from which to extract svg canvas points
  * @param {node} node - Node from which to base bounding rects on
+ * @returns {Object} point - Point object
  */
 export function localPoint(node, event) {
   // called with no args

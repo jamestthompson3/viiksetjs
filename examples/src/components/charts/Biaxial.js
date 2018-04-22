@@ -15,7 +15,7 @@ const Biaxial = () => {
           data={biaxialSeries.data}
           color="rgb(238, 66, 244)"
           stroke="rgba(109, 109, 109, 0.25)"
-          tooltip={BiaxialTooltip}
+          tooltipRenderer={BiaxialTooltip}
           numXTicks={isMobile ? 1 : 4}
         >
           <LineChart color="rgb(238, 66, 244)" dataKey="users" axisId="users" />
@@ -52,7 +52,7 @@ const Biaxial = () => {
             data={biaxialSeries.data}
             color="rgb(238, 66, 244)"
             stroke="rgba(109, 109, 109, 0.25)"
-            tooltip={BiaxialTooltip}
+            tooltipRenderer={BiaxialTooltip}
           >
             <LineChart color="rgb(238, 66, 244)" dataKey="users" axisId="users" />
             <LineChart color="rgb(244, 196, 65)" dataKey="posts" axisId="posts" />
