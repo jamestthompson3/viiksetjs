@@ -308,8 +308,7 @@ data prop and exposes the following props to `Tooltip` components:
 
 ### Props
 
-| Prop
-| Default  | Type     | Desc   |                                                                        |
+| Prop     | Default | Type    | Desc                                                                   |
 | :------- | :-----: | :------ | :--------------------------------------------------------------------- |
 | data     |    []   |  Array  | An array of data objects to be visualized                              |
 | color    |  #000   | String  | Color string. Supports colors from styled-components' `themeProvider`. |
