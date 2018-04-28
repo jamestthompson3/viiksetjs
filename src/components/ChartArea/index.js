@@ -40,17 +40,6 @@ class ChartArea extends Component {
     bar: false
   }
 
-  componentDidUpdate(prevProps) {
-    const dataWasChanged = prevProps.data !== this.props.data
-    const widthWasChanged = prevProps.size && prevProps.size.width !== this.props.size.width
-    const heightWasChanged =
-      prevProps.size.height !== 0 && prevProps.size.height !== this.props.size.height
-    const typeWasChanged = prevProps.type !== this.props.type
-    if (dataWasChanged || widthWasChanged || heightWasChanged || typeWasChanged) {
-      return this.calculateData()
-    }
-  }
-
   // To prevent tooltips from not showing on bar chart due to minification changing names
   declareBar = () => this.setState({ bar: true })
 
