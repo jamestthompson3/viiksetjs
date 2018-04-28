@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { Group } from '@vx/group'
 import styled from 'styled-components'
 
-import { StyledText, StyledPie, findColor } from '../styledComponents'
+import { StyledText, StyledPie, findColor, defaultTooltipContent } from '../styledComponents'
 import withParentSize from '../Responsive/withParentSize'
 import withTooltip from '../Tooltip/withTooltip'
 
@@ -35,35 +35,34 @@ const TooltipContainer = styled.div.attrs({
   font-size: 12px;
   pointer-events: none;
 `
-const TooltipComponent = ({ tooltipData, height, width, mouseX, mouseY, color }) => {
+const defaultPieTooltip = ({
+  tooltipData,
+  height,
+  width,
+  mouseX,
+  mouseY,
+  color,
+  tooltipContent
+}) => {
   return (
     <TooltipContainer {...{ mouseX, height, width, mouseY, color }}>
-      {Object.entries(tooltipData).map((entry, i) => <p key={i}>{`${entry[0]}: ${entry[1]}`}</p>)}
+      {tooltipContent({ tooltipData })}
     </TooltipContainer>
   )
 }
 
 class PieChart extends Component {
-  // shouldComponentUpdate(prevProps) {
-     // return prevProps.data !== this.props.data || prevProps.dataKey !== this.props.dataKey
-     // const widthWasChanged = prevProps.size && prevProps.size.width !== this.props.size.width
-     // const heightWasChanged =
-     //   prevProps.size.height !== 0 && prevProps.size.height !== this.props.size.height
-     // if (dataWasChanged || widthWasChanged || heightWasChanged || dataKeyWasChanged) {
-     //   return true
-     // } else {
-     //   return false
-     // }
-  // }
   mouseMove = ({ d: { data, centroid } }) => {
     const { updateTooltip } = this.props
     return updateTooltip({
       calculatedData: data,
       mouseX: centroid[0],
-      mouseY: centroid[1]
+      mouseY: centroid[1],
+      showTooltip: true
     })
   }
-  mouseLeave = () => this.props.updateTooltip({ calculatedData: null, x: null, yCoords: null })
+  mouseLeave = () =>
+    this.props.updateTooltip({ calculatedData: null, showTooltip: false, x: null, yCoords: null })
   render() {
     const {
       data,
@@ -77,7 +76,9 @@ class PieChart extends Component {
       mouseY,
       mouseX,
       calculatedData,
-      tooltip: Tooltip,
+      showTooltip,
+      tooltipRenderer,
+      tooltipContent,
       outerRadius
     } = this.props
     const radius = Math.min(width, height) / 2
@@ -102,9 +103,18 @@ class PieChart extends Component {
             />
           </Group>
         </svg>
-        {mouseX && (
-          <Tooltip tooltipData={calculatedData} {...{ mouseX, color, mouseY, height, width }} />
-        )}
+        {showTooltip &&
+          tooltipRenderer({
+            ...{
+              tooltipData: calculatedData,
+              tooltipContent,
+              mouseX,
+              mouseY,
+              height,
+              color,
+              width
+            }
+          })}
       </Fragment>
     )
   }
@@ -124,7 +134,7 @@ PieChart.propTypes = {
   /**
    * Prop for determining the opacity of the pie pieces
    */
-  determineOpacity: PropTypes.function,
+  determineOpacity: PropTypes.func,
   /**
    * innerRadius offset
    */
@@ -134,9 +144,11 @@ PieChart.propTypes = {
    */
   outerRadius: PropTypes.number
 }
+
 PieChart.defaultProps = {
   determineOpacity: d => 0.5,
-  tooltip: TooltipComponent,
+  tooltipRenderer: defaultPieTooltip,
+  tooltipContent: defaultTooltipContent,
   innerRadius: 0,
   outerRadius: 0,
   margin: { top: 10, bottom: 10, left: 10, right: 10 }

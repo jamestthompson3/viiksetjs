@@ -4,6 +4,7 @@ import { Group } from '@vx/group'
 import { Bar } from '@vx/shape'
 import { bisect } from 'd3-array'
 import { flow, uniq, head, isEmpty, get } from 'lodash'
+import { createSelector } from 'reselect'
 
 import {
   getX,
@@ -24,23 +25,19 @@ import {
 import withTooltip from '../Tooltip/withTooltip'
 import withParentSize from '../Responsive/withParentSize'
 import {
-  TooltipComponent,
   Indicator,
   StyledGridRows,
+  defaultTooltipRenderer,
+  defaultTooltipContent,
   StyledLeftAxis,
-  StyledBottomAxis,
-  withBounds
+  StyledBottomAxis
 } from '../styledComponents'
 
 const margin = { top: 18, right: 15, bottom: 15, left: 30 }
 
 class ChartArea extends Component {
   state = {
-    chartData: false,
     bar: false
-  }
-  componentDidMount() {
-    this.calculateData()
   }
 
   componentDidUpdate(prevProps) {
@@ -55,12 +52,10 @@ class ChartArea extends Component {
   }
 
   // To prevent tooltips from not showing on bar chart due to minification changing names
-
   declareBar = () => this.setState({ bar: true })
 
-  calculateData = () => {
-    this.setState({ chartData: false })
-    const { data, children, size, xKey, yKey, type, margin } = this.props
+  calculateData = data => {
+    const { children, size, xKey, yKey, type, margin } = this.props
     if (isEmpty(data)) {
       // eslint-disable-next-line
       console.error('Data is empty, cannot calculate chart')
@@ -75,7 +70,7 @@ class ChartArea extends Component {
     const yScale = determineYScale({ type, yPoints, height, margin })
     const yScales = biaxialChildren && createScalarData(data, dataKeys, height, margin)
     const xScale = determineXScale({ type, width, xPoints, margin })
-    return this.setState({
+    return {
       width,
       height,
       xPoints,
@@ -86,10 +81,10 @@ class ChartArea extends Component {
       yScales,
       dataKeys,
       chartData: true
-    })
+    }
   }
-  mouseMove = (event, datum) => {
-    const { xPoints, xScale, yScale, yScales, dataKeys } = this.state
+
+  mouseMove = ({ event, xPoints, xScale, yScale, yScales, dataKeys, datum }) => {
     const { data, updateTooltip, xKey, type } = this.props
     const svgPoint = localPoint(this.chart, event)
     if (datum) {
@@ -97,7 +92,8 @@ class ChartArea extends Component {
         calculatedData: datum,
         x: get(svgPoint, 'x'),
         mouseX: get(svgPoint, 'x'),
-        mouseY: get(svgPoint, 'y')
+        mouseY: get(svgPoint, 'y'),
+        showTooltip: true
       })
     }
     const xValue = xScale.invert(get(svgPoint, 'x'))
@@ -118,6 +114,7 @@ class ChartArea extends Component {
         return updateTooltip({
           calculatedData,
           x,
+          showTooltip: true,
           mouseX: get(svgPoint, 'x'),
           mouseY: get(svgPoint, 'y'),
           yCoords
@@ -126,19 +123,11 @@ class ChartArea extends Component {
     )(xValue)
   }
 
-  mouseLeave = () => this.props.updateTooltip({ calculatedData: null, x: null, yCoords: null })
+  mouseLeave = () =>
+    this.props.updateTooltip({ calculatedData: null, x: null, yCoords: null, showTooltip: false })
+
   render() {
-    const {
-      width,
-      height,
-      xScale,
-      yScale,
-      biaxialChildren,
-      chartData,
-      bar,
-      yPoints,
-      xPoints
-    } = this.state
+    const { bar } = this.state
     const {
       size,
       children,
@@ -169,11 +158,24 @@ class ChartArea extends Component {
       tooltipContent,
       indicator: Indicator,
       mouseX,
+      showTooltip,
       mouseY,
       x
     } = this.props
 
-    const Tooltip = tooltipRenderer && withBounds(tooltipRenderer)
+    const memoizedData = createSelector(data => data, data => this.calculateData(data))
+    const {
+      width,
+      height,
+      xScale,
+      yScale,
+      yScales,
+      biaxialChildren,
+      chartData,
+      dataKeys,
+      yPoints,
+      xPoints
+    } = memoizedData(data)
 
     return (
       chartData && (
@@ -214,8 +216,12 @@ class ChartArea extends Component {
                   height={height}
                   fill="transparent"
                   onMouseMove={() => event => {
-                    notool || this.mouseMove(event)
+                    notool || this.mouseMove({ event, xPoints, xScale, yScale, yScales, dataKeys })
                   }}
+                  onTouchMove={() => event => {
+                    notool || this.mouseMove({ event, xPoints, xScale, yScale, yScales, dataKeys })
+                  }}
+                  onTouchEnd={() => this.mouseLeave}
                   onMouseLeave={() => this.mouseLeave}
                 />
               )}
@@ -253,25 +259,19 @@ class ChartArea extends Component {
             />
             {x && !bar && <Indicator {...{ yCoords, x, stroke, color, height, mouseX }} />}
           </svg>
-          {x ? (
-            Tooltip ? (
-              <Tooltip
-                {...{
-                  tooltipData: calculatedData,
-                  yCoords,
-                  x,
-                  mouseX,
-                  mouseY,
-                  height,
-                  color
-                }}
-              />
-            ) : (
-              <TooltipComponent color={color} tooltipData={calculatedData} x={x}>
-                {tooltipContent}
-              </TooltipComponent>
-            )
-          ) : null}
+          {showTooltip &&
+            tooltipRenderer({
+              ...{
+                tooltipData: calculatedData,
+                tooltipContent,
+                yCoords,
+                x,
+                mouseX,
+                mouseY,
+                height,
+                color
+              }
+            })}
         </Fragment>
       )
     )
@@ -301,7 +301,7 @@ ChartArea.propTypes = {
    */
   xKey: PropTypes.string,
   /**
-   * A React component to return as a tooltip receives as props the following:
+   * A function that returns React component to return as a tooltip receives as props the following:
    * @param {Object} tooltipData - calculated data returned from tooltip calculations
    * @param {Number} x - x coordinate of closest data point
    * @param {Number} mouseX - x coordinate of mouse position
@@ -310,13 +310,13 @@ ChartArea.propTypes = {
    * @param {String} color - string of color inherited from ChartArea
    * @returns {ReactElement} Tooltip - TooltipComponent
    */
-  tooltipRender: PropTypes.element,
+  tooltipRenderer: PropTypes.func,
   /**
-   * A React Component that renders inside the default tooltip container
+   * A function that returns a React Component that renders inside the default tooltip container
    * @param {Object} tooltipData - calculated data returned from tooltip calculations
    * @returns {ReactElement} TooltipContent
    */
-  tooltipContent: PropTypes.element,
+  tooltipContent: PropTypes.func,
   /**
    * A React component made with SVG to indicate the tooltip position
    */
@@ -391,6 +391,8 @@ ChartArea.defaultProps = {
   notool: false,
   noYAxis: false,
   indicator: Indicator,
+  tooltipRenderer: defaultTooltipRenderer,
+  tooltipContent: defaultTooltipContent,
   formatY: formatTicks,
   labelY: '',
   labelX: '',

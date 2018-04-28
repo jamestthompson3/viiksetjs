@@ -57,6 +57,13 @@ export const determineYScale = ({ type, yPoints, height, margin }) => {
   }
 }
 
+/**
+ * Finds the xCoordinates within the tooltipCalcuation
+ * @param {String} type - type of chart
+ * @param {Number} calculatedX - value calcualted on mouse coordinates
+ * @param {Functtion} xScale
+ * @returns {Number} x coordiante of the tooltip
+ */
 export const findTooltipX = ({ type, calculatedX, xScale }) => {
   switch (type) {
     case 'ordinal':

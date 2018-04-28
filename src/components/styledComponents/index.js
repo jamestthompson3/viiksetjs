@@ -1,4 +1,4 @@
-import React, { Fragment, Children, cloneElement } from 'react'
+import React, { Fragment } from 'react'
 import styled from 'styled-components'
 import { get } from 'lodash'
 import { withBoundingRects } from '@vx/bounds'
@@ -15,6 +15,11 @@ export const findColor = p => p.theme[p.color] || p.color || p.theme.primaryColo
 
 const findFill = p => p.theme[p.fill] || p.fill || p.theme.primaryColor
 
+/**
+ * Takes a function and returns the another function containing the correct props for axes
+ * @param {Function} func - function that returns the current axis props
+ * @param {Object} p - props object
+ */
 const propsColorSetter = (func, p) => {
   const exec = func()
   switch (true) {
@@ -170,10 +175,10 @@ const TooltipContainer = styled.div.attrs({
 const boundsSetter = ({ left, rect, parentRect }) => {
   if (left + rect.width > parentRect.width) {
     return left - rect.width // case for shifting to the right
-  } else if (rect.width + rect.left < parentRect.left) {
-    return left + rect.width / 3 // case for shifting to the left
+  } else if (rect.width / 3 == parentRect.left) {
+    return rect.width // FIXME case for shifting to the left
   } else {
-    return left - rect.width / 3 // default case
+    return left - rect.width / 2.5 // default case
   }
 }
 
@@ -217,24 +222,29 @@ export const withBounds = component => withBoundingRects(component)
  * @param {Number} x - svg x coordinate
  * @param {ReactElement} tooltipContent - prop passed from user
  */
-export const TooltipComponent = ({ tooltipData, color, x, children }) => {
-  return (
-    <BoundedTooltip left={x}>
-      <TooltipWrapper color={color}>
-        {children
-          ? Children.map(children, child =>
-              cloneElement(child, {
-                tooltipData,
-                color
-              })
-            )
-          : Object.entries(tooltipData).map((entry, i) => (
-              <p key={i}>{`${entry[0]}: ${entry[1]}`}</p>
-            ))}
-      </TooltipWrapper>
-    </BoundedTooltip>
-  )
-}
+export const defaultTooltipRenderer = ({
+  tooltipData,
+  tooltipContent,
+  yCoords,
+  mouseX,
+  mouseY,
+  height,
+  color,
+  x,
+  children
+}) => (
+  <BoundedTooltip left={x}>
+    <TooltipWrapper color={color}>{tooltipContent({ tooltipData })}</TooltipWrapper>
+  </BoundedTooltip>
+)
+
+/**
+ * Default tooltip content function
+ * @param {Object} tooltipData - tooltipData
+ * @returns {ReactElement} tooltipContent
+ */
+export const defaultTooltipContent = ({ tooltipData }) =>
+  Object.entries(tooltipData).map((entry, i) => <p key={i}>{`${entry[0]}: ${entry[1]}`}</p>)
 
 export const Indicator = ({ yCoords, x, stroke, color }) => {
   return (

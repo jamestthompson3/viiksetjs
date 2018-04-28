@@ -99,7 +99,7 @@ class StackedBar extends Component {
                     onMouseMove={data => event => {
                       const key = s.key
                       const datum = set({}, key, data[key])
-                      return notool || mouseMove(event, datum)
+                      return notool || mouseMove({ event, datum })
                     }}
                     onMouseLeave={() => event => mouseLeave()}
                     {...barProps}

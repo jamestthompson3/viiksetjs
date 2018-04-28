@@ -7,7 +7,7 @@ import { ChartArea, LineChart } from 'viiksetjs'
 
 const isMobile = window.innerWidth <= 500
 
-const TooltipContent = ({ tooltipData }) => (
+const tooltipContent = ({ tooltipData }) => (
   <Fragment>
     <p>
       number of messages: <span style={{ color: '#00adee' }}>{tooltipData.messages}</span>
@@ -27,14 +27,14 @@ const TimeSeries = () => {
           numXTicks={isMobile ? 2 : 4}
           color="#2189C8"
           stroke="grey"
-          tooltipContent={<TooltipContent />}
+          tooltipContent={tooltipContent}
         >
           <LineChart dataKey="messages" color="#2189C8" />
         </ChartArea>
       </GraphContainer>
       <Snippet>
         {`
-        const TooltipContent = ({ tooltipData }) => (
+        const tooltipContent = ({ tooltipData }) => (
             <Fragment>
                 <p>
                 number of messages: <span style={{ color: '#00adee' }}>{tooltipData.messages}</span>
@@ -50,7 +50,7 @@ const TimeSeries = () => {
             numXTicks={isMobile ? 2 : 4}
             color="#2189C8"
             stroke="grey"
-            tooltipContent={<TooltipContent />}
+            tooltipContent={tooltipContent}
         >
           <LineChart dataKey="messages" color="#2189C8" />
         </ChartArea>`}
