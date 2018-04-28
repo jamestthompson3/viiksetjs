@@ -47,7 +47,7 @@ class BarChart extends Component {
               y={height - barHeight(d)}
               data={d}
               fill={!nofill && `url(#gradient${xKey})`}
-              onMouseMove={() => event => notool || mouseMove(event, d)}
+              onMouseMove={() => event => notool || mouseMove({ event, datum: d })}
               onMouseLeave={() => event => mouseLeave()}
               {...barProps}
             />

@@ -24,7 +24,6 @@ export const Wrapper = styled.div`
   padding: 2rem;
   background: #fff;
   width: 95%;
-  height: 100%;
   display: flex;
   flex-wrap: wrap;
   @media (max-width: 500px) {

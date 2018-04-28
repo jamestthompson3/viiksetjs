@@ -11,6 +11,11 @@ export {
   withBounds,
   StyledLine,
   StyledBar,
+  StyledText,
+  StyledLeftAxis,
+  StyledRightAxis,
+  StyledBottomAxis,
+  StyledPie,
   StyledLinePath,
   StyledAreaClosed
 } from './components/styledComponents'

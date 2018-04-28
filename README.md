@@ -4,8 +4,8 @@
 
 A lightweight Javascript graphing library for React based on styled-components and vx
 
-[ChartArea](https://github.com/jamestthompson3/viiksetjs#chartarea) | [StreamableChart](https://github.com/jamestthompson3/viiksetjs#streamablechart) | [LineChart](https://github.com/jamestthompson3/viiksetjs#linechart) |
-| [BarChart](https://github.com/jamestthompson3/viiksetjs#barchart) | [StackedBar](https://github.com/jamestthompson3/viiksetjs#stackedbar) | [ScatterPlot](https://github.com/jamestthompson3/viiksetjs#scatterplot) |
+[ChartArea](https://github.com/jamestthompson3/viiksetjs#chartarea) | [StreamableChart](https://github.com/jamestthompson3/viiksetjs#streamablechart) | [LineChart](https://github.com/jamestthompson3/viiksetjs#linechart)
+| [BarChart](https://github.com/jamestthompson3/viiksetjs#barchart) | [StackedBar](https://github.com/jamestthompson3/viiksetjs#stackedbar) | [ScatterPlot](https://github.com/jamestthompson3/viiksetjs#scatterplot)
 | [PieChart](https://github.com/jamestthompson3/viiksetjs#piechart) | [StyledPoint](https://github.com/jamestthompson3/viiksetjs#styledpoint) | [StyledLine](https://github.com/jamestthompson3/viiksetjs#styledline) | [Tooltips](https://github.com/jamestthompson3/viiksetjs#tooltips)
 
 ## About
@@ -67,8 +67,8 @@ The `ChartArea` component will construct a grid and axes on which it will render
 | stroke          | #000                                                                                                                    | String                                       | color applied to the gridlines and to the default indicator line if `gridStroke` is not passed, this prop only applies to the indicator                                                                                                                                                                                                                                                                                                                  |
 | gridStroke      | #000                                                                                                                    | String                                       | color applied to the gridlines                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | xKey            | ''                                                                                                                      | String                                       | Optional key delimiting the xValues                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| tooltipRenderer | \*see tooltip section below for examples                                                                                | Function                                     | React component that gets passed the following props: `tooltipData, color, x, mouseX, yCoords`. `tooltipData` contains the calculated data object for current mouse position. `color` is the color passed from `ChartArea`. `x` is the x coordinate of the closest estimated data point to the current mouse position. `mouseX` is the current position of the mouse. `yCoords` is the calculated yCoordinates for the data point at mouse position `x`. |
-| tooltipContent  | \*see tooltip section below for examples                                                                                | Function                                     | React component that gets passed the following props: `tooltipData, color, x, mouseX, yCoords`. `tooltipData` contains the calculated data object for current mouse position. `color` is the color passed from `ChartArea`. `x` is the x coordinate of the closest estimated data point to the current mouse position. `mouseX` is the current position of the mouse. `yCoords` is the calculated yCoordinates for the data point at mouse position `x`. |
+| tooltipRenderer | \*see tooltip section below for examples                                                                                | Function                                     |  A function that returns a React Component that gets passed the following props: `tooltipData, color, x, mouseX, yCoords`. `tooltipData` contains the calculated data object for current mouse position. `color` is the color passed from `ChartArea`. `x` is the x coordinate of the closest estimated data point to the current mouse position. `mouseX` is the current position of the mouse. `yCoords` is the calculated yCoordinates for the data point at mouse position `x`. |
+| tooltipContent  | \*see tooltip section below for examples                                                                                | Function                                     |  A function that return a React Component which renders the content of the tooltip. Gets passed the following props: `tooltipData`, `color` where color is inherited from the `ChartArea` component|
 | indicator       | \*see tooltip section below for examples                                                                                | Function                                     | React component that gets passed the following props: `yCoords, x, stroke, color, height`. `yCoords` are the calculated yCoordinates for all datapoints in the chart at the given mouse position. is the x coordinate of the closest estimated data point to the current mouse position.`mouseX` is the current position of the mouse. `height` is the height of the `ChartArea`. `stroke` and `color` are inherited from `ChartArea`.                   |
 | nogrid          | false                                                                                                                   | Boolean                                      | If `true`, then no gridlines will be shown on `ChartArea`                                                                                                                                                                                                                                                                                                                                                                                                |
 | notool          | false                                                                                                                   | Boolean                                      | If `true` then no tooltip will be shown                                                                                                                                                                                                                                                                                                                                                                                                                  |
@@ -317,6 +317,8 @@ data prop and exposes the following props to `Tooltip` components:
 | labelKey |    ''   | String  | A key for denoting data labels     |
 | innerRadius |  0  | Number | The radius of the inner part of the `PieChart`     |
 | outerRadius |  0  | Number | The radius of the outer part of the `PieChart`     |
+| tooltipRenderer |    | Function |  Function that returns the tooltip rendered in the `PieChart` receives the following props: `tooltipData`, `tooltipContent`, `mouseX`, `mouseY`, `height`, `width`,`color`     |
+| tooltipContent |    | Function |  Function that returns the tooltip content rendered in the `PieChart`    |
 | determineOpacity |  d => 0.5  | Function | A function that determines the opacity of the pie slices |
 
 ```js
@@ -367,23 +369,24 @@ Styled componenets implementation of [vx area closed](https://github.com/hshoff/
 ## Tooltips
 
 Included in Viikset are some tooltip utilties.
-By default, Viikset does provide a tooltip component. You need only to pass a
-React component to `tooltipContent` and it will be rendered within the default
+By default, Viikset does provide a tooltip component. You need only to return a
+React component from the `tooltipContent` props and it will be rendered within the default
 component. However, if you wish to make your own tooltip component, see the
 example below on how to use the tooltip API.
 
-When creating a custom tooltip, you must pass the component to the
+When creating a custom tooltip, you must return a component from the
 `tooltipRenderer` prop in the `ChartArea` component. The `tooltipRenderer`
 recieves the following props:
-| Name       | Type     | Description                                                                                       |
-:============:==========:===================================================================================================
-| tooltipData | Object | An object containing all of the information in the closest datapoint to the current mouse position |
-| yCoords     | Array  | Array of the svg y coordinates of the data being mapped |
-| color       | String | The color prop passed to `ChartArea`                    |
-| x           | Number | The svg x coordinate of the closest data point to the mouse pointer location |
-| mouseX      | Number | The svg x coordinate of the current mouse pointer location |
-| mouseY      | Number | The svg y coordinate of the current mouse pointer location |
-| height      | Number | The height of the svg chart area |
+| Name           | Type     | Description                                                                                       |
+:------------ ---:----------:---------------------------------------------------------------------------------------------------:
+| tooltipData    | Object   | An object containing all of the information in the closest datapoint to the current mouse position |
+| tooltipContent | Function | A function which returns a component containing the content of the tooltip |
+| yCoords        | Array    | Array of the svg y coordinates of the data being mapped |
+| color          | String   | The color prop passed to `ChartArea`                    |
+| x              | Number   | The svg x coordinate of the closest data point to the mouse pointer location |
+| mouseX         | Number   | The svg x coordinate of the current mouse pointer location |
+| mouseY         | Number   | The svg y coordinate of the current mouse pointer location |
+| height         | Number   | The height of the svg chart area |
 
 #### Example
 
@@ -391,7 +394,6 @@ The default tooltip uses this function to move the move the toolitp to the side 
 It recieves the
 First, construct component to be rendered as a tooltip
 ```js
-
 const TooltipContainer = styled.div.attrs({
   style: ({ bounds }) => ({
     left: `${bounds.left}px`,
