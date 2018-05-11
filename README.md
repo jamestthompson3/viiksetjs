@@ -356,6 +356,19 @@ A simple line component.
 | strokeDasharray | - | String |  Pattern of stroke. |
 | width | - | Number |  Width of the line. |
 
+## Threshold
+A threshold graph that displays the differences between two sets of datapoint
+
+### Props
+| Prop    | Default | Type    | Desc                                                                   |
+| :------ | :-----: | :------ | :--------------------------------------------------------------------- |
+| y0 |   -    | String  | Specifies the first threshold data category |
+| y1 |   -    | String  | Specifies the second threshold data category |
+| aboveAreaProps   |  { fill: 'green', fillOpacity: 0.5 }   | Object  | Props object for the Area above the threshold cutoff |
+| belowAreaProps   |  { fill: 'red, fillOpacity: 0.5 }   | Object  | Props object for the Area below the threshold cutoff |
+| clipAboveTo | 0 | Number | Above clip limit |
+| clipBelowTo | height | Number | Below clip limit |
+
 ## StyledBar
 Styled components implementation of [vx bar](https://github.com/hshoff/vx/blob/master/packages/vx-shape/Readme.md#bar-)
 
@@ -377,7 +390,7 @@ When creating a custom tooltip, you must return a component from the
 `tooltipRenderer` prop in the `ChartArea` component. The `tooltipRenderer`
 recieves the following props:
 | Name           | Type     | Description                                                                                       |
-:------------ ---:----------:---------------------------------------------------------------------------------------------------:
+|:--------------|:----------|:-------------------------------------------------------------------------------------------------:|
 | tooltipData    | Object   | An object containing all of the information in the closest datapoint to the current mouse position |
 | tooltipContent | Function | A function which returns a component containing the content of the tooltip |
 | yCoords        | Array    | Array of the svg y coordinates of the data being mapped |

@@ -94,9 +94,19 @@
   dependencies:
     prop-types "^15.5.10"
 
+"@vx/clip-path@0.0.161":
+  version "0.0.161"
+  resolved "https://registry.yarnpkg.com/@vx/clip-path/-/clip-path-0.0.161.tgz#b6ed813925c6000e267ea0b6297a89ca311bf9c7"
+
 "@vx/curve@0.0.153", "@vx/curve@^0.0.153":
   version "0.0.153"
   resolved "https://registry.yarnpkg.com/@vx/curve/-/curve-0.0.153.tgz#6829c3454f9ec16b7e6925aecbad5a1e3c8b3169"
+  dependencies:
+    d3-shape "^1.0.6"
+
+"@vx/curve@0.0.161":
+  version "0.0.161"
+  resolved "https://registry.yarnpkg.com/@vx/curve/-/curve-0.0.161.tgz#b02c4311cad712adaa16500abc05e48d82e3fee3"
   dependencies:
     d3-shape "^1.0.6"
 
@@ -122,6 +132,12 @@
   dependencies:
     classnames "^2.2.5"
 
+"@vx/group@0.0.161":
+  version "0.0.161"
+  resolved "https://registry.yarnpkg.com/@vx/group/-/group-0.0.161.tgz#497a19c2a458dd5ff6fd59e3cd79933dbf184156"
+  dependencies:
+    classnames "^2.2.5"
+
 "@vx/pattern@^0.0.153":
   version "0.0.153"
   resolved "https://registry.yarnpkg.com/@vx/pattern/-/pattern-0.0.153.tgz#d458625006b3b5382463d9ccaab7784a12f0f188"
@@ -133,6 +149,10 @@
   version "0.0.153"
   resolved "https://registry.yarnpkg.com/@vx/point/-/point-0.0.153.tgz#c0623f72804026a5afe7e1602bb27cd7b0847afc"
 
+"@vx/point@0.0.161":
+  version "0.0.161"
+  resolved "https://registry.yarnpkg.com/@vx/point/-/point-0.0.161.tgz#fb8f37a4be0f95581daf3f963adf2f99b64a4a2d"
+
 "@vx/shape@0.0.158", "@vx/shape@^0.0.158":
   version "0.0.158"
   resolved "https://registry.yarnpkg.com/@vx/shape/-/shape-0.0.158.tgz#700582c7574b523d6ba1d9b9bd784d7bbb2e37fb"
@@ -143,6 +163,27 @@
     classnames "^2.2.5"
     d3-path "^1.0.5"
     d3-shape "^1.2.0"
+    prop-types "^15.5.10"
+
+"@vx/shape@0.0.162":
+  version "0.0.162"
+  resolved "https://registry.yarnpkg.com/@vx/shape/-/shape-0.0.162.tgz#adf7728eb3dba559005bb7f29c3d1ffa9a4d56a2"
+  dependencies:
+    "@vx/curve" "0.0.161"
+    "@vx/group" "0.0.161"
+    "@vx/point" "0.0.161"
+    classnames "^2.2.5"
+    d3-path "^1.0.5"
+    d3-shape "^1.2.0"
+    prop-types "^15.5.10"
+
+"@vx/threshold@^0.0.162":
+  version "0.0.162"
+  resolved "https://registry.yarnpkg.com/@vx/threshold/-/threshold-0.0.162.tgz#f2dcd19c19a65591764f3bfc701ddf4b2fc37774"
+  dependencies:
+    "@vx/clip-path" "0.0.161"
+    "@vx/shape" "0.0.162"
+    classnames "^2.2.5"
     prop-types "^15.5.10"
 
 abab@^1.0.4:

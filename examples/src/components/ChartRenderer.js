@@ -8,6 +8,7 @@ import {
   StreamingChart,
   TimeSeries,
   WithVX,
+  ThresholdExample,
   PieExample
 } from './charts'
 const ChartRenderer = ({ active }) => {
@@ -30,6 +31,8 @@ const ChartRenderer = ({ active }) => {
       return <WithVX />
     case 'pie':
       return <PieExample />
+    case 'threshold':
+      return <ThresholdExample />
     default:
       return null
   }

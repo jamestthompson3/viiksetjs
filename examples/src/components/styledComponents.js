@@ -45,7 +45,7 @@ export const Selector = styled.h4`
   box-shadow: ${p => p.active && '0px 0px 0px 1px #49484f'};
 `
 export const FilterBox = styled.div`
-  margin-top: 1rem;
+  margin-top: 2rem;
   margin-bottom: 1rem;
   flex: 1 0 120px;
   height: 300px;
