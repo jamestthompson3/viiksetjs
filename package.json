@@ -1,6 +1,6 @@
 {
   "name": "viiksetjs",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Javascript graphing utility based on SVG",
   "homepage": "https://jamestthompson3.github.io/viiksetjs",
   "main": "lib/index.js",
@@ -55,6 +55,7 @@
     "@vx/pattern": "^0.0.153",
     "@vx/point": "^0.0.153",
     "@vx/shape": "^0.0.158",
+    "@vx/threshold": "^0.0.162",
     "d3-array": "^1.2.1",
     "d3-scale": "^2.0.0",
     "d3-shape": "^1.2.0",

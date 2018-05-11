@@ -7,6 +7,7 @@ import { LinearGradient } from '@vx/gradient'
 import { GridRows } from '@vx/grid'
 import { AreaClosed, LinePath, Bar, Line, Pie } from '@vx/shape'
 import { AxisBottom, AxisLeft, AxisRight } from '@vx/axis'
+import { Threshold } from '@vx/threshold'
 import { rgba } from 'polished'
 
 const findStroke = p => p.theme[p.stroke] || p.stroke || p.theme.primaryColor
@@ -39,6 +40,8 @@ const colorSetter = (formatProps, p) => {
       return { ...formatProps, stroke: findColor(p), fill: findColor(p) }
     case get(formatProps, 'stroke') != null:
       return { ...formatProps, stroke: findStroke(p), fill: findStroke(p) }
+    case get(formatProps, 'fill') != null:
+      return { ...formatProps, stroke: findFill(p), fill: findFill(p) }
     default:
       return { ...formatProps, stroke: findColor(p), fill: findColor(p) }
   }
@@ -142,6 +145,11 @@ export const StyledPie = styled(Pie).attrs({
   data: p => p.data
 })``
 
+export const StyledThreshold = styled(Threshold).attrs({
+  belowAreaProps: p => colorSetter(p.belowAreaProps, p),
+  aboveAreaProps: p => colorSetter(p.aboveAreaProps, p)
+})``
+
 export const TooltipWrapper = styled.div`
   display: block;
   color: #fff;
@@ -222,17 +230,7 @@ export const withBounds = component => withBoundingRects(component)
  * @param {Number} x - svg x coordinate
  * @param {ReactElement} tooltipContent - prop passed from user
  */
-export const defaultTooltipRenderer = ({
-  tooltipData,
-  tooltipContent,
-  yCoords,
-  mouseX,
-  mouseY,
-  height,
-  color,
-  x,
-  children
-}) => (
+export const defaultTooltipRenderer = ({ tooltipData, tooltipContent, color, x }) => (
   <BoundedTooltip left={x}>
     <TooltipWrapper color={color}>{tooltipContent({ tooltipData })}</TooltipWrapper>
   </BoundedTooltip>
