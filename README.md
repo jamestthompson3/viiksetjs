@@ -389,8 +389,9 @@ example below on how to use the tooltip API.
 When creating a custom tooltip, you must return a component from the
 `tooltipRenderer` prop in the `ChartArea` component. The `tooltipRenderer`
 recieves the following props:
-| Name           | Type     | Description                                                                            |
-|:---------------|:----------|:-------------------------------------------------------------------------------------:|
+
+| Prop    |  Type    | Desc                                                                   |
+| :------ |  :------ | :--------------------------------------------------------------------- |
 | tooltipData    | Object   | An object containing all of the information in the closest datapoint to the current mouse position |
 | tooltipContent | Function | A function which returns a component containing the content of the tooltip |
 | yCoords        | Array    | Array of the svg y coordinates of the data being mapped |
@@ -399,6 +400,7 @@ recieves the following props:
 | mouseX         | Number   | The svg x coordinate of the current mouse pointer location |
 | mouseY         | Number   | The svg y coordinate of the current mouse pointer location |
 | height         | Number   | The height of the svg chart area |
+
 
 #### Example
 
