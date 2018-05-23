@@ -295,7 +295,6 @@ The `ScatterPlot` component inherits the data from the `ChartArea` which wraps i
           type="linear"
           labelY="Heat (K)"
           labelX="Observation No."
-          tooltip={LinearTooltip}
           indicator={Indicator}
         >
           <ScatterPlot dataKey="y" color="#42f4c2" />
