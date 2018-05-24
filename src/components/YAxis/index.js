@@ -2,6 +2,7 @@ import React from 'react'
 import { scaleLinear } from 'd3-scale'
 import { StyledLeftAxis, StyledRightAxis } from '../styledComponents'
 
+// TODO Memoize props, make it standalone
 const YAxis = ({
   height,
   data,
@@ -19,7 +20,8 @@ const YAxis = ({
 }) => {
   // Check if data exists
   if (data.map(item => item[axisId]).includes(undefined)) {
-    new ReferenceError(`YAxis: No data found with axisId ${axisId}`)
+    // eslint-disable-next-line
+    console.error(`YAxis: No data found with axisId ${axisId}`)
     return null
   }
   const dataPoints = data.map(item => item[axisId])
@@ -33,7 +35,7 @@ const YAxis = ({
       numTicks={numYTicks}
       hideTicks
       tickFormat={formatY}
-      tickLabels={
+      tickLabelProps={
         tickLabels
           ? tickLabels
           : () => ({
@@ -54,7 +56,7 @@ const YAxis = ({
       numTicks={numYTicks}
       hideTicks
       tickFormat={formatY}
-      tickLabels={
+      tickLabelProps={
         tickLabels
           ? tickLabels
           : () => ({
@@ -72,7 +74,8 @@ const YAxis = ({
 }
 
 YAxis.defaultProps = {
-  labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' }
+  labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' },
+  data: []
 }
 
 export default YAxis
