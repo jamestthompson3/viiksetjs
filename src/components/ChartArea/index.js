@@ -173,7 +173,7 @@ class ChartArea extends Component {
             width={size.width}
             height={height + margin.top + margin.bottom}
             preserveAspectRatio="none"
-            viewBox={viewBox || `-10 0 ${size.width} ${height}`}
+            viewBox={viewBox || `-10 0 ${size.width} ${size.height}`}
             ref={svg => (this.chart = svg)}
           >
             {Children.map(children, child =>
@@ -230,7 +230,7 @@ class ChartArea extends Component {
                       height,
                       margin
                     })}
-                    {...{ color, numTicks: numYTicks, tickLabels: yTickLabelProps }}
+                    {...{ color, numTicks: numYTicks, tickLabelProps: yTickLabelProps }}
                     hideTicks
                     tickFormat={formatY}
                     label={labelY || ''}

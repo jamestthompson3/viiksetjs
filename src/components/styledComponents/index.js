@@ -94,7 +94,7 @@ export const StyledLeftAxis = styled(AxisLeft).attrs({
   strokeWidth: 2,
   numTicks: p => p.numTicks,
   stroke: p => findColor(p),
-  tickLabelProps: p => propsColorSetter(p.tickLabels, p),
+  tickLabelProps: p => propsColorSetter(p.tickLabelProps, p),
   labelProps: p => colorSetter(p.labelProps, p)
 })``
 
@@ -102,7 +102,7 @@ export const StyledRightAxis = styled(AxisRight).attrs({
   strokeWidth: 2,
   numTicks: p => p.numTicks,
   stroke: p => findColor(p),
-  tickLabelProps: p => propsColorSetter(p.tickLabels, p),
+  tickLabelProps: p => propsColorSetter(p.tickLabelProps, p),
   labelProps: p => colorSetter(p.labelProps, p)
 })``
 

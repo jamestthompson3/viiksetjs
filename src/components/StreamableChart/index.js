@@ -137,7 +137,7 @@ class StreamableChart extends Component {
                   height,
                   margin
                 })}
-                {...{ color, numTicks: numYTicks, tickLabels: yTickLabelProps }}
+                {...{ color, numTicks: numYTicks, tickLabelProps: yTickLabelProps }}
                 hideTicks
                 tickFormat={formatY}
                 label={labelY || ''}
