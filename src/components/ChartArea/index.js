@@ -120,7 +120,7 @@ class ChartArea extends Component {
     const {
       size,
       children,
-      viewBox,
+      determineViewBox,
       data,
       noYAxis,
       xKey,
@@ -173,7 +173,7 @@ class ChartArea extends Component {
             width={size.width}
             height={height + margin.top + margin.bottom}
             preserveAspectRatio="none"
-            viewBox={viewBox || `-10 0 ${size.width} ${size.height}`}
+            viewBox={determineViewBox(size, margin) || `-10 0 ${size.width} ${size.height}`}
             ref={svg => (this.chart = svg)}
           >
             {Children.map(children, child =>
@@ -240,7 +240,7 @@ class ChartArea extends Component {
             </Group>
             <StyledBottomAxis
               scale={xScale}
-              {...{ color, height, margin, numTicks: numXTicks, tickLabels: xTickLabelProps }}
+              {...{ color, height, margin, numTicks: numXTicks, tickLabelProps: xTickLabelProps }}
               hideTicks
               tickFormat={formatX}
               label={labelX || ''}
@@ -355,9 +355,9 @@ ChartArea.propTypes = {
    */
   formatX: PropTypes.func,
   /**
-   * An optional string for the chart viewbox
+   * An optional function for the chart viewbox, passed size and margin props
    */
-  viewBox: PropTypes.string,
+  determineViewBox: PropTypes.func,
   /**
    * If true, no gridlines will be shown.
    */
@@ -391,13 +391,13 @@ ChartArea.defaultProps = {
     dy: '-0.25rem',
     dx: '-0.75rem',
     strokeWidth: '0.5px',
-    fontWeight: '400',
+    fontWeight: 400,
     textAnchor: 'end',
     fontSize: 12
   }),
   xTickLabelProps: () => ({
     dy: '-0.25rem',
-    fontWeight: '400',
+    fontWeight: 400,
     strokeWidth: '0.5px',
     textAnchor: 'end',
     fontSize: 12
