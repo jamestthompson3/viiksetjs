@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import styled from 'styled-components'
+import styled, { withTheme } from 'styled-components'
 import { get } from 'lodash'
 import { withBoundingRects } from '@vx/bounds'
 import { PatternLines } from '@vx/pattern'
@@ -23,17 +23,17 @@ const findFill = p => p.theme[p.fill] || p.fill || p.theme.primaryColor
  */
 const propsColorSetter = (func, p) => {
   const exec = func()
-  switch (true) {
-    case get(p, 'color') != null:
-      return () => ({ ...exec, stroke: findColor(p), fill: findColor(p) })
-    case get(p, 'stroke') != null:
-      return () => ({ ...exec, stroke: findStroke(p), fill: findStroke(p) })
-    default:
-      return () => ({ ...exec, stroke: findColor(p), fill: findColor(p) })
-  }
+  const combinedProps = { ...exec, ...p }
+  const fill = findFill(combinedProps)
+  const labelProps = () => ({ ...exec, fill })
+  return labelProps
 }
 
-// FIXME SHOULD BE FOLDED INTO propsColorSetter
+/**
+ * Takes props from VX components and uses styled-component's theme to return the proper color
+ * @param {Object} formatProps - props inherited from visualization component
+ * @param {Object} p - props object
+ */
 const colorSetter = (formatProps, p) => {
   switch (true) {
     case get(formatProps, 'color') != null:
@@ -47,108 +47,137 @@ const colorSetter = (formatProps, p) => {
   }
 }
 
-export const StyledText = styled.text.attrs({
-  x: p => p.x,
-  y: p => p.y,
-  fill: p => findFill(p),
-  textAnchor: p => p.textAnchor,
-  dy: p => p.dy,
-  dx: p => p.dx,
-  fontSize: p => p.fontSize
-})`
-  pointer-events: none;
-`
+export const StyledText = withTheme(props => (
+  <text {...{ ...props, fill: findFill(props) }} style={{ pointerEvents: 'none' }} />
+))
 
-export const StyledPoint = styled.circle.attrs({
-  cx: p => p.x,
-  cy: p => p.y,
-  stroke: p => findColor(p),
-  strokeWidth: 1,
-  fillOpacity: p => p.opacity,
-  fill: p => findColor(p),
-  r: p => p.radius
-})``
+export const StyledPoint = withTheme(props => (
+  <circle
+    {...{
+      ...props,
+      r: props.radius,
+      stroke: findStroke(props),
+      fillOpacity: props.opacity,
+      fill: findColor(props)
+    }}
+  />
+))
 
-export const StyledLine = styled(Line).attrs({
-  from: p => p.from,
-  to: p => p.to,
-  stroke: p => findColor(p),
-  strokeWidth: p => p.width,
-  strokeDasharray: p => p.strokeDasharray
-})``
-
-export const StyledBar = styled(Bar).attrs({
-  rx: 5,
-  ry: 0,
-  stroke: p => findColor(p),
+StyledPoint.defaultProps = {
   strokeWidth: 1
-})``
+}
 
-export const StyledGridRows = styled(GridRows).attrs({
-  pointerEvents: 'none',
-  width: p => p.width,
-  stroke: p => findStroke(p)
-})``
+export const StyledLine = withTheme(props => (
+  <Line {...{ ...props, strokeWidth: props.width, stroke: findStroke(props) }} />
+))
 
-export const StyledLeftAxis = styled(AxisLeft).attrs({
-  strokeWidth: 2,
-  numTicks: p => p.numTicks,
-  stroke: p => findColor(p),
-  tickLabelProps: p => propsColorSetter(p.tickLabelProps, p),
-  labelProps: p => colorSetter(p.labelProps, p)
-})``
+export const StyledBar = withTheme(props => <Bar {...{ ...props, stroke: findColor(props) }} />)
 
-export const StyledRightAxis = styled(AxisRight).attrs({
-  strokeWidth: 2,
-  numTicks: p => p.numTicks,
-  stroke: p => findColor(p),
-  tickLabelProps: p => propsColorSetter(p.tickLabelProps, p),
-  labelProps: p => colorSetter(p.labelProps, p)
-})``
+StyledBar.defaultProps = {
+  rx: 5,
+  ry: 0
+}
 
-export const StyledBottomAxis = styled(AxisBottom).attrs({
-  top: p => p.height,
-  numTicks: p => p.numTicks,
-  stroke: p => findColor(p),
-  tickLabelProps: p => propsColorSetter(p.tickLabelProps, p),
-  labelProps: p => colorSetter(p.labelProps, p)
-})``
+export const StyledGridRows = withTheme(props => (
+  <GridRows {...{ ...props, stroke: findStroke(props) }} style={{ pointerEvents: 'none' }} />
+))
 
-export const StyledPatternLines = styled(PatternLines).attrs({
-  stroke: p => rgba(findColor(p), 0.15),
+export const StyledLeftAxis = withTheme(props => (
+  <AxisLeft
+    {...{
+      ...props,
+      stroke: findColor(props),
+      tickLabelProps: propsColorSetter(props.tickLabelProps, props),
+      labelProps: colorSetter(props.labelProps, props)
+    }}
+  />
+))
+
+StyledLeftAxis.defaultProps = {
+  strokeWidth: 2
+}
+
+export const StyledRightAxis = withTheme(props => (
+  <AxisRight
+    {...{
+      ...props,
+      stroke: findColor(props),
+      tickLabelProps: propsColorSetter(props.tickLabelProps, props),
+      labelProps: colorSetter(props.labelProps, props)
+    }}
+  />
+))
+
+StyledRightAxis.defaultProps = {
+  strokeWidth: 2
+}
+
+export const StyledBottomAxis = withTheme(props => (
+  <AxisBottom
+    {...{
+      ...props,
+      stroke: findColor(props),
+      tickLabelProps: propsColorSetter(props.tickLabelProps, props),
+      top: props.height,
+      labelProps: colorSetter(props.labelProps, props)
+    }}
+  />
+))
+
+export const StyledPatternLines = withTheme(props => (
+  <PatternLines {...{ ...props, stroke: rgba(findColor(props), props.opacity) }} />
+))
+
+StyledPatternLines.defaultProps = {
+  opacity: 0.15,
   strokeWidth: 1,
   width: 6,
   height: 6,
   orientation: ['diagonal']
-})``
+}
 
-export const StyledGradient = styled(LinearGradient).attrs({
-  from: p => rgba(findColor(p), 0.35),
-  to: p => rgba(findColor(p), 0.05)
-})``
+export const StyledGradient = withTheme(props => (
+  <LinearGradient
+    {...{
+      ...props,
+      from: rgba(findColor(props), props.startOpacity),
+      to: rgba(findColor(props), props.endOpacity)
+    }}
+  />
+))
 
-export const StyledLinePath = styled(LinePath).attrs({
-  data: p => p.data,
-  stroke: p => findColor(p),
+StyledGradient.defaultProps = {
+  startOpacity: 0.35,
+  endOpacity: 0.05
+}
+
+export const StyledLinePath = withTheme(props => (
+  <LinePath {...{ ...props, stroke: findColor(props) }} />
+))
+
+StyledLinePath.defaultProps = {
   strokeWidth: '1.5px'
-})``
+}
 
-export const StyledAreaClosed = styled(AreaClosed).attrs({
-  data: p => p.data,
-  stroke: p => findColor(p),
+export const StyledAreaClosed = withTheme(props => (
+  <AreaClosed {...{ ...props, stroke: findColor(props) }} />
+))
+
+StyledAreaClosed.defaultProps = {
   strokeWidth: 1
-})``
+}
 
-export const StyledPie = styled(Pie).attrs({
-  fill: p => findColor(p),
-  fillOpacity: p => p.fillOpacity,
-  data: p => p.data
-})``
+export const StyledPie = withTheme(props => <Pie {...{ ...props, fill: findColor(props) }} />)
 
-export const StyledThreshold = styled(Threshold).attrs({
-  belowAreaProps: p => colorSetter(p.belowAreaProps, p),
-  aboveAreaProps: p => colorSetter(p.aboveAreaProps, p)
-})``
+export const StyledThreshold = withTheme(props => (
+  <Threshold
+    {...{
+      ...props,
+      belowAreaProps: colorSetter(props.belowAreaProps, props),
+      aboveAreaProps: colorSetter(props.aboveAreaProps, props)
+    }}
+  />
+))
 
 export const TooltipWrapper = styled.div`
   display: block;

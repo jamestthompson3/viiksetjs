@@ -77,7 +77,7 @@ class StreamableChart extends Component {
     const {
       size,
       children,
-      viewBox,
+      determineViewBox,
       data,
       xScale,
       yScale,
@@ -107,7 +107,9 @@ class StreamableChart extends Component {
         width={size.width}
         height={size.height}
         preserveAspectRatio="none"
-        viewBox={viewBox ? viewBox : `-10 0 ${size.width} ${height}`}
+        viewBox={
+          determineViewBox ? determineViewBox({ size, margin }) : `-10 0 ${size.width} ${height}`
+        }
         ref={svg => (this.chart = svg)}
       >
         {Children.map(children, child =>
@@ -127,7 +129,14 @@ class StreamableChart extends Component {
           })
         )}
         <Group left={margin.left}>
-          {!nogrid && <StyledGridRows scale={yScale} {...{ stroke }} width={width - margin.left} />}
+          {!nogrid && (
+            <StyledGridRows
+              scale={yScale}
+              {...{ stroke }}
+              width={width - margin.left}
+              numTicks={3}
+            />
+          )}
           {biaxialChildren ||
             noYAxis || (
               <StyledLeftAxis
@@ -147,7 +156,7 @@ class StreamableChart extends Component {
         </Group>
         <StyledBottomAxis
           scale={xScale}
-          {...{ color, height, margin, numTicks: numXTicks, tickLabels: xTickLabelProps }}
+          {...{ color, height, margin, numTicks: numXTicks, tickLabelProps: xTickLabelProps }}
           hideTicks
           tickFormat={formatX}
           label={labelX || ''}
@@ -224,9 +233,9 @@ StreamableChart.propTypes = {
    */
   formatX: PropTypes.func,
   /**
-   * An optional string for the chart viewbox
+   * An optional function for determining the chart viewbox passed size and margin props
    */
-  viewBox: PropTypes.string,
+  determineViewBox: PropTypes.func,
   /**
    * If true, no gridlines will be shown.
    */
