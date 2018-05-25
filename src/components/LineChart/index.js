@@ -50,15 +50,14 @@ class LineChart extends Component {
       .domain([0, Math.max(...dataPoints)])
       .range([height, margin.top + margin.top])
     const getAxis = () => (axisId == null ? inheritedScale : yScale)
-    const findFill = gradient =>
-      nofill || gradient ? `url(#gradient${dataKey})` : `url(#dlines${dataKey})`
+    const findFill = gradient => (gradient ? `url(#gradient${dataKey})` : `url(#dlines${dataKey})`)
 
     return (
       <Fragment>
         {!nofill && (
           <Fragment>
-            <StyledGradient {...{ color }} id={`gradient${dataKey}`} />
-            <StyledPatternLines {...{ color }} id={`dlines${dataKey}`} />
+            <StyledGradient color={color} id={`gradient${dataKey}`} />
+            <StyledPatternLines color={color} id={`dlines${dataKey}`} />
           </Fragment>
         )}
         <StyledLinePath
@@ -82,7 +81,7 @@ class LineChart extends Component {
             {...areaProps}
           />
         )}
-        {!nopattern ||
+        {nopattern ||
           (!nofill && (
             <StyledAreaClosed
               {...{ data, color }}

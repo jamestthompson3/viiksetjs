@@ -403,7 +403,7 @@ ChartArea.defaultProps = {
     dy: '-0.25rem',
     fontWeight: 400,
     strokeWidth: '0.5px',
-    textAnchor: 'end',
+    textAnchor: 'start',
     fontSize: 12
   }),
   labelYProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' },
