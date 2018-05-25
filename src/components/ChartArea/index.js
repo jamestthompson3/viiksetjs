@@ -4,7 +4,6 @@ import { Group } from '@vx/group'
 import { Bar } from '@vx/shape'
 import { bisect } from 'd3-array'
 import { flow, uniq, head, isEmpty, get } from 'lodash'
-import { createSelector } from 'reselect'
 
 import {
   getX,
@@ -37,14 +36,30 @@ const margin = { top: 18, right: 15, bottom: 15, left: 30 }
 
 class ChartArea extends Component {
   state = {
-    bar: false
+    bar: false,
+    chartData: false
+  }
+
+  componentDidMount() {
+    this.calculateData()
+  }
+
+  componentDidUpdate(prevProps) {
+    const dataWasChanged = prevProps.data !== this.props.data
+    const widthWasChanged = prevProps.size && prevProps.size.width !== this.props.size.width
+    const heightWasChanged =
+      prevProps.size.height !== 0 && prevProps.size.height !== this.props.size.height
+    const typeWasChanged = prevProps.type !== this.props.type
+    if (dataWasChanged || widthWasChanged || heightWasChanged || typeWasChanged) {
+      return this.calculateData()
+    }
   }
 
   // To prevent tooltips from not showing on bar chart due to minification changing names
   declareBar = () => this.setState({ bar: true })
 
-  calculateData = data => {
-    const { children, size, xKey, yKey, type, margin } = this.props
+  calculateData = () => {
+    const { children, size, xKey, yKey, type, margin, data } = this.props
     if (isEmpty(data)) {
       // eslint-disable-next-line
       console.error('Data is empty, cannot calculate chart')
@@ -59,7 +74,7 @@ class ChartArea extends Component {
     const yScale = determineYScale({ type, yPoints, height, margin })
     const yScales = biaxialChildren && createScalarData(data, dataKeys, height, margin)
     const xScale = determineXScale({ type, width, xPoints, margin })
-    return {
+    return this.setState({
       width,
       height,
       xPoints,
@@ -70,7 +85,7 @@ class ChartArea extends Component {
       yScales,
       dataKeys,
       chartData: true
-    }
+    })
   }
 
   mouseMove = ({ event, xPoints, xScale, yScale, yScales, dataKeys, datum }) => {
@@ -116,7 +131,19 @@ class ChartArea extends Component {
     this.props.updateTooltip({ calculatedData: null, x: null, yCoords: null, showTooltip: false })
 
   render() {
-    const { bar } = this.state
+    const {
+      bar,
+      width,
+      height,
+      xScale,
+      yScale,
+      yScales,
+      biaxialChildren,
+      chartData,
+      dataKeys,
+      yPoints,
+      xPoints
+    } = this.state
     const {
       size,
       children,
@@ -151,20 +178,6 @@ class ChartArea extends Component {
       mouseY,
       x
     } = this.props
-
-    const memoizedData = createSelector(data => data, data => this.calculateData(data))
-    const {
-      width,
-      height,
-      xScale,
-      yScale,
-      yScales,
-      biaxialChildren,
-      chartData,
-      dataKeys,
-      yPoints,
-      xPoints
-    } = memoizedData(data)
 
     return (
       chartData && (
