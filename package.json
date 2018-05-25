@@ -63,8 +63,7 @@
     "polished": "^1.9.2",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "react-sizeme": "^2.3.6",
-    "reselect": "^3.0.1"
+    "react-sizeme": "^2.3.6"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
