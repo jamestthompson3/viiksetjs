@@ -110,7 +110,7 @@ export const StyledBottomAxis = styled(AxisBottom).attrs({
   top: p => p.height,
   numTicks: p => p.numTicks,
   stroke: p => findColor(p),
-  tickLabelProps: p => propsColorSetter(p.tickLabels, p),
+  tickLabelProps: p => propsColorSetter(p.tickLabelProps, p),
   labelProps: p => colorSetter(p.labelProps, p)
 })``
 
