@@ -173,7 +173,11 @@ class ChartArea extends Component {
             width={size.width}
             height={height + margin.top + margin.bottom}
             preserveAspectRatio="none"
-            viewBox={determineViewBox(size, margin) || `-10 0 ${size.width} ${size.height}`}
+            viewBox={
+              determineViewBox
+                ? determineViewBox({ size, margin })
+                : `-10 0 ${size.width} ${size.height}`
+            }
             ref={svg => (this.chart = svg)}
           >
             {Children.map(children, child =>
