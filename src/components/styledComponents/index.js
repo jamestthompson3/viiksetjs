@@ -24,7 +24,7 @@ const findFill = p => p.theme[p.fill] || p.fill || p.theme.primaryColor
 const propsColorSetter = (func, p) => {
   const exec = func()
   const combinedProps = { ...exec, ...p }
-  const fill = findFill(combinedProps)
+  const fill = get(combinedProps, 'fill') ? findFill(combinedProps) : findColor(combinedProps)
   const labelProps = () => ({ ...exec, fill })
   return labelProps
 }
@@ -140,15 +140,15 @@ export const StyledGradient = withTheme(props => (
   <LinearGradient
     {...{
       ...props,
-      from: rgba(findColor(props), props.startOpacity),
-      to: rgba(findColor(props), props.endOpacity)
+      from: rgba(findColor(props), props.start),
+      to: rgba(findColor(props), props.end)
     }}
   />
 ))
 
 StyledGradient.defaultProps = {
-  startOpacity: 0.35,
-  endOpacity: 0.05
+  start: 0.35,
+  end: 0.05
 }
 
 export const StyledLinePath = withTheme(props => (
