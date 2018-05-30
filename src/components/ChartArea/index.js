@@ -160,6 +160,8 @@ class ChartArea extends Component {
       labelXProps,
       yTickLabelProps,
       xTickLabelProps,
+      xAxisProps,
+      yAxisProps,
       numXTicks,
       numYTicks,
       type,
@@ -247,7 +249,12 @@ class ChartArea extends Component {
                       height,
                       margin
                     })}
-                    {...{ color, numTicks: numYTicks, tickLabelProps: yTickLabelProps }}
+                    {...{
+                      color,
+                      numTicks: numYTicks,
+                      tickLabelProps: yTickLabelProps,
+                      ...yAxisProps
+                    }}
                     hideTicks
                     tickFormat={formatY}
                     label={labelY || ''}
@@ -257,7 +264,14 @@ class ChartArea extends Component {
             </Group>
             <StyledBottomAxis
               scale={xScale}
-              {...{ color, height, margin, numTicks: numXTicks, tickLabelProps: xTickLabelProps }}
+              {...{
+                color,
+                height,
+                margin,
+                numTicks: numXTicks,
+                tickLabelProps: xTickLabelProps,
+                ...xAxisProps
+              }}
               hideTicks
               tickFormat={formatX}
               label={labelX || ''}
@@ -355,6 +369,14 @@ ChartArea.propTypes = {
    * Label props object for xLabel
    */
   labelXProps: PropTypes.object,
+  /**
+   * Optional props object to be applied to the xAxis
+   */
+  xAxisProps: PropTypes.object,
+  /**
+   * Optional props object to be applied to the yAxis
+   */
+  yAxisProps: PropTypes.object,
   /**
    * Label props for x ticks
    */

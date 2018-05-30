@@ -21,8 +21,9 @@ const findFill = p => p.theme[p.fill] || p.fill || p.theme.primaryColor
  * @param {Function} func - function that returns the current axis props
  * @param {Object} p - props object
  */
-const propsColorSetter = (func, p) => {
-  const exec = func()
+const propsColorSetter = (func, p, value, index) => {
+  console.log('props', p)
+  const exec = func(value, index)
   const combinedProps = { ...exec, ...p }
   const fill = get(combinedProps, 'fill') ? findFill(combinedProps) : findColor(combinedProps)
   const labelProps = () => ({ ...exec, fill })
@@ -87,7 +88,7 @@ export const StyledLeftAxis = withTheme(props => (
     {...{
       ...props,
       stroke: findColor(props),
-      tickLabelProps: propsColorSetter(props.tickLabelProps, props),
+      tickLabelProps: (value, index) => propsColorSetter(props.tickLabelProps, props, value, index),
       labelProps: colorSetter(props.labelProps, props)
     }}
   />
@@ -102,7 +103,7 @@ export const StyledRightAxis = withTheme(props => (
     {...{
       ...props,
       stroke: findColor(props),
-      tickLabelProps: propsColorSetter(props.tickLabelProps, props),
+      tickLabelProps: (value, index) => propsColorSetter(props.tickLabelProps, props, value, index),
       labelProps: colorSetter(props.labelProps, props)
     }}
   />
@@ -117,7 +118,7 @@ export const StyledBottomAxis = withTheme(props => (
     {...{
       ...props,
       stroke: findColor(props),
-      tickLabelProps: propsColorSetter(props.tickLabelProps, props),
+      tickLabelProps: (value, index) => propsColorSetter(props.tickLabelProps, props, value, index),
       top: props.height,
       labelProps: colorSetter(props.labelProps, props)
     }}
