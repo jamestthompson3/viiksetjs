@@ -156,6 +156,7 @@ The `LineChart` component inherits the data from the `ChartArea` which wraps it.
 | axisID    | ''      | String  | String denoting which axis the LineChart belongs to, needed only when creating biaxial charts |
 | color     | #000    | String  | Color string. Supports colors from styled-components' `themeProvider`.                        |
 | nofill    | false   | Boolean | If `true`, the LineChart will have no fill                                                    |
+| solidfill | false   | Boolean | If `true`, the LineChart will have a solid fill without gradient                              |
 | nopattern | false   | Boolean | If `true`, the LineChart will have no pattern                                                 |
 | lineProps | {}      | Object  | vx props applied to the line path                                                             |
 | areaProps | {}      | Object  | vx props applied to the area fill                                                             |
@@ -175,7 +176,7 @@ const data = [
   {"day":"2017-11-22","northAmerica":100,"southAmerica":351, "asia": 43, "europe": 76},{"day":"2017-11-23","northAmerica":135,"southAmerica":382, "asia": 455, "europe": 76},
   ...
   ]
-<ChartArea
+    <ChartArea
       data={data}
       color="rgb(0, 172, 227)"
       stroke="rgba(109, 109, 109, 0.13)"
@@ -255,7 +256,7 @@ The `StackedBar` component is nearly identical to the `Barchart` in the props th
 ```
 
 ```js
-      <ChartArea
+        <ChartArea
           data={stackedData.data}
           type={orientation}
           color="grey"
@@ -288,7 +289,7 @@ The `ScatterPlot` component inherits the data from the `ChartArea` which wraps i
 | radius  | 8       | Number  | The radius of the points in the Scatterplot                            |
 
 ```js
-<ChartArea
+        <ChartArea
           data={numericSeries.data}
           color="#42f4c2"
           stroke="grey"
