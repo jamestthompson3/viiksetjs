@@ -22,12 +22,10 @@ const findFill = p => p.theme[p.fill] || p.fill || p.theme.primaryColor
  * @param {Object} p - props object
  */
 const propsColorSetter = (func, p, value, index) => {
-  console.log('props', p)
   const exec = func(value, index)
   const combinedProps = { ...exec, ...p }
   const fill = get(combinedProps, 'fill') ? findFill(combinedProps) : findColor(combinedProps)
-  const labelProps = () => ({ ...exec, fill })
-  return labelProps
+  return { ...exec, fill }
 }
 
 /**
