@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { Group } from '@vx/group'
+import { get } from 'lodash'
 import styled from 'styled-components'
 
 import { StyledText, StyledPie, findColor, defaultTooltipContent } from '../styledComponents'
@@ -88,7 +89,7 @@ class PieChart extends Component {
           <Group top={height / 2} left={width / 2}>
             <StyledPie
               data={data}
-              pieValue={d => d[dataKey]}
+              pieValue={d => get(d, dataKey)}
               innerRadius={radius - innerRadius}
               outerRadius={radius - outerRadius}
               fill={color}
@@ -98,7 +99,7 @@ class PieChart extends Component {
               centroid={(centroid, arc) => {
                 const [x, y] = centroid
                 const { data } = arc
-                return <Label x={x} y={y} labelText={data[labelKey]} />
+                return <Label x={x} y={y} labelText={get(data, labelKey)} />
               }}
             />
           </Group>

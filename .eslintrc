@@ -53,13 +53,6 @@
     ],
     "no-debugger": 2,
     "prefer-spread": 1,
-    "brace-style": [
-      2,
-      "stroustrup",
-      {
-        "allowSingleLine": true
-      }
-    ],
     "no-trailing-spaces": 2,
     "keyword-spacing": 2,
     "space-before-function-paren": [
@@ -71,8 +64,6 @@
       "always"
     ],
     "vars-on-top": 2,
-    "no-undef": 1,
-    "no-undefined": 1,
     "comma-dangle": [
       2,
       "never"
@@ -95,7 +86,6 @@
     "no-extra-semi": 1,
     "no-unreachable": 1,
     "no-unused-expressions": 0,
-    "no-magic-numbers": 0,
     "max-len": [
       1,
       140,

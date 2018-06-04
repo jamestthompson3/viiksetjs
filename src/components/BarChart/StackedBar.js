@@ -78,8 +78,8 @@ class StackedBar extends Component {
     const isHorizontal = type === 'horizontal'
     const series = stack().keys(keys || extractLabels(data[0]))(data)
     const bandwidth = isHorizontal ? yScale.bandwidth() : xScale.bandwidth()
-    const yPoint = d => yScale(d[yKey])
-    const xPoint = d => xScale(d[xKey])
+    const yPoint = d => yScale(get(d, yKey))
+    const xPoint = d => xScale(get(d, xKey))
     return (
       <Group>
         {series &&
@@ -91,14 +91,15 @@ class StackedBar extends Component {
                   <StyledBar
                     key={`bar-group-bar-${i}-${ii}-${s.key}`}
                     x={isHorizontal ? xScale(d[0]) : xPoint(d.data)}
-                    y={isHorizontal ? yPoint(d.data) : height + margin.top - yScale(d[1])}
+                    y={isHorizontal ? yPoint(get(d, data)) : height + margin.top - yScale(d[1])}
                     width={isHorizontal ? barWidth : bandwidth}
                     height={isHorizontal ? bandwidth : barWidth}
                     fill={zScale(s.key)}
-                    data={d.data}
+                    data={get(d, data)}
                     onMouseMove={data => event => {
+                      // FIXME add non quantative value to tt
                       const key = s.key
-                      const datum = set({}, key, data[key])
+                      const datum = set({}, key, get(data, key))
                       return notool || mouseMove({ event, datum })
                     }}
                     onMouseLeave={() => event => mouseLeave()}

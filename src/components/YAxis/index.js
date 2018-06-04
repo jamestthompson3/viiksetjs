@@ -1,5 +1,6 @@
 import React from 'react'
 import { scaleLinear } from 'd3-scale'
+import { get } from 'lodash'
 import { StyledLeftAxis, StyledRightAxis } from '../styledComponents'
 
 // TODO Memoize props, make it standalone
@@ -19,12 +20,12 @@ const YAxis = ({
   ...rest
 }) => {
   // Check if data exists
-  if (data.map(item => item[axisId]).includes(undefined)) {
+  if (data.map(item => get(item, axisId)).includes(undefined)) {
     // eslint-disable-next-line
     console.error(`YAxis: No data found with axisId ${axisId}`)
     return null
   }
-  const dataPoints = data.map(item => item[axisId])
+  const dataPoints = data.map(item => get(item, axisId))
   const yScale = scaleLinear()
     .domain([0, Math.max(...dataPoints)])
     .range([height, margin.top])

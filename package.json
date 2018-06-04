@@ -12,6 +12,7 @@
     "build": "babel src --out-dir lib",
     "watch": "babel --watch src --out-dir lib",
     "precommit": "lint-staged",
+    "prepush": "yarn jest",
     "prepublish": "babel src --out-dir lib"
   },
   "lint-staged": {
@@ -19,6 +20,9 @@
       "prettier --write",
       "git add"
     ]
+  },
+  "jest": {
+    "watchPathIgnorePatterns": ["<rootDir>/lib/"]
   },
   "babel": {
     "presets": [
@@ -32,6 +36,7 @@
       ],
       "stage-2"
     ],
+    "ignore": "/lib/",
     "env": {
       "test": {
         "presets": [

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { scaleLinear } from 'd3-scale'
+import { get } from 'lodash'
 import { curveBasis } from '@vx/curve'
 import PropTypes from 'prop-types'
 
@@ -29,20 +30,20 @@ class Threshold extends Component {
       lineProps
     } = this.props
     // Check if data exists
-    if (data.map(item => item[y0]).includes(undefined)) {
+    if (data.map(item => get(item, y0)).includes(undefined)) {
       // eslint-disable-next-line
       console.error(
         `Threshold: No data found with dataKey ${y0}. Expecting to find value using y0 prop`
       )
       return null
     }
-    if (axisId && data.map(item => item[y0]).includes(undefined)) {
+    if (axisId && data.map(item => get(item, y0)).includes(undefined)) {
       // eslint-disable-next-line
       console.error(`Threshold: No data found with axisId ${axisId}`)
       return null
     }
-    const xPoints = d => (xKey ? d[xKey] : new Date(parseObject(d, 'string', checkMoment)))
-    const dataPoints = [...data.map(item => item[y0]), ...data.map(item => item[y1])]
+    const xPoints = d => (xKey ? get(d, xKey) : new Date(parseObject(d, 'string', checkMoment)))
+    const dataPoints = [...data.map(item => get(item, y0)), ...data.map(item => get(item, y1))]
     const yScale = scaleLinear()
       .domain([0, Math.max(...dataPoints)])
       .range([height, margin.top + margin.top])
@@ -51,8 +52,8 @@ class Threshold extends Component {
     return (
       <StyledThreshold
         x={xPoints}
-        y0={d => d[y0]}
-        y1={d => d[y1]}
+        y0={d => get(d, y0)}
+        y1={d => get(d, y1)}
         yScale={d => getAxis()(d)}
         {...{ xScale, data, aboveAreaProps, belowAreaProps }}
         clipAboveTo={clipAboveTo || 0}

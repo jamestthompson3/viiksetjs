@@ -1,5 +1,6 @@
 import React, { Fragment, Component } from 'react'
 import { scaleLinear } from 'd3-scale'
+import { get } from 'lodash'
 import { curveMonotoneX } from '@vx/curve'
 import PropTypes from 'prop-types'
 
@@ -7,7 +8,8 @@ import {
   StyledGradient,
   StyledPatternLines,
   StyledLinePath,
-  StyledAreaClosed
+  StyledAreaClosed,
+  findColor
 } from '../styledComponents'
 import { parseObject, checkMoment } from '../../utils/dataUtils'
 
@@ -34,19 +36,19 @@ class LineChart extends Component {
       lineProps
     } = this.props
     // Check if data exists
-    if (data.map(item => item[dataKey]).includes(undefined)) {
+    if (data.map(item => get(item, dataKey)).includes(undefined)) {
       // eslint-disable-next-line
       console.error(`LineChart: No data found with dataKey ${dataKey}`)
       return null
     }
-    if (axisId && data.map(item => item[axisId]).includes(undefined)) {
+    if (axisId && data.map(item => get(item, axisId)).includes(undefined)) {
       // eslint-disable-next-line
       console.error(`LineChart: No data found with axisId ${axisId}`)
       return null
     }
-    const yPoints = d => d[dataKey]
-    const xPoints = d => (xKey ? d[xKey] : new Date(parseObject(d, 'string', checkMoment)))
-    const dataPoints = data.map(item => item[dataKey])
+    const yPoints = d => get(d, dataKey)
+    const xPoints = d => (xKey ? get(d, xKey) : new Date(parseObject(d, 'string', checkMoment)))
+    const dataPoints = data.map(item => get(item, dataKey))
     const yScale = scaleLinear()
       .domain([0, Math.max(...dataPoints)])
       .range([height, margin.top + margin.top])

@@ -70,7 +70,9 @@ export const StyledLine = withTheme(props => (
   <Line {...{ ...props, strokeWidth: props.width, stroke: findStroke(props) }} />
 ))
 
-export const StyledBar = withTheme(props => <Bar {...{ ...props, stroke: findColor(props) }} />)
+export const StyledBar = withTheme(props => (
+  <Bar {...{ ...props, stroke: findColor(props), fill: findFill(props) }} />
+))
 
 StyledBar.defaultProps = {
   rx: 5,
@@ -93,7 +95,8 @@ export const StyledLeftAxis = withTheme(props => (
 ))
 
 StyledLeftAxis.defaultProps = {
-  strokeWidth: 2
+  strokeWidth: 2,
+  tickLabelProps: () => ({ fill: 'black', textAnchor: 'middle', fontSize: 12 })
 }
 
 export const StyledRightAxis = withTheme(props => (
@@ -108,7 +111,8 @@ export const StyledRightAxis = withTheme(props => (
 ))
 
 StyledRightAxis.defaultProps = {
-  strokeWidth: 2
+  strokeWidth: 2,
+  tickLabelProps: () => ({ fill: 'black', textAnchor: 'middle', fontSize: 12 })
 }
 
 export const StyledBottomAxis = withTheme(props => (
@@ -123,6 +127,9 @@ export const StyledBottomAxis = withTheme(props => (
   />
 ))
 
+StyledBottomAxis.defaultProps = {
+  tickLabelProps: () => ({ fill: 'black', textAnchor: 'middle', fontSize: 12 })
+}
 export const StyledPatternLines = withTheme(props => (
   <PatternLines {...{ ...props, stroke: rgba(findColor(props), props.opacity) }} />
 ))

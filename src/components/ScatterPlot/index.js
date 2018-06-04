@@ -2,7 +2,7 @@ import React, { Fragment, Component } from 'react'
 import { scaleLinear } from 'd3-scale'
 import moment from 'moment'
 import PropTypes from 'prop-types'
-import { flatten } from 'lodash'
+import { flatten, get } from 'lodash'
 
 import { StyledPoint } from '../styledComponents'
 
@@ -26,23 +26,23 @@ class ScatterPlot extends Component {
       ...rest
     } = this.props
     // Check if data exists
-    if (data.map(item => item[dataKey]).includes(undefined)) {
+    if (data.map(item => get(item, dataKey)).includes(undefined)) {
       // eslint-disable-next-line
       new console.error(`LineChart: No data found with dataKey ${dataKey}`)
       return null
     }
-    if (axisId && data.map(item => item[axisId]).includes(undefined)) {
+    if (axisId && data.map(item => get(item, axisId)).includes(undefined)) {
       // eslint-disable-next-line
       new console.error(`LineChart: No data found with axisId ${axisId}`)
       return null
     }
     const getAxis = () => (axisId == null ? inheritedScale : yScale)
-    const dataPoints = data.map(item => item[dataKey])
-    const yPoints = d => getAxis()(d[dataKey])
+    const dataPoints = data.map(item => get(item, dataKey))
+    const yPoints = d => getAxis()(get(d, dataKey))
     const xPoints = d =>
       xScale(
         xKey
-          ? d[xKey]
+          ? get(d, xKey)
           : flatten(
               Object.values(d).map(value => {
                 if (typeof value === 'string') {
