@@ -1,5 +1,5 @@
 import { scaleLinear } from 'd3-scale'
-import { flatten, head, last } from 'lodash'
+import { flatten, head, last, get } from 'lodash'
 import moment from 'moment'
 
 /**
@@ -12,9 +12,9 @@ export const checkMoment = data => {
     case typeof data === 'string' && moment(data).isValid():
       return moment(data).format()
     case moment.isMoment(data):
-      return data.format()
+      return data.toISOString()
     case data instanceof Date:
-      return data.toString()
+      return data.toISOString()
     default:
       return data
   }
@@ -40,7 +40,7 @@ export const parseObject = (object, arg, app) =>
  */
 export const getX = (data, xKey) =>
   xKey
-    ? data.map(datum => datum[xKey])
+    ? data.map(datum => get(datum, xKey))
     : flatten(data.map(datum => parseObject(datum, 'string', checkMoment)).map(i => new Date(i)))
 
 /**
@@ -49,7 +49,9 @@ export const getX = (data, xKey) =>
  * @param {String} yKey - a key for the yvalue, if not using categorical or timeseries data
  */
 export const getY = (data, yKey) =>
-  yKey ? data.map(datum => datum[yKey]) : flatten(data.map(datum => parseObject(datum, 'number')))
+  yKey
+    ? data.map(datum => get(datum, yKey))
+    : flatten(data.map(datum => parseObject(datum, 'number')))
 
 /**
  * Takes a data object and extracts all Y values
@@ -57,7 +59,7 @@ export const getY = (data, yKey) =>
  * @param {String} yKey - a key for the yvalue, if not using categorical or timeseries data
  */
 export const extractY = (datum, yKey) =>
-  yKey ? [datum[yKey]] : flatten(parseObject(datum, 'number'))
+  yKey ? [get(datum, yKey)] : flatten(parseObject(datum, 'number'))
 
 /**
  * Takes a data object and extracts all X values and parse them to date time objects if applicable
@@ -65,7 +67,9 @@ export const extractY = (datum, yKey) =>
  * @param {String} xKey - a key for the xvalue, if not using categorical or timeseries data
  */
 export const extractX = (datum, xKey) =>
-  xKey ? [datum[xKey]] : flatten(parseObject(datum, 'string')).map(i => checkMoment(i))
+  xKey
+    ? [get(datum, xKey)]
+    : flatten(parseObject(datum, 'string')).map(i => new Date(checkMoment(i)))
 
 /**
  * Takes a data object and extracts all Y labels by parsing which values contain numbers

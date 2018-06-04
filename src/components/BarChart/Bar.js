@@ -1,5 +1,7 @@
 import React, { Fragment, Component } from 'react'
+import { get } from 'lodash'
 import { Group } from '@vx/group'
+import { scaleBand, scaleLinear } from 'd3-scale'
 import PropTypes from 'prop-types'
 
 import { StyledGradient, StyledBar } from '../styledComponents'
@@ -12,28 +14,55 @@ class BarChart extends Component {
   shouldComponentUpdate(prevProps) {
     return prevProps.yPoints !== this.props.yPoints || prevProps.dataKey !== this.props.dataKey
   }
+  determineScales = ({ type }) => {
+    const { margin, height, width, yPoints, xPoints } = this.props
+    if (type === 'horizontal') {
+      const xScale = scaleLinear()
+        .domain([0, xPoints])
+        .range([margin.left, width])
+      const yScale = scaleBand()
+        .domain(yPoints)
+        .range([height, margin.top])
+        .padding(0.1)
+
+      return { xScale, yScale }
+    } else {
+      const xScale = scaleBand()
+        .domain(xPoints)
+        .range([margin.left, width])
+        .padding(0.1)
+      const yScale = scaleLinear()
+        .domain([yPoints, 0])
+        .range([height, margin.top])
+
+      return { xScale, yScale }
+    }
+  }
+
   render() {
     const {
       data,
       color,
       dataKey,
-      xScale,
       xKey,
       height,
+      margin,
       notool,
       mouseMove,
       mouseLeave,
       nofill,
-      inheritedScale,
+      type,
       barProps
     } = this.props
-    if (data.map(item => item[dataKey]).includes(undefined)) {
+    if (data.map(item => get(item, dataKey)).includes(undefined)) {
       // eslint-disable-next-line
       console.error(`BarChart: No data found with dataKey ${dataKey}`)
       return null
     }
-    const xPoint = d => xScale(d[xKey])
-    const barHeight = d => inheritedScale(d[dataKey])
+    const { xScale, yScale } = this.determineScales({ type })
+    const xPoint = d => get(d, xKey)
+    const barHeight = d => yScale(get(d, dataKey))
+    const isHorizontal = type === 'horizontal'
     return (
       <Fragment>
         <StyledGradient color={color} id={`gradient${xKey}`} />
@@ -42,9 +71,9 @@ class BarChart extends Component {
             <StyledBar
               width={xScale.bandwidth()}
               height={barHeight(d)}
-              x={xPoint(d)}
+              x={isHorizontal ? xScale(xPoint(d)) : xPoint(d)}
               key="BarChart"
-              y={height - barHeight(d)}
+              y={isHorizontal ? barHeight : height + margin.top - barHeight(d)}
               data={d}
               fill={!nofill && `url(#gradient${xKey})`}
               onMouseMove={() => event => notool || mouseMove({ event, datum: d })}
