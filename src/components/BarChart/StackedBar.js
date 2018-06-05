@@ -3,9 +3,9 @@ import PropTypes from 'prop-types'
 import { Group } from '@vx/group'
 import { stack } from 'd3-shape'
 import { scaleOrdinal, scaleBand, scaleLinear } from 'd3-scale'
-import { get, flatten, sum, set } from 'lodash'
+import { get, flatten, head, sum, set } from 'lodash'
 
-import { extractLabels } from '../../utils/dataUtils'
+import { extractLabels, extractX } from '../../utils/dataUtils'
 import { StyledBar } from '../styledComponents'
 
 class StackedBar extends Component {
@@ -79,7 +79,7 @@ class StackedBar extends Component {
     const series = stack().keys(keys || extractLabels(data[0]))(data)
     const bandwidth = isHorizontal ? yScale.bandwidth() : xScale.bandwidth()
     const yPoint = d => yScale(get(d, yKey))
-    const xPoint = d => xScale(get(d, xKey))
+    const xPoint = d => xScale(extractX(d, xKey))
     return (
       <Group>
         {series &&
@@ -95,14 +95,13 @@ class StackedBar extends Component {
                     width={isHorizontal ? barWidth : bandwidth}
                     height={isHorizontal ? bandwidth : barWidth}
                     fill={zScale(s.key)}
-                    data={get(d, data)}
-                    onMouseMove={data => event => {
-                      // FIXME add non quantative value to tt
+                    onMouseMove={() => event => {
                       const key = s.key
-                      const datum = set({}, key, get(data, key))
+                      const datum = set({}, key, get(d, `data.${key}`))
+                      set(datum, xKey || 'xValue', head(extractX(get(d, 'data'), xKey)))
                       return notool || mouseMove({ event, datum })
                     }}
-                    onMouseLeave={() => event => mouseLeave()}
+                    onMouseLeave={() => () => mouseLeave()}
                     {...barProps}
                   />
                 )
