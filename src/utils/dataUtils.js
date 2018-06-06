@@ -83,6 +83,7 @@ export const extractLabels = datum =>
         return head(value)
       }
     })
+    // eslint-disable-next-line
   ).filter(i => i != null)
 
 /**
@@ -106,6 +107,7 @@ export const createScalarData = (data, dataKeys, height, margin) => {
                 new Error(`no data key by name of ${key} found`)
                 return 0
               }
+
               return item[key]
             })
           )

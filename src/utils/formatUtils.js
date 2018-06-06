@@ -1,7 +1,6 @@
-import {
-  timeFormat
-} from 'd3-time-format'
+import { timeFormat } from 'd3-time-format'
 import moment from 'moment'
+
 /**
  * Takes a data point and formats it to the following time
  * Mon Jan 19 (ddd mmm DD)

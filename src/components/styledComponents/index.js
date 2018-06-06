@@ -10,11 +10,12 @@ import { AxisBottom, AxisLeft, AxisRight } from '@vx/axis'
 import { Threshold } from '@vx/threshold'
 import { rgba } from 'polished'
 
-const findStroke = p => p.theme[p.stroke] || p.stroke || p.theme.primaryColor
+const findStroke = p => (p.theme ? p.theme[p.stroke] || p.stroke || p.theme.primaryColor : p.stroke)
 
-export const findColor = p => p.theme[p.color] || p.color || p.theme.primaryColor
+export const findColor = p =>
+  p.theme ? p.theme[p.color] || p.color || p.theme.primaryColor : p.color
 
-const findFill = p => p.theme[p.fill] || p.fill || p.theme.primaryColor
+const findFill = p => (p.theme ? p.theme[p.fill] || p.fill || p.theme.primaryColor : p.fill)
 
 /**
  * Takes a function and returns the another function containing the correct props for axes
@@ -34,6 +35,7 @@ const propsColorSetter = (func, p, value, index) => {
  * @param {Object} p - props object
  */
 const colorSetter = (formatProps, p) => {
+  /* eslint-disable */
   switch (true) {
     case get(formatProps, 'color') != null:
       return { ...formatProps, stroke: findColor(p), fill: findColor(p) }
@@ -44,6 +46,7 @@ const colorSetter = (formatProps, p) => {
     default:
       return { ...formatProps, stroke: findColor(p), fill: findColor(p) }
   }
+  /* eslint-enable */
 }
 
 export const StyledText = withTheme(props => (
@@ -130,6 +133,7 @@ export const StyledBottomAxis = withTheme(props => (
 StyledBottomAxis.defaultProps = {
   tickLabelProps: () => ({ fill: 'black', textAnchor: 'middle', fontSize: 12 })
 }
+
 export const StyledPatternLines = withTheme(props => (
   <PatternLines {...{ ...props, stroke: rgba(findColor(props), props.opacity) }} />
 ))
@@ -198,6 +202,7 @@ export const TooltipWrapper = styled.div`
     font-size: 12px;
   }
 `
+
 const TooltipContainer = styled.div.attrs({
   style: ({ bounds }) => {
     return {
@@ -218,7 +223,7 @@ const TooltipContainer = styled.div.attrs({
 const boundsSetter = ({ left, rect, parentRect }) => {
   if (left + rect.width > parentRect.width) {
     return left - rect.width // case for shifting to the right
-  } else if (rect.width / 3 == parentRect.left) {
+  } else if (rect.width / 3 === parentRect.left) {
     return rect.width // FIXME case for shifting to the left
   } else {
     return left - rect.width / 2.5 // default case
@@ -233,6 +238,7 @@ const boundsSetter = ({ left, rect, parentRect }) => {
  */
 const TooltipBounder = ({ children, getRects, left }) => {
   const { rect, parentRect } = getRects()
+
   const getBounds = () => {
     if (rect && parentRect) {
       return {
@@ -240,11 +246,13 @@ const TooltipBounder = ({ children, getRects, left }) => {
         top: -parentRect.height - rect.height
       }
     }
+
     return {
       left: left,
       top: 0
     }
   }
+
   return <TooltipContainer bounds={getBounds()}>{children}</TooltipContainer>
 }
 

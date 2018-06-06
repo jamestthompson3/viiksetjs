@@ -12,6 +12,7 @@ class StackedBar extends Component {
   componentDidMount() {
     this.props.declareBar()
   }
+
   shouldComponentUpdate(prevProps) {
     return !(prevProps.yPoints === this.props.yPoints) || !(prevProps.keys === this.props.keys)
   }
@@ -21,6 +22,7 @@ class StackedBar extends Component {
     const dataDomain = Math.max(
       ...flatten(data.map(d => keys.map(key => get(d, key))).map(arr => sum(arr)))
     )
+
     if (type === 'horizontal') {
       const xScale = scaleLinear()
         .domain([0, dataDomain])
@@ -65,12 +67,14 @@ class StackedBar extends Component {
       mouseLeave,
       barProps
     } = this.props
+
     if (!keys) {
       // eslint-disable-next-line
       console.warn(
         'StackedBar: You have not provided the keys prop, this could explain unexpected render output'
       )
     }
+
     const zScale = scaleOrdinal()
       .domain(keys || extractLabels(data[0]))
       .range(colors)

@@ -10,6 +10,7 @@ const Container = styled.div.attrs({
 })`
   position: ${p => (p.x ? 'static' : 'relative')} !important;
 `
+
 export default function withParentSize(BaseComponent) {
   class WrappedComponent extends React.PureComponent {
     render() {
@@ -31,4 +32,3 @@ export default function withParentSize(BaseComponent) {
     WrappedComponent
   )
 }
-

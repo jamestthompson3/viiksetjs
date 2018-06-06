@@ -13,6 +13,7 @@ import moment from 'moment'
  */
 export const determineXScale = ({ type, xPoints, width, margin }) => {
   const range = [margin.left, width]
+
   switch (type) {
     case 'ordinal':
       return scaleBand()
@@ -40,6 +41,7 @@ export const determineXScale = ({ type, xPoints, width, margin }) => {
  */
 export const determineYScale = ({ type, yPoints, height, margin }) => {
   const range = [height, margin.top]
+
   switch (type) {
     case 'ordinal':
       return scaleLinear()
@@ -122,8 +124,8 @@ export function localPoint(node, event) {
       y: clientY - rect.top - node.clientTop
     })
   }
+
   // calculate coordinates from svg
-  node.createSVGPoint
   let point = node.createSVGPoint()
   point.x = clientX
   point.y = clientY

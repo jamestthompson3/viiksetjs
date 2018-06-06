@@ -14,13 +14,16 @@ class StreamableChart extends Component {
   state = {
     socket: null
   }
+
   componentDidMount() {
     const { connection } = this.props
+
     if (!connection) {
       // eslint-disable-next-line
       console.error('Connection string is needed for StreamableChart')
       return null
     }
+
     this.socket = new window.WebSocket(connection)
     this.calculateData()
   }
@@ -31,6 +34,7 @@ class StreamableChart extends Component {
 
   componentDidUpdate() {
     const { stopPersist, data } = this.props
+
     if (stopPersist && data.length >= stopPersist) {
       this.socket.close()
     }
@@ -52,7 +56,7 @@ class StreamableChart extends Component {
     const biaxialChildren = biaxial(children)
     const width = size.width - margin.left - margin.right
     const height = size.height - margin.top - margin.bottom
-    this.socket.onclose = () => console.log('connection closed')
+    this.socket.onclose = () => console.warn('connection closed')
     this.socket.onmessage = message =>
       fromStream({
         message: streamParser(message),
@@ -72,6 +76,7 @@ class StreamableChart extends Component {
       height
     })
   }
+
   render() {
     const { biaxialChildren, width, height } = this.state
     const {

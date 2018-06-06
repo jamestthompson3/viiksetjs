@@ -50,6 +50,7 @@ class ChartArea extends Component {
     const heightWasChanged =
       prevProps.size.height !== 0 && prevProps.size.height !== this.props.size.height
     const typeWasChanged = prevProps.type !== this.props.type
+
     if (dataWasChanged || widthWasChanged || heightWasChanged || typeWasChanged) {
       return this.calculateData()
     }
@@ -60,11 +61,13 @@ class ChartArea extends Component {
 
   calculateData = () => {
     const { children, size, xKey, yKey, type, margin, data } = this.props
+
     if (isEmpty(data)) {
       // eslint-disable-next-line
       console.error('Data is empty, cannot calculate chart')
       return null
     }
+
     const biaxialChildren = biaxial(children)
     const dataKeys = extractLabels(data[0])
     const width = size.width - margin.left - margin.right
@@ -91,6 +94,7 @@ class ChartArea extends Component {
   mouseMove = ({ event, xPoints, xScale, yScale, yScales, dataKeys, datum }) => {
     const { data, updateTooltip, xKey, type } = this.props
     const svgPoint = localPoint(this.chart, event)
+
     if (datum) {
       return updateTooltip({
         calculatedData: datum,
@@ -100,6 +104,7 @@ class ChartArea extends Component {
         showTooltip: true
       })
     }
+
     const xValue = xScale.invert(get(svgPoint, 'x'))
     return flow(
       xValue => bisect(xPoints, xValue),

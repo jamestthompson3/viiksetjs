@@ -36,6 +36,7 @@ const TooltipContainer = styled.div.attrs({
   font-size: 12px;
   pointer-events: none;
 `
+
 const defaultPieTooltip = ({
   tooltipData,
   height,
@@ -62,8 +63,10 @@ class PieChart extends Component {
       showTooltip: true
     })
   }
+
   mouseLeave = () =>
     this.props.updateTooltip({ calculatedData: null, showTooltip: false, x: null, yCoords: null })
+
   render() {
     const {
       data,
@@ -73,7 +76,6 @@ class PieChart extends Component {
       labelKey,
       determineOpacity,
       innerRadius,
-      margin,
       mouseY,
       mouseX,
       calculatedData,
@@ -94,7 +96,7 @@ class PieChart extends Component {
               outerRadius={radius - outerRadius}
               fill={color}
               fillOpacity={({ data }) => determineOpacity(data)}
-              onMouseEnter={d => event => this.mouseMove({ d })}
+              onMouseEnter={d => () => this.mouseMove({ d })}
               onMouseLeave={() => this.mouseLeave}
               centroid={(centroid, arc) => {
                 const [x, y] = centroid
@@ -147,11 +149,12 @@ PieChart.propTypes = {
 }
 
 PieChart.defaultProps = {
-  determineOpacity: d => 0.5,
+  determineOpacity: () => 0.5,
   tooltipRenderer: defaultPieTooltip,
   tooltipContent: defaultTooltipContent,
   innerRadius: 0,
   outerRadius: 0,
   margin: { top: 10, bottom: 10, left: 10, right: 10 }
 }
+
 export default withTooltip(withParentSize(PieChart))
