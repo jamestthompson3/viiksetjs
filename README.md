@@ -153,7 +153,7 @@ The `LineChart` component inherits the data from the `ChartArea` which wraps it.
 | Prop      | Default | Type    | Desc                                                                                          |
 | :-------- | :-----: | :------ | :-------------------------------------------------------------------------------------------- |
 | dataKey   | ''      | String  | Key for data to be graphed, supports nested keys such as `'data.users'`                                                                    |
-| axisID    | ''      | String  | String denoting which axis the LineChart belongs to, needed only when creating biaxial charts |
+| axisId    | ''      | String  | String denoting which axis the LineChart belongs to, needed only when creating biaxial charts |
 | color     | #000    | String  | Color string. Supports colors from styled-components' `themeProvider`.                        |
 | nofill    | false   | Boolean | If `true`, the LineChart will have no fill                                                    |
 | solidfill | false   | Boolean | If `true`, the LineChart will have a solid fill without gradient                              |
