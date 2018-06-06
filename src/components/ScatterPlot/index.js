@@ -10,6 +10,7 @@ class ScatterPlot extends Component {
   shouldComponentUpdate(prevProps) {
     return this.props.yPoints !== prevProps.yPoints || prevProps.dataKey !== this.props.dataKey
   }
+
   render() {
     const {
       data,
@@ -25,18 +26,21 @@ class ScatterPlot extends Component {
       axisId,
       ...rest
     } = this.props
+
     // Check if data exists
     if (data.map(item => get(item, dataKey)).includes(undefined)) {
       // eslint-disable-next-line
       new console.error(`LineChart: No data found with dataKey ${dataKey}`)
       return null
     }
+
     if (axisId && data.map(item => get(item, axisId)).includes(undefined)) {
       // eslint-disable-next-line
       new console.error(`LineChart: No data found with axisId ${axisId}`)
       return null
     }
-    const getAxis = () => (axisId == null ? inheritedScale : yScale)
+
+    const getAxis = () => (axisId ? inheritedScale : yScale)
     const dataPoints = data.map(item => get(item, dataKey))
     const yPoints = d => getAxis()(get(d, dataKey))
     const xPoints = d =>
@@ -49,6 +53,7 @@ class ScatterPlot extends Component {
                   return moment(value)
                 }
               })
+              // eslint-disable-next-line
             ).filter(i => i != null)[0]
       )
     const yScale = scaleLinear()
@@ -96,4 +101,5 @@ ScatterPlot.defaultProps = {
   opacity: 0.8,
   radius: 8
 }
+
 export default ScatterPlot

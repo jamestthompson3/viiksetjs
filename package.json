@@ -11,12 +11,14 @@
   "scripts": {
     "build": "babel src --out-dir lib",
     "watch": "babel --watch src --out-dir lib",
+    "lint": "eslint --fix --ext .js ./src/",
     "precommit": "lint-staged",
     "prepush": "yarn jest",
     "prepublish": "babel src --out-dir lib"
   },
   "lint-staged": {
     "*.{js}": [
+      "eslint --fix --ext .js ./src/",
       "prettier --write",
       "git add"
     ]

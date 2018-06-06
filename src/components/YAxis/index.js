@@ -25,6 +25,7 @@ const YAxis = ({
     console.error(`YAxis: No data found with axisId ${axisId}`)
     return null
   }
+
   const dataPoints = data.map(item => get(item, axisId))
   const yScale = scaleLinear()
     .domain([0, Math.max(...dataPoints)])

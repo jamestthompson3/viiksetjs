@@ -15,8 +15,10 @@ class BarChart extends Component {
   shouldComponentUpdate(prevProps) {
     return prevProps.yPoints !== this.props.yPoints || prevProps.dataKey !== this.props.dataKey
   }
+
   determineScales = ({ type }) => {
     const { margin, height, width, yPoints, xPoints } = this.props
+
     if (type === 'horizontal') {
       const xScale = scaleLinear()
         .domain([0, Math.max(...yPoints)])
@@ -47,7 +49,6 @@ class BarChart extends Component {
       dataKey,
       xKey,
       height,
-      margin,
       notool,
       mouseMove,
       mouseLeave,
@@ -55,11 +56,13 @@ class BarChart extends Component {
       type,
       barProps
     } = this.props
+
     if (data.map(item => get(item, dataKey)).includes(undefined)) {
       // eslint-disable-next-line
       console.error(`BarChart: No data found with dataKey ${dataKey}`)
       return null
     }
+
     const { xScale, yScale } = this.determineScales({ type })
     const xPoint = d => extractX(d, xKey)
     const barHeight = d => yScale(get(d, dataKey))
@@ -103,4 +106,5 @@ BarChart.defaultProps = {
   color: 'rgb(0, 157, 253)',
   nofill: false
 }
+
 export default BarChart

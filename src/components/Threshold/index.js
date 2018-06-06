@@ -29,6 +29,7 @@ class Threshold extends Component {
       belowAreaProps,
       lineProps
     } = this.props
+
     // Check if data exists
     if (data.map(item => get(item, y0)).includes(undefined)) {
       // eslint-disable-next-line
@@ -37,17 +38,19 @@ class Threshold extends Component {
       )
       return null
     }
+
     if (axisId && data.map(item => get(item, y0)).includes(undefined)) {
       // eslint-disable-next-line
       console.error(`Threshold: No data found with axisId ${axisId}`)
       return null
     }
+
     const xPoints = d => (xKey ? get(d, xKey) : new Date(parseObject(d, 'string', checkMoment)))
     const dataPoints = [...data.map(item => get(item, y0)), ...data.map(item => get(item, y1))]
     const yScale = scaleLinear()
       .domain([0, Math.max(...dataPoints)])
       .range([height, margin.top + margin.top])
-    const getAxis = () => (axisId == null ? inheritedScale : yScale)
+    const getAxis = () => (axisId ? inheritedScale : yScale)
 
     return (
       <StyledThreshold
@@ -102,4 +105,5 @@ Threshold.defaultProps = {
     fillOpacity: 0.5
   }
 }
+
 export default Threshold

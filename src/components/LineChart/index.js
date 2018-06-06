@@ -35,24 +35,27 @@ class LineChart extends Component {
       areaProps,
       lineProps
     } = this.props
+
     // Check if data exists
     if (data.map(item => get(item, dataKey)).includes(undefined)) {
       // eslint-disable-next-line
       console.error(`LineChart: No data found with dataKey ${dataKey}`)
       return null
     }
+
     if (axisId && data.map(item => get(item, axisId)).includes(undefined)) {
       // eslint-disable-next-line
       console.error(`LineChart: No data found with axisId ${axisId}`)
       return null
     }
+
     const yPoints = d => get(d, dataKey)
     const xPoints = d => (xKey ? get(d, xKey) : new Date(parseObject(d, 'string', checkMoment)))
     const dataPoints = data.map(item => get(item, dataKey))
     const yScale = scaleLinear()
       .domain([0, Math.max(...dataPoints)])
       .range([height, margin.top + margin.top])
-    const getAxis = () => (axisId == null ? inheritedScale : yScale)
+    const getAxis = () => (axisId ? inheritedScale : yScale)
     const findFill = gradient => (gradient ? `url(#gradient${dataKey})` : `url(#dlines${dataKey})`)
 
     return (
@@ -126,4 +129,5 @@ LineChart.defaultProps = {
   nofill: false,
   nopattern: false
 }
+
 export default LineChart
