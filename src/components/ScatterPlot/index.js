@@ -40,7 +40,7 @@ class ScatterPlot extends Component {
       return null
     }
 
-    const getAxis = () => (axisId ? inheritedScale : yScale)
+    const getAxis = () => (!axisId ? inheritedScale : yScale)
     const dataPoints = data.map(item => get(item, dataKey))
     const yPoints = d => getAxis()(get(d, dataKey))
     const xPoints = d =>
