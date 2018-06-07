@@ -50,7 +50,7 @@ class Threshold extends Component {
     const yScale = scaleLinear()
       .domain([0, Math.max(...dataPoints)])
       .range([height, margin.top + margin.top])
-    const getAxis = () => (axisId ? inheritedScale : yScale)
+    const getAxis = () => (!axisId ? inheritedScale : yScale)
 
     return (
       <StyledThreshold
