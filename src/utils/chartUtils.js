@@ -1,7 +1,7 @@
 import { Children } from 'react'
 import { Point } from '@vx/point'
 import { scaleLinear, scaleTime, scaleBand } from 'd3-scale'
-import moment from 'moment'
+import { head, last } from 'lodash'
 
 /**
  * Determines the xScale of the chart based on chart type
@@ -13,6 +13,7 @@ import moment from 'moment'
  */
 export const determineXScale = ({ type, xPoints, width, margin }) => {
   const range = [margin.left, width]
+  const sortedX = xPoints.sort((a, b) => a - b)
 
   switch (type) {
     case 'ordinal':
@@ -22,11 +23,11 @@ export const determineXScale = ({ type, xPoints, width, margin }) => {
         .padding(0.1)
     case 'linear':
       return scaleLinear()
-        .domain([xPoints[0], xPoints[xPoints.length - 1]])
+        .domain([head(sortedX), last(sortedX)])
         .range(range)
     default:
       return scaleTime()
-        .domain([xPoints[0], xPoints[xPoints.length - 1]])
+        .domain([head(sortedX), last(sortedX)])
         .range(range)
   }
 }
@@ -65,6 +66,7 @@ export const determineYScale = ({ type, yPoints, height, margin }) => {
  * @param {Number} calculatedX - value calcualted on mouse coordinates
  * @param {Functtion} xScale
  * @returns {Number} x coordiante of the tooltip
+ * TODO Support more chart types
  */
 export const findTooltipX = ({ type, calculatedX, xScale }) => {
   switch (type) {
@@ -72,7 +74,7 @@ export const findTooltipX = ({ type, calculatedX, xScale }) => {
     case 'linear':
       return xScale(calculatedX)
     default:
-      return xScale(moment(calculatedX))
+      return xScale(calculatedX)
   }
 }
 
