@@ -101,8 +101,8 @@ class StackedBar extends Component {
                     fill={zScale(s.key)}
                     onMouseMove={() => event => {
                       const key = s.key
-                      const datum = set({}, key, get(d, `data.${key}`))
-                      set(datum, xKey || 'xValue', head(extractX(get(d, 'data'), xKey)))
+                      const datum = set({}, xKey || 'xValue', head(extractX(get(d, 'data'), xKey)))
+                      set(datum, key, get(d, `data.${key}`))
                       return notool || mouseMove({ event, datum })
                     }}
                     onMouseLeave={() => () => mouseLeave()}
