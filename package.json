@@ -1,6 +1,6 @@
 {
   "name": "viiksetjs",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Javascript graphing utility based on SVG",
   "homepage": "https://jamestthompson3.github.io/viiksetjs",
   "main": "lib/index.js",
