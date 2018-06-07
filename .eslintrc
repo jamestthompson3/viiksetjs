@@ -68,7 +68,7 @@
     "no-with": 2,
     "no-continue": 1,
     "prefer-const": 2,
-    "no-console": [1, { "allow": ["warn", "error"] }],
+    "no-console": [2, { "allow": ["warn", "error"] }],
     "no-alert": 2,
     "react/prefer-es6-class": 1,
     "react/prop-types": 0,
