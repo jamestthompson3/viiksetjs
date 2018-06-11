@@ -94,8 +94,8 @@ class StackedBar extends Component {
                 return (
                   <StyledBar
                     key={`bar-group-bar-${i}-${ii}-${s.key}`}
-                    x={isHorizontal ? xScale(d[0]) : xPoint(d.data)}
-                    y={isHorizontal ? yPoint(get(d, data)) : height + margin.top - yScale(d[1])}
+                    x={isHorizontal ? xScale(d[0]) : xPoint(get(d, 'data'))}
+                    y={isHorizontal ? yPoint(get(d, 'data')) : height + margin.top - yScale(d[1])}
                     width={isHorizontal ? barWidth : bandwidth}
                     height={isHorizontal ? bandwidth : barWidth}
                     fill={zScale(s.key)}
