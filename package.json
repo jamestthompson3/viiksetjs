@@ -13,7 +13,6 @@
     "watch": "babel --watch src --out-dir lib",
     "lint": "eslint --fix --ext .js ./src/",
     "precommit": "lint-staged",
-    "prepush": "yarn jest",
     "prepublish": "babel src --out-dir lib"
   },
   "lint-staged": {
@@ -65,6 +64,7 @@
     "@vx/point": "^0.0.161",
     "@vx/shape": "^0.0.164",
     "@vx/threshold": "^0.0.164",
+    "babel-plugin-dynamic-import-node": "^2.0.0",
     "d3-array": "^1.2.1",
     "d3-scale": "^2.0.0",
     "d3-shape": "^1.2.0",
