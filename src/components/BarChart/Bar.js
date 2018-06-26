@@ -56,7 +56,8 @@ class BarChart extends Component {
       type,
       inverted,
       fullHeight,
-      barProps
+      barProps,
+      margin
     } = this.props
 
     if (data.map(item => get(item, dataKey)).includes(undefined)) {
@@ -76,7 +77,7 @@ class BarChart extends Component {
           <Group key={`bar${xPoint(d)}`}>
             <StyledBar
               width={xScale.bandwidth()}
-              height={fullHeight ? barHeight(d) barHeight(d) - margin.top}
+              height={fullHeight ? barHeight(d) : barHeight(d) - margin.top}
               x={xScale(xPoint(d))}
               key="BarChart"
               y={isHorizontal ? barHeight(d) : inverted ? 0 : height - barHeight(d)}
