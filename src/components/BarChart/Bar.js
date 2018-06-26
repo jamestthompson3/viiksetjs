@@ -54,6 +54,7 @@ class BarChart extends Component {
       mouseLeave,
       nofill,
       type,
+      inverted,
       barProps
     } = this.props
 
@@ -77,7 +78,7 @@ class BarChart extends Component {
               height={barHeight(d)}
               x={xScale(xPoint(d))}
               key="BarChart"
-              y={isHorizontal ? barHeight(d) : height - barHeight(d)}
+              y={isHorizontal ? barHeight(d) : inverted ? 0 : height - barHeight(d)}
               data={d}
               fill={!nofill && `url(#gradient${xKey})`}
               onMouseMove={() => event => notool || mouseMove({ event, datum: d })}
@@ -97,6 +98,10 @@ BarChart.propTypes = {
    */
   dataKey: PropTypes.string.isRequired,
   /**
+   * Indicates chart should go from top to bottom
+   */
+  inverted: PropTypes.boolean,
+  /**
    * Indicates the color of the BarChart
    */
   color: PropTypes.string
@@ -104,7 +109,8 @@ BarChart.propTypes = {
 
 BarChart.defaultProps = {
   color: 'rgb(0, 157, 253)',
-  nofill: false
+  nofill: false,
+  inverted: false
 }
 
 export default BarChart

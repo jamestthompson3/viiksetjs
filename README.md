@@ -201,6 +201,7 @@ The `BarChart` component inherits the data from the `ChartArea` which wraps it. 
 | dataKey | ''      | String  | Key for data to be graphed, supports nested keys  such as `'data.users'`     |
 | color   | #000    | String  | Color string. Supports colors from styled-components' `themeProvider`. |
 | nofill  | false   | Boolean | If `true`, the BarChart will have no fill                              |
+| inverted | false   | Boolean | If `true`, the BarChart will start from the top and go to the bottom                             |
 
 #### data
 
