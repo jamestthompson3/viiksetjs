@@ -2,7 +2,8 @@ import React, { Fragment, Component } from 'react'
 import { scaleLinear } from 'd3-scale'
 import moment from 'moment'
 import PropTypes from 'prop-types'
-import { flatten, get } from 'lodash'
+import get from 'lodash/get'
+import flatten from 'lodash/flatten'
 
 import { StyledPoint } from '../styledComponents'
 

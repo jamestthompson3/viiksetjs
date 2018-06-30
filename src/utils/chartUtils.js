@@ -1,7 +1,8 @@
 import { Children } from 'react'
 import { Point } from '@vx/point'
 import { scaleLinear, scaleTime, scaleBand } from 'd3-scale'
-import { head, last } from 'lodash'
+import head from 'lodash/head'
+import last from 'lodash/last'
 
 /**
  * Determines the xScale of the chart based on chart type

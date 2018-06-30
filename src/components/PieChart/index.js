@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { Group } from '@vx/group'
-import { get } from 'lodash'
+import get from 'lodash/get'
 import styled from 'styled-components'
 
 import { StyledText, StyledPie, findColor, defaultTooltipContent } from '../styledComponents'

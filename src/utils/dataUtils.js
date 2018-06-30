@@ -1,5 +1,8 @@
 import { scaleLinear } from 'd3-scale'
-import { flatten, head, last, get } from 'lodash'
+import flatten from 'lodash/flatten'
+import head from 'lodash/head'
+import last from 'lodash/last'
+import get from 'lodash/get'
 import moment from 'moment'
 
 /**

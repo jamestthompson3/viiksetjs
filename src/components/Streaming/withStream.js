@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 import { getX, getY } from '../../utils/dataUtils'
 import { determineXScale, determineYScale } from '../../utils/chartUtils'
-import { uniq } from 'lodash'
+import uniq from 'lodash/uniq'
 import moment from 'moment'
 
 export const withStreamPropTypes = {
