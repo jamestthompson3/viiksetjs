@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { scaleLinear } from 'd3-scale'
-import { get } from 'lodash'
+import get from 'lodash/get'
 import { curveBasis } from '@vx/curve'
 import PropTypes from 'prop-types'
 

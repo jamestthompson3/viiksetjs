@@ -1,5 +1,5 @@
 import React, { Fragment, Component } from 'react'
-import { get } from 'lodash'
+import get from 'lodash/get'
 import { Group } from '@vx/group'
 import { scaleBand, scaleLinear } from 'd3-scale'
 import PropTypes from 'prop-types'

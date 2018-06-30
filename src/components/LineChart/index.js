@@ -1,6 +1,6 @@
 import React, { Fragment, Component } from 'react'
 import { scaleLinear } from 'd3-scale'
-import { get } from 'lodash'
+import get from 'lodash/get'
 import { curveMonotoneX } from '@vx/curve'
 import PropTypes from 'prop-types'
 

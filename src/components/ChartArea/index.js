@@ -2,8 +2,12 @@ import React, { Children, cloneElement, Component, Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { Group } from '@vx/group'
 import { Bar } from '@vx/shape'
-import { bisect } from 'd3-array'
-import { flow, uniq, head, isEmpty, get } from 'lodash'
+import bisect from 'd3-array/bisect'
+import flow from 'lodash/flow'
+import uniq from 'lodash/uniq'
+import head from 'lodash/head'
+import isEmpty from 'lodash/isEmpty'
+import get from 'lodash/get'
 
 import {
   getX,

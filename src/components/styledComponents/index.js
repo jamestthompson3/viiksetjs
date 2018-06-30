@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 import styled, { withTheme } from 'styled-components'
-import { get } from 'lodash'
+import get from 'lodash/get'
 import { withBoundingRects } from '@vx/bounds'
 import { PatternLines } from '@vx/pattern'
 import { LinearGradient } from '@vx/gradient'
