@@ -202,7 +202,6 @@ The `BarChart` component inherits the data from the `ChartArea` which wraps it. 
 | color   | #000    | String  | Color string. Supports colors from styled-components' `themeProvider`. |
 | nofill  | false   | Boolean | If `true`, the BarChart will have no fill                              |
 | inverted | false   | Boolean | If `true`, the BarChart will start from the top and go to the bottom                             |
-| fullHeight | false   | Boolean | If `true`, the BarChart will take the whole `ChartArea` height ( useful for percentages ) else there will be some padding between the top of the bar and the top of the `ChartArea` |
 
 #### data
 
