@@ -55,9 +55,7 @@ class BarChart extends Component {
       nofill,
       type,
       inverted,
-      fullHeight,
-      barProps,
-      margin
+      barProps
     } = this.props
 
     if (data.map(item => get(item, dataKey)).includes(undefined)) {
@@ -77,7 +75,7 @@ class BarChart extends Component {
           <Group key={`bar${xPoint(d)}`}>
             <StyledBar
               width={xScale.bandwidth()}
-              height={fullHeight ? barHeight(d) : barHeight(d) - margin.top}
+              height={barHeight(d)}
               x={xScale(xPoint(d))}
               key="BarChart"
               y={isHorizontal ? barHeight(d) : inverted ? 0 : height - barHeight(d)}
@@ -104,11 +102,6 @@ BarChart.propTypes = {
    */
   inverted: PropTypes.boolean,
   /**
-   * Indicates chart take the full height of the ChartArea
-   */
-  fullHeight: PropTypes.boolean,
-
-  /**
    * Indicates the color of the BarChart
    */
   color: PropTypes.string
@@ -117,8 +110,7 @@ BarChart.propTypes = {
 BarChart.defaultProps = {
   color: 'rgb(0, 157, 253)',
   nofill: false,
-  inverted: false,
-  fullHeight: false
+  inverted: false
 }
 
 export default BarChart
