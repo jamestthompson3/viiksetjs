@@ -26,7 +26,7 @@ class LineChart extends Component {
       xScale,
       xKey,
       nofill,
-      solidfill,
+      solidFill,
       height,
       margin,
       nopattern,
@@ -80,7 +80,7 @@ class LineChart extends Component {
             {...{ data, color }}
             y={yPoints}
             x={xPoints}
-            fill={solidfill ? findColor(this.props) : findFill('gradient')}
+            fill={solidFill ? findColor(this.props) : findFill('gradient')}
             yScale={getAxis()}
             xScale={xScale}
             curve={curveMonotoneX}
