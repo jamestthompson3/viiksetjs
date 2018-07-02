@@ -1,95 +1,27 @@
 {
-  "name": "viiksetjs",
-  "version": "0.0.12",
-  "description": "Javascript graphing utility based on SVG",
-  "homepage": "https://jamestthompson3.github.io/viiksetjs",
-  "main": "lib/index.js",
-  "repository": "https://github.com/jamestthompson3/viiksetjs.git",
-  "author": "Taylor Thompson <taylor@easyanticheat.net>",
-  "license": "MIT",
+  "name": "viiksetexamples",
+  "version": "0.1.0",
+  "homepage": "https://viiksetjs.com",
   "private": false,
-  "scripts": {
-    "build": "babel src --out-dir lib",
-    "watch": "babel --watch src --out-dir lib",
-    "lint": "eslint --fix --ext .js ./src/",
-    "precommit": "lint-staged",
-    "prepublish": "babel src --out-dir lib"
-  },
-  "lint-staged": {
-    "*.{js}": [
-      "eslint --fix ./src/",
-      "prettier --write",
-      "git add"
-    ]
-  },
-  "jest": {
-    "watchPathIgnorePatterns": [
-      "<rootDir>/lib/"
-    ]
-  },
-  "babel": {
-    "presets": [
-      "react",
-      "env",
-      [
-        "es2015",
-        {
-          "modules": false
-        }
-      ],
-      "stage-2"
-    ],
-    "ignore": "/lib/",
-    "env": {
-      "test": {
-        "presets": [
-          "react",
-          "es2015",
-          "stage-2"
-        ],
-        "plugins": [
-          "dynamic-import-node"
-        ]
-      }
-    }
-  },
   "dependencies": {
-    "@vx/axis": "^0.0.164",
-    "@vx/bounds": "^0.0.161",
-    "@vx/curve": "^0.0.161",
-    "@vx/gradient": "^0.0.161",
-    "@vx/grid": "^0.0.164",
-    "@vx/group": "^0.0.161",
-    "@vx/pattern": "^0.0.161",
-    "@vx/point": "^0.0.161",
-    "@vx/shape": "^0.0.164",
-    "@vx/threshold": "^0.0.164",
-    "babel-plugin-dynamic-import-node": "^2.0.0",
-    "d3-array": "^1.2.1",
-    "d3-scale": "^2.0.0",
-    "d3-shape": "^1.2.0",
+    "@vx/shape": "^0.0.158",
     "lodash": "^4.17.5",
-    "polished": "^1.9.2",
+    "moment": "^2.21.0",
+    "prettier": "^1.11.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "react-sizeme": "^2.3.6"
+    "react-router-dom": "^4.2.2",
+    "react-scripts": "1.1.1",
+    "styled-components": "^3.2.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-eslint": "^8.0.3",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-2": "^6.24.1",
-    "eslint": "^4.12.1",
-    "eslint-plugin-react": "^7.9.1",
-    "husky": "^0.14.3",
-    "jest": "^23.1.0",
-    "lint-staged": "^7.1.3",
-    "prettier": "^1.13.4"
-  },
-  "peerDependencies": {
-    "moment": "^2.21.0",
-    "styled-components": "^3.2.1"
+    "flow-bin": "^0.67.1",
+    "react-styleguidist": "^7.0.14"
   }
 }

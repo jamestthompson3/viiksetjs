@@ -1,7 +1,0 @@
-examples/
-src/
-.eslintrc
-.prettierrc
-.tern-project
-.flow-config
-.dumbjumpignore
