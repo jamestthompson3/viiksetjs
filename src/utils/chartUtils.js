@@ -1,4 +1,4 @@
-import { Children } from 'react'
+import { Children, isValidElement } from 'react'
 import { Point } from '@vx/point'
 import { scaleLinear, scaleTime, scaleBand } from 'd3-scale'
 import head from 'lodash/head'
@@ -85,7 +85,11 @@ export const findTooltipX = ({ type, calculatedX, xScale }) => {
  * @returns {Boolean} - Indicates whether the chart should be biaxial
  */
 export const biaxial = children =>
-  children && Children.map(children, child => child.props.hasOwnProperty('axisId')).includes(true)
+  children &&
+  Children.map(
+    children,
+    child => isValidElement(child) && child.props.hasOwnProperty('axisId')
+  ).includes(true)
 
 /**
  * Own implementation of localPoint from VX. Makes it work on Firefox
