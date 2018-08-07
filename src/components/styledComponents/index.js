@@ -58,6 +58,8 @@ export const StyledPoint = withTheme(props => (
     {...{
       ...props,
       r: props.radius,
+      cx: props.x,
+      cy: props.y,
       stroke: findStroke(props),
       fillOpacity: props.opacity,
       fill: findColor(props)

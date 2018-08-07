@@ -1,11 +1,11 @@
 import React, { Fragment, Component } from 'react'
-import { scaleLinear } from 'd3-scale'
 import moment from 'moment'
 import PropTypes from 'prop-types'
 import get from 'lodash/get'
 import flatten from 'lodash/flatten'
 
 import { StyledPoint } from '../styledComponents'
+import { determineYScale } from '../../utils/chartUtils'
 
 class ScatterPlot extends Component {
   shouldComponentUpdate(prevProps) {
@@ -19,12 +19,13 @@ class ScatterPlot extends Component {
       dataKey,
       xScale,
       xKey,
-      opacity,
-      radius,
       height,
       margin,
+      opacity,
+      radius,
       inheritedScale,
       axisId,
+      type,
       ...rest
     } = this.props
 
@@ -57,24 +58,23 @@ class ScatterPlot extends Component {
               // eslint-disable-next-line
             ).filter(i => i != null)[0]
       )
-    const yScale = scaleLinear()
-      .domain([0, Math.max(...dataPoints)])
-      .range([height, margin.top + margin.top])
-    return (
-      <Fragment>
-        {data.map((d, i) => (
-          <StyledPoint
-            key={i}
-            x={xPoints(d)}
-            y={yPoints(d)}
-            radius={radius}
-            opacity={opacity}
-            color={color}
-            {...rest}
-          />
-        ))}
-      </Fragment>
-    )
+    const yScale = determineYScale({
+      type: type || 'linear',
+      yPoints: dataPoints,
+      height,
+      margin
+    })
+    return data.map((d, i) => (
+      <StyledPoint
+        key={i}
+        x={xPoints(d)}
+        y={yPoints(d)}
+        radius={radius}
+        opacity={opacity}
+        color={color}
+        {...rest}
+      />
+    ))
   }
 }
 

@@ -1,4 +1,4 @@
-import React, { Children, cloneElement, Component, Fragment } from 'react'
+import React, { Children, cloneElement, isValidElement, Component, Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { Group } from '@vx/group'
 import { Bar } from '@vx/shape'
@@ -204,27 +204,30 @@ class ChartArea extends Component {
             }
             ref={svg => (this.chart = svg)}
           >
-            {Children.map(children, child =>
-              cloneElement(child, {
-                data,
-                xScale,
-                margin,
-                height,
-                yPoints,
-                xPoints,
-                width,
-                notool,
-                declareBar: this.declareBar,
-                type,
-                mouseMove: this.mouseMove,
-                mouseLeave: this.mouseLeave,
-                xKey,
-                yKey,
-                inheritedScale: yScale,
-                formatY,
-                numYTicks,
-                formatX
-              })
+            {Children.map(
+              children,
+              child =>
+                isValidElement(child) &&
+                cloneElement(child, {
+                  data,
+                  xScale,
+                  margin,
+                  height,
+                  yPoints,
+                  xPoints,
+                  width,
+                  notool,
+                  declareBar: this.declareBar,
+                  type,
+                  mouseMove: this.mouseMove,
+                  mouseLeave: this.mouseLeave,
+                  xKey,
+                  yKey,
+                  inheritedScale: yScale,
+                  formatY,
+                  numYTicks,
+                  formatX
+                })
             )}
             <Group left={margin.left}>
               {bar || (
