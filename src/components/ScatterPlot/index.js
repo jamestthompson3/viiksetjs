@@ -26,7 +26,8 @@ class ScatterPlot extends Component {
       inheritedScale,
       axisId,
       type,
-      ...rest
+      stroke,
+      pointProps
     } = this.props
 
     // Check if data exists
@@ -70,9 +71,10 @@ class ScatterPlot extends Component {
         x={xPoints(d)}
         y={yPoints(d)}
         radius={radius}
+        stroke={stroke}
         opacity={opacity}
         color={color}
-        {...rest}
+        {...pointProps}
       />
     ))
   }
@@ -92,13 +94,22 @@ ScatterPlot.propTypes = {
    **/
   color: PropTypes.string,
   /**
+   * Optional stroke prop
+   **/
+  stroke: PropTypes.string,
+  /**
+   * Additional props to be applied to each point
+   **/
+  pointProps: PropTypes.number,
+  /**
    * Opacity for points on scatterplot
    **/
   opacity: PropTypes.number
 }
 
 ScatterPlot.defaultProps = {
-  color: 'rgb(0, 157, 253)',
+  color: '#000',
+  stroke: '#000',
   opacity: 0.8,
   radius: 8
 }

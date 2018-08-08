@@ -286,8 +286,10 @@ The `ScatterPlot` component inherits the data from the `ChartArea` which wraps i
 | :------ | :-----: | :------ | :--------------------------------------------------------------------- |
 | dataKey | ''      | String  | Key for data to be graphed, supports nested keys such as `'data.users'`                                             |
 | color   | #000    | String  | Color string. Supports colors from styled-components' `themeProvider`. |
+| stroke  | #000    | String  | Color string. Supports colors from styled-components' `themeProvider`. |
 | opacity | 0.8     | Number  | The opacity of the points in the Scatterplot                           |
 | radius  | 8       | Number  | The radius of the points in the Scatterplot                            |
+| pointProps  | {}  | Object  | Additional props to be applied to each point                           |
 
 ```js
         <ChartArea
