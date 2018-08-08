@@ -82,7 +82,8 @@ class PieChart extends Component {
       showTooltip,
       tooltipRenderer,
       tooltipContent,
-      outerRadius
+      outerRadius,
+      ...rest
     } = this.props
     const radius = Math.min(width, height) / 2
     return (
@@ -103,6 +104,7 @@ class PieChart extends Component {
                 const { data } = arc
                 return <Label x={x} y={y} labelText={get(data, labelKey)} />
               }}
+              {...rest}
             />
           </Group>
         </svg>

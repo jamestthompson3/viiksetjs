@@ -204,6 +204,36 @@ class ChartArea extends Component {
             }
             ref={svg => (this.chart = svg)}
           >
+            <Group left={margin.left}>
+              {!nogrid && (
+                <StyledGridRows
+                  scale={yScale}
+                  stroke={gridStroke || stroke}
+                  width={width - margin.left}
+                />
+              )}
+              {biaxialChildren ||
+                noYAxis || (
+                  <StyledLeftAxis
+                    scale={determineYScale({
+                      type: type === 'horizontal' ? 'horizontal' : null,
+                      yPoints,
+                      height,
+                      margin
+                    })}
+                    {...{
+                      color,
+                      numTicks: numYTicks,
+                      tickLabelProps: yTickLabelProps,
+                      ...yAxisProps
+                    }}
+                    hideTicks
+                    tickFormat={formatY}
+                    label={labelY || ''}
+                    labelProps={labelYProps}
+                  />
+                )}
+            </Group>
             {Children.map(
               children,
               child =>
@@ -245,34 +275,6 @@ class ChartArea extends Component {
                   onMouseLeave={() => this.mouseLeave}
                 />
               )}
-              {!nogrid && (
-                <StyledGridRows
-                  scale={yScale}
-                  stroke={gridStroke || stroke}
-                  width={width - margin.left}
-                />
-              )}
-              {biaxialChildren ||
-                noYAxis || (
-                  <StyledLeftAxis
-                    scale={determineYScale({
-                      type: type === 'horizontal' ? 'horizontal' : null,
-                      yPoints,
-                      height,
-                      margin
-                    })}
-                    {...{
-                      color,
-                      numTicks: numYTicks,
-                      tickLabelProps: yTickLabelProps,
-                      ...yAxisProps
-                    }}
-                    hideTicks
-                    tickFormat={formatY}
-                    label={labelY || ''}
-                    labelProps={labelYProps}
-                  />
-                )}
             </Group>
             <StyledBottomAxis
               scale={xScale}
