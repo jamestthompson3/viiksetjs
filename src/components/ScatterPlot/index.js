@@ -1,4 +1,4 @@
-import React, { Fragment, Component } from 'react'
+import React, { Component } from 'react'
 import moment from 'moment'
 import PropTypes from 'prop-types'
 import get from 'lodash/get'

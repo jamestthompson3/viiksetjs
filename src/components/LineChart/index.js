@@ -34,7 +34,8 @@ class LineChart extends Component {
       axisId,
       type,
       areaProps,
-      lineProps
+      lineProps,
+      gradientOpacity
     } = this.props
 
     // Check if data exists
@@ -66,7 +67,7 @@ class LineChart extends Component {
       <Fragment>
         {!nofill && (
           <Fragment>
-            <StyledGradient color={color} id={`gradient${dataKey}`} />
+            <StyledGradient opacity={gradientOpacity} color={color} id={`gradient${dataKey}`} />
             <StyledPatternLines color={color} id={`dlines${dataKey}`} />
           </Fragment>
         )}
@@ -84,7 +85,7 @@ class LineChart extends Component {
             {...{ data, color }}
             y={yPoints}
             x={xPoints}
-            fill={solidFill ? findColor(this.props) : findFill('gradient')}
+            fill={solidFill ? color : findFill('gradient')}
             yScale={getAxis()}
             xScale={xScale}
             curve={curveMonotoneX}
@@ -118,6 +119,11 @@ LineChart.propTypes = {
    * Optional color prop
    **/
   color: PropTypes.string,
+  /**
+   * Optional opacity prop, values between 0 and 1
+   **/
+  opacity: PropTypes.array,
+
   /**
    * If true, there will be no fill on the line chart.
    **/

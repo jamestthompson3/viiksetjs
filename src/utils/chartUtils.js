@@ -1,9 +1,28 @@
-import { Children, isValidElement } from 'react'
+import { Children, isValidElement, cloneElement } from 'react'
 import { Point } from '@vx/point'
 import { scaleLinear, scaleTime, scaleBand } from 'd3-scale'
 import head from 'lodash/head'
 import last from 'lodash/last'
 
+/**
+ * Recursively clones children, passing props down nested DOM structures
+ *
+ * @param {React.Node} children Children to clone
+ * @param {Object} props Props to give children
+ * @returns {React.Node} Returns children with cloned props
+ */
+export const recursiveCloneChildren = (children, props) =>
+  Children.map(children, child => {
+    if (!isValidElement(child)) return child
+
+    if (child.props) {
+      props.children = recursiveCloneChildren(child.props.children, props)
+
+      return cloneElement(child, props)
+    }
+
+    return child
+  })
 /**
  * Determines the xScale of the chart based on chart type
  * @param {String} type - Type of chart
