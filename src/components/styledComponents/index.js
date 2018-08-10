@@ -12,8 +12,7 @@ import { rgba } from 'polished'
 
 const findStroke = p => (p.theme ? p.theme[p.stroke] || p.stroke || p.theme.primaryColor : p.stroke)
 
-export const findColor = p =>
-  p.theme ? p.theme[p.color] || p.color || p.theme.primaryColor : p.color
+export const findColor = p => (p.theme && p.theme[p.color]) || p.color || p.theme.primaryColor
 
 const findFill = p => (p.theme ? p.theme[p.fill] || p.fill || p.theme.primaryColor : p.fill)
 
@@ -152,8 +151,8 @@ export const StyledGradient = withTheme(props => (
   <LinearGradient
     {...{
       ...props,
-      from: rgba(findColor(props), props.start),
-      to: rgba(findColor(props), props.end)
+      from: rgba(findColor(props), props.opacity ? props.opacity[0] : props.start),
+      to: rgba(findColor(props), props.opacity ? props.opacity[1] : props.end)
     }}
   />
 ))
@@ -172,7 +171,7 @@ StyledLinePath.defaultProps = {
 }
 
 export const StyledAreaClosed = withTheme(props => (
-  <AreaClosed {...{ ...props, stroke: findColor(props) }} />
+  <AreaClosed {...{ ...props, stroke: findColor(props), fill: findFill(props) }} />
 ))
 
 StyledAreaClosed.defaultProps = {

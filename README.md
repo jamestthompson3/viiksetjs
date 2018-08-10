@@ -150,16 +150,17 @@ The `LineChart` component inherits the data from the `ChartArea` which wraps it.
 
 ### Props
 
-| Prop      | Default | Type    | Desc                                                                                          |
-| :-------- | :-----: | :------ | :-------------------------------------------------------------------------------------------- |
-| dataKey   | ''      | String  | Key for data to be graphed, supports nested keys such as `'data.users'`                                                                    |
-| axisId    | ''      | String  | String denoting which axis the LineChart belongs to, needed only when creating biaxial charts |
-| color     | #000    | String  | Color string. Supports colors from styled-components' `themeProvider`.                        |
-| nofill    | false   | Boolean | If `true`, the LineChart will have no fill                                                    |
-| solidFill | false   | Boolean | If `true`, the LineChart will have a solid fill without gradient                              |
-| nopattern | false   | Boolean | If `true`, the LineChart will have no pattern                                                 |
-| lineProps | {}      | Object  | vx props applied to the line path                                                             |
-| areaProps | {}      | Object  | vx props applied to the area fill                                                             |
+| Prop            | Default | Type    | Desc                                                                                          |
+| :-------------- | :-----: | :------ | :-------------------------------------------------------------------------------------------- |
+| dataKey         | ''      | String  | Key for data to be graphed, supports nested keys such as `'data.users'`                       |
+| axisId          | ''      | String  | String denoting which axis the LineChart belongs to, needed only when creating biaxial charts |
+| color           | #000    | String  | Color string. Supports colors from styled-components' `themeProvider`.                        |
+| nofill          | false   | Boolean | If `true`, the LineChart will have no fill                                                    |
+| solidFill       | false   | Boolean | If `true`, the LineChart will have a solid fill without gradient                              |
+| nopattern       | false   | Boolean | If `true`, the LineChart will have no pattern                                                 |
+| lineProps       | {}      | Object  | vx props applied to the line path                                                             |
+| areaProps       | {}      | Object  | vx props applied to the area fill                                                             |
+| gradientOpacity |         | Array   | Array of of two values between 0 and 1 to be applied to the LineChart gradient                |
 
 ```js
 <LineChart dataKey="count_messages" color="rgb(0, 157, 253)" />

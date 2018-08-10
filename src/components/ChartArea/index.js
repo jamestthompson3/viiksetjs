@@ -23,7 +23,8 @@ import {
   biaxial,
   localPoint,
   determineYScale,
-  findTooltipX
+  findTooltipX,
+  recursiveCloneChildren
 } from '../../utils/chartUtils'
 import withTooltip from '../Tooltip/withTooltip'
 import withParentSize from '../Responsive/withParentSize'
@@ -189,7 +190,6 @@ class ChartArea extends Component {
       mouseY,
       x
     } = this.props
-
     return (
       chartData && (
         <Fragment>
@@ -234,31 +234,26 @@ class ChartArea extends Component {
                   />
                 )}
             </Group>
-            {Children.map(
-              children,
-              child =>
-                isValidElement(child) &&
-                cloneElement(child, {
-                  data,
-                  xScale,
-                  margin,
-                  height,
-                  yPoints,
-                  xPoints,
-                  width,
-                  notool,
-                  declareBar: this.declareBar,
-                  type,
-                  mouseMove: this.mouseMove,
-                  mouseLeave: this.mouseLeave,
-                  xKey,
-                  yKey,
-                  inheritedScale: yScale,
-                  formatY,
-                  numYTicks,
-                  formatX
-                })
-            )}
+            {recursiveCloneChildren(children, {
+              data,
+              xScale,
+              margin,
+              height,
+              yPoints,
+              xPoints,
+              width,
+              notool,
+              declareBar: this.declareBar,
+              type,
+              mouseMove: this.mouseMove,
+              mouseLeave: this.mouseLeave,
+              xKey,
+              yKey,
+              inheritedScale: yScale,
+              formatY,
+              numYTicks,
+              formatX
+            })}
             <Group left={margin.left}>
               {bar || (
                 <Bar
