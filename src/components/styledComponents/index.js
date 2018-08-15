@@ -12,7 +12,8 @@ import { rgba } from 'polished'
 
 const findStroke = p => (p.theme ? p.theme[p.stroke] || p.stroke || p.theme.primaryColor : p.stroke)
 
-export const findColor = p => (p.theme && p.theme[p.color]) || p.color || p.theme.primaryColor
+export const findColor = p =>
+  p.theme ? p.theme[p.color] || p.color || p.theme.primaryColor : p.color
 
 const findFill = p => (p.theme ? p.theme[p.fill] || p.fill || p.theme.primaryColor : p.fill)
 
