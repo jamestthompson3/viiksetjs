@@ -184,8 +184,8 @@ export const StyledThreshold = withTheme(props => (
   <Threshold
     {...{
       ...props,
-      belowAreaProps: colorSetter(props.belowAreaProps, props),
-      aboveAreaProps: colorSetter(props.aboveAreaProps, props)
+      belowAreaProps: colorSetter(props.belowAreaProps, { ...props, ...props.belowAreaProps }),
+      aboveAreaProps: colorSetter(props.aboveAreaProps, { ...props, ...props.aboveAreaProps })
     }}
   />
 ))

@@ -7,8 +7,7 @@ import {
   StyledGradient,
   StyledPatternLines,
   StyledLinePath,
-  StyledAreaClosed,
-  findColor
+  StyledAreaClosed
 } from '../styledComponents'
 import { parseObject, checkMoment } from '../../utils/dataUtils'
 import { determineYScale } from '../../utils/chartUtils'
