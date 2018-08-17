@@ -17,10 +17,12 @@ class StackedBarExample extends Component {
   state = {
     orientation: 'ordinal'
   }
+
   handleChange = e =>
     e.target.checked
       ? this.setState({ orientation: 'horizontal' })
       : this.setState({ orientation: 'ordinal' })
+
   render() {
     const { orientation } = this.state
     return (
@@ -32,7 +34,8 @@ class StackedBarExample extends Component {
         <GraphContainer>
           <ChartArea
             data={stackedData.data}
-            type={orientation}
+            type={orientation === 'horizontal' ? 'linear' : 'ordinal'}
+            orientation={orientation}
             numXTicks={isMobile ? 1 : 4}
             color="grey"
             xKey="activity"

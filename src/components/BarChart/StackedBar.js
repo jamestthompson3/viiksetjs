@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Group } from '@vx/group'
 import { stack } from 'd3-shape'
-import { scaleOrdinal, scaleBand, scaleLinear } from 'd3-scale'
+import { scaleOrdinal, scaleBand, scaleLinear, scaleTime } from 'd3-scale'
 import get from 'lodash/get'
 import flatten from 'lodash/flatten'
 import head from 'lodash/head'
@@ -21,14 +21,16 @@ class StackedBar extends Component {
     return !(prevProps.yPoints === this.props.yPoints) || !(prevProps.keys === this.props.keys)
   }
 
-  determineScales = ({ type, data, keys }) => {
+  determineScales = ({ orientation, type, data, keys }) => {
     const { margin, height, width, yPoints, xPoints } = this.props
     const dataDomain = Math.max(
       ...flatten(data.map(d => keys.map(key => get(d, key))).map(arr => sum(arr)))
     )
 
-    if (type === 'horizontal') {
-      const xScale = scaleLinear()
+    const scalar = type === 'linear' ? scaleLinear : scaleTime
+
+    if (orientation === 'horizontal') {
+      const xScale = scalar()
         .domain([0, dataDomain])
         .range([margin.left, width])
       const yScale = scaleBand()
@@ -41,7 +43,7 @@ class StackedBar extends Component {
         .domain(xPoints)
         .range([margin.left, width])
         .padding(0.1)
-      const yScale = scaleLinear()
+      const yScale = scalar()
         .domain([dataDomain, 0])
         .range([height, margin.top])
       return { xScale, yScale }
@@ -60,6 +62,7 @@ class StackedBar extends Component {
     const {
       data,
       type,
+      orientation,
       colors,
       keys,
       yKey,
@@ -82,8 +85,8 @@ class StackedBar extends Component {
     const zScale = scaleOrdinal()
       .domain(keys || extractLabels(data[0]))
       .range(colors)
-    const { xScale, yScale } = this.determineScales({ type, data, keys })
-    const isHorizontal = type === 'horizontal'
+    const { xScale, yScale } = this.determineScales({ type, orientation, data, keys })
+    const isHorizontal = orientation === 'horizontal'
     const series = stack().keys(keys || extractLabels(data[0]))(data)
     const bandwidth = isHorizontal ? yScale.bandwidth() : xScale.bandwidth()
     const yPoint = d => yScale(get(d, yKey))

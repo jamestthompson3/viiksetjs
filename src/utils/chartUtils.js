@@ -60,7 +60,7 @@ export const determineXScale = ({ type, xPoints, width, margin }) => {
  * @param {Object} margin - margin passed to ChartArea
  * @returns {Object} yScale - yScale
  */
-export const determineYScale = ({ type, yPoints, height, margin }) => {
+export const determineYScale = ({ type, orientation, yPoints, height, margin }) => {
   const range = [height, margin.top]
 
   switch (type) {
@@ -68,11 +68,15 @@ export const determineYScale = ({ type, yPoints, height, margin }) => {
       return scaleLinear()
         .domain([Math.max(...yPoints), 0])
         .range(range)
-    case 'horizontal':
-      return scaleBand()
-        .domain(yPoints)
-        .range([height, margin.top])
-        .padding(0.1)
+    case 'linear':
+      return orientation === 'horizontal'
+        ? scaleBand()
+            .domain(yPoints)
+            .range([height, margin.top])
+            .padding(0.1)
+        : scaleLinear()
+            .domain([0, Math.max(...yPoints)])
+            .range(range)
     default:
       return scaleLinear()
         .domain([0, Math.max(...yPoints)])

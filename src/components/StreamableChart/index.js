@@ -146,7 +146,8 @@ class StreamableChart extends Component {
             noYAxis || (
               <StyledLeftAxis
                 scale={determineYScale({
-                  type: type === 'horizontal' ? 'horizontal' : null,
+                  type,
+                  orientation,
                   yPoints,
                   height,
                   margin
@@ -193,6 +194,11 @@ StreamableChart.propTypes = {
    * A string indicating the type of scale the type should have, defaults to timeseries
    */
   type: PropTypes.oneOf(['ordinal', 'linear', 'horizontal']),
+  /**
+   * A string indicating the orientation the chart should have
+   */
+  orientation: PropTypes.oneOf(['horizontal']),
+
   /**
    * A string indicating which data values should be used to create the x-axis
    */
