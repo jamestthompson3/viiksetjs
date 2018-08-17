@@ -1,7 +1,7 @@
 import React, { Fragment, Component } from 'react'
 import get from 'lodash/get'
 import { Group } from '@vx/group'
-import { scaleBand, scaleLinear } from 'd3-scale'
+import { scaleBand, scaleLinear, scaleTime } from 'd3-scale'
 import PropTypes from 'prop-types'
 
 import { StyledGradient, StyledBar } from '../styledComponents'
@@ -16,11 +16,12 @@ class BarChart extends Component {
     return prevProps.yPoints !== this.props.yPoints || prevProps.dataKey !== this.props.dataKey
   }
 
-  determineScales = ({ type }) => {
+  determineScales = ({ type, orientation }) => {
     const { margin, height, width, yPoints, xPoints } = this.props
+    const scalar = type === 'linear' ? scaleLinear : scaleTime
 
-    if (type === 'horizontal') {
-      const xScale = scaleLinear()
+    if (orientation === 'horizontal') {
+      const xScale = scalar()
         .domain([0, Math.max(...yPoints)])
         .range([margin.left, width])
       const yScale = scaleBand()
@@ -34,7 +35,7 @@ class BarChart extends Component {
         .domain(xPoints)
         .range([margin.left, width])
         .padding(0.1)
-      const yScale = scaleLinear()
+      const yScale = scalar()
         .domain([Math.max(...yPoints), 0])
         .range([height, margin.top])
 
@@ -54,6 +55,7 @@ class BarChart extends Component {
       mouseLeave,
       nofill,
       type,
+      orientation,
       inverted,
       barProps
     } = this.props
@@ -64,10 +66,10 @@ class BarChart extends Component {
       return null
     }
 
-    const { xScale, yScale } = this.determineScales({ type })
+    const { xScale, yScale } = this.determineScales({ type, orientation })
     const xPoint = d => extractX(d, xKey)
     const barHeight = d => yScale(get(d, dataKey))
-    const isHorizontal = type === 'horizontal'
+    const isHorizontal = orientation === 'horizontal'
     return (
       <Fragment>
         <StyledGradient color={color} id={`gradient${xKey}`} />

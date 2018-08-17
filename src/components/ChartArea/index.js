@@ -175,6 +175,7 @@ class ChartArea extends Component {
       numXTicks,
       numYTicks,
       type,
+      orientation,
       stroke,
       nogrid,
       notool,
@@ -216,7 +217,8 @@ class ChartArea extends Component {
                 noYAxis || (
                   <StyledLeftAxis
                     scale={determineYScale({
-                      type: type === 'horizontal' ? 'horizontal' : null,
+                      type,
+                      orientation,
                       yPoints,
                       height,
                       margin
@@ -245,6 +247,7 @@ class ChartArea extends Component {
               notool,
               declareBar: this.declareBar,
               type,
+              orientation,
               mouseMove: this.mouseMove,
               mouseLeave: this.mouseLeave,
               xKey,
@@ -324,7 +327,12 @@ ChartArea.propTypes = {
   /**
    * A string indicating the type of scale the type should have, defaults to timeseries
    */
-  type: PropTypes.oneOf(['ordinal', 'linear', 'horizontal']),
+  type: PropTypes.oneOf(['ordinal', 'linear']),
+  /**
+   * A string indicating the orientation the chart should have
+   */
+  orientation: PropTypes.oneOf(['horizontal']),
+
   /**
    * A string indicating which data values should be used to create the x-axis
    */
