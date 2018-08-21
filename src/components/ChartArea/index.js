@@ -183,6 +183,7 @@ class ChartArea extends Component {
       color,
       yCoords,
       calculatedData,
+      glyphRenderer,
       tooltipRenderer,
       tooltipContent,
       indicator: Indicator,
@@ -274,6 +275,7 @@ class ChartArea extends Component {
                 />
               )}
             </Group>
+            {glyphRenderer && glyphRenderer({ width, height, xScale, yScale, margin })}
             <StyledBottomAxis
               scale={xScale}
               {...{
@@ -406,6 +408,11 @@ ChartArea.propTypes = {
    * Number of ticks for yAxis
    */
   numYTicks: PropTypes.number,
+  /*
+   * A function that recieves `width`, `height`, `xScale`, `yScale`, and `margin` from the `ChartArea` and
+   * renders a glyph or series of glyphs with a `z-index` above all chart elements.
+   */
+  glyphRenderer: PropTypes.function,
   /**
    * A function which formats the xAxis
    */
