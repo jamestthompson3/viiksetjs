@@ -27,12 +27,12 @@ export const checkMoment = data => {
  * applicator function
  * @param {Object} object - object which you wish to parse
  * @param {String} arg - one of the javascript types for variables
- * @param {Function} app - applicator function
+ * @param {Function} applicator - applicator function
  * @returns {Any[]} values - values of the object accordingt argument type and result of applicator function
  */
-export const parseObject = (object, arg, app) =>
+export const parseObject = (object, arg, applicator) =>
   Object.values(object)
-    .map(value => (app ? app(value) : value))
+    .map(value => (applicator ? applicator(value) : value))
     .filter(value => typeof value === arg)
 
 /**
