@@ -40,13 +40,15 @@ class LineChart extends Component {
     // Check if data exists
     if (data.map(item => get(item, dataKey)).includes(undefined)) {
       // eslint-disable-next-line
-      console.error(`LineChart: No data found with dataKey ${dataKey}`)
+      process.env.NODE_ENV !== 'production' &&
+        console.warn(`LineChart: No data found with dataKey ${dataKey}`)
       return null
     }
 
     if (axisId && data.map(item => get(item, axisId)).includes(undefined)) {
       // eslint-disable-next-line
-      console.error(`LineChart: No data found with axisId ${axisId}`)
+      process.env.NODE_ENV !== 'production' &&
+        console.warn(`LineChart: No data found with axisId ${axisId}`)
       return null
     }
 
@@ -59,15 +61,16 @@ class LineChart extends Component {
       height,
       margin
     })
+    const gradientKey = typeof dataKey === 'string' ? dataKey.split(' ').join('') : dataKey
     const getAxis = () => (!axisId ? inheritedScale : yScale)
-    const findFill = gradient => (gradient ? `url(#gradient${dataKey})` : `url(#dlines${dataKey})`)
-
+    const findFill = gradient =>
+      gradient ? `url(#gradient${gradientKey})` : `url(#dlines${gradientKey})`
     return (
       <Fragment>
         {!nofill && (
           <Fragment>
-            <StyledGradient opacity={gradientOpacity} color={color} id={`gradient${dataKey}`} />
-            <StyledPatternLines color={color} id={`dlines${dataKey}`} />
+            <StyledGradient opacity={gradientOpacity} color={color} id={`gradient${gradientKey}`} />
+            <StyledPatternLines color={color} id={`dlines${gradientKey}`} />
           </Fragment>
         )}
         <StyledLinePath
