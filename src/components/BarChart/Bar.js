@@ -62,7 +62,8 @@ class BarChart extends Component {
 
     if (data.map(item => get(item, dataKey)).includes(undefined)) {
       // eslint-disable-next-line
-      console.error(`BarChart: No data found with dataKey ${dataKey}`)
+      process.env.NODE_ENV !== 'production' &&
+        console.warn(`BarChart: No data found with dataKey ${dataKey}`)
       return null
     }
 

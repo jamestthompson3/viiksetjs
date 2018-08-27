@@ -1,4 +1,4 @@
-import React, { Children, cloneElement, isValidElement, Component, Fragment } from 'react'
+import React, { Component, Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { Group } from '@vx/group'
 import { Bar } from '@vx/shape'
@@ -442,6 +442,7 @@ ChartArea.defaultProps = {
   nogrid: false,
   notool: false,
   noYAxis: false,
+  glyphRenderer: () => null,
   indicator: Indicator,
   tooltipRenderer: defaultTooltipRenderer,
   tooltipContent: defaultTooltipContent,

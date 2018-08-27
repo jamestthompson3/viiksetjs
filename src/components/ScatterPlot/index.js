@@ -33,13 +33,15 @@ class ScatterPlot extends Component {
     // Check if data exists
     if (data.map(item => get(item, dataKey)).includes(undefined)) {
       // eslint-disable-next-line
-      new console.error(`LineChart: No data found with dataKey ${dataKey}`)
+      process.env.NODE_ENV !== 'production' &&
+        console.warn(`ScatterPlot: No data found with dataKey ${dataKey}`)
       return null
     }
 
     if (axisId && data.map(item => get(item, axisId)).includes(undefined)) {
       // eslint-disable-next-line
-      new console.error(`LineChart: No data found with axisId ${axisId}`)
+      process.env.NODE_ENV !== 'production' &&
+        console.warn(`ScatterPlot: No data found with axisId ${axisId}`)
       return null
     }
 
