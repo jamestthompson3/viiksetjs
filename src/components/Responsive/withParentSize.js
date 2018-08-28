@@ -1,5 +1,5 @@
 import React from 'react'
-import sizeMe from 'react-sizeme'
+import { SizeMe } from 'react-sizeme'
 import styled from 'styled-components'
 
 const Container = styled.div.attrs({
@@ -12,23 +12,21 @@ const Container = styled.div.attrs({
 `
 
 export default function withParentSize(BaseComponent) {
-  class WrappedComponent extends React.PureComponent {
-    render() {
-      const { x } = this.props
-      return (
-        <Container
-          innerRef={ref => {
-            this.container = ref
-          }}
-          x={x}
-        >
-          <BaseComponent {...this.props} />
-        </Container>
-      )
-    }
+  const WrappedComponent = props => {
+    const { x } = props
+    return (
+      <SizeMe
+        monitorHeight
+        refreshMode="debounce"
+        refreshRate={100}
+        render={({ size }) => (
+          <Container x={x}>
+            <BaseComponent {...{ ...props, size }} />
+          </Container>
+        )}
+      />
+    )
   }
 
-  return sizeMe({ monitorHeight: true, refreshMode: 'debounce', refreshRate: 100 })(
-    WrappedComponent
-  )
+  return WrappedComponent
 }

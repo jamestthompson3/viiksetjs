@@ -4,7 +4,7 @@
 
 A lightweight Javascript graphing library for React based on styled-components and vx
 
-[ChartArea](https://github.com/jamestthompson3/viiksetjs#chartarea) | [StreamableChart](https://github.com/jamestthompson3/viiksetjs#streamablechart) | [LineChart](https://github.com/jamestthompson3/viiksetjs#linechart)
+[ChartArea](https://github.com/jamestthompson3/viiksetjs#chartarea) | [StreamableChart](https://github.com/jamestthompson3/viiksetjs#streamablechart) | [DataContext](https://github.com/jamestthompson3/viiksetjs#datacontext) | [LineChart](https://github.com/jamestthompson3/viiksetjs#linechart)
 | [BarChart](https://github.com/jamestthompson3/viiksetjs#barchart) | [StackedBar](https://github.com/jamestthompson3/viiksetjs#stackedbar) | [ScatterPlot](https://github.com/jamestthompson3/viiksetjs#scatterplot)
 | [PieChart](https://github.com/jamestthompson3/viiksetjs#piechart) | [Threshold](https://github.com/jamestthompson3/viiksetjs#threshold) | [StyledPoint](https://github.com/jamestthompson3/viiksetjs#styledpoint) | [YAxis](https://github.com/jamestthompson3/viiksetjs#yaxis) | [StyledLine](https://github.com/jamestthompson3/viiksetjs#styledline) | [Tooltips](https://github.com/jamestthompson3/viiksetjs#tooltips)
 
@@ -89,6 +89,39 @@ The `ChartArea` component will construct a grid and axes on which it will render
 | xKey            | ''                                                                                                                      | String                                       | Optional key delimiting the xValues, supports nested keys such as `'data.users'`                                                                                                                                                                                                                                                                                                                                                                                                   |
 | xTickLabelProps | `() => ({ dy: '-0.25rem', fontWeight: '400', strokeWidth: '0.5px', textAnchor: 'left', fontSize: 12})`                  | Function                                     | Function that returns the labelProps for the xLabels                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | yAxisProps      | {}                                                                                                                      | Object                                       | A Props Object passed to the  yAxis                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+
+## DataContext
+The `DataContext` component allows even greater flexibility for working with your data. It takes a set of props needed to create scales, and returns these scale values to you which can be used with svg, d3, canvas, or even DOM nodes.
+
+### Props
+
+| Prop            | Default       | Type                                          | Desc                                                                                          |
+| :----------     | :-----------  | :---------------------------------------------| :-------------------------------------------------------------------------------------------- |
+| data            | []            |  Array                                        | Array of chart data                                                                           |
+| xKey            |               | String                                        | An optional string denoting the data key for x values, supports nesting such as `'some.thing'`|
+| yKey            |               | String                                        | An optional string denoting the data key for y values, supports nesting such as `'some.thing'`|
+| type            | ''            | `oneOf(['ordinal', 'linear', 'horizontal'])`  | An optional string indicating the type of scale the type should have, defaults to timeseries  |
+| margin          | `{ top: 18, right: 15, bottom: 0, left: 30 }` | Object        | An optional object delineating margin values                                                  |
+| orientation     | ''            | String                                        | An optional string denoting the orientation of the `DataContext`                              |
+```js
+<DataContext data={chartdata} margin={margin}>
+{
+  ({
+    xScale,
+     size,
+     dataKeys,
+     biaxialChildren,
+     data,
+     width,
+     height,
+     yPoints,
+     xPoints,
+     yScale,
+     yScales
+  }) => {/* render children here */}
+}
+</DataContext>
+```
 
 ## StreamableChart
 The `StreamableChart` component takes a `connection` string which is a URL for a WebSocket. The chart will then begin streaming the data from the connection.
@@ -270,7 +303,7 @@ The `StackedBar` component is nearly identical to the `Barchart` in the props th
           nogrid
           yKey='activity'
           yTickLabelProps={() => ({ dx: '-3rem', fontSize: 10, strokeWidth: '0.5px' })}
-          noYaxis='horizontal'
+          noYAxis
          >
            <StackedBar
              colors={['#51344D', '#6F5060', '#A78682']}

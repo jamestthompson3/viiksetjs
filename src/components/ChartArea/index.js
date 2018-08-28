@@ -26,6 +26,7 @@ import {
   findTooltipX,
   recursiveCloneChildren
 } from '../../utils/chartUtils'
+import DataContext from '../DataContext'
 import withTooltip from '../Tooltip/withTooltip'
 import withParentSize from '../Responsive/withParentSize'
 import {
@@ -45,56 +46,8 @@ class ChartArea extends Component {
     chartData: false
   }
 
-  componentDidMount() {
-    this.calculateData()
-  }
-
-  componentDidUpdate(prevProps) {
-    const dataWasChanged = prevProps.data !== this.props.data
-    const widthWasChanged = prevProps.size && prevProps.size.width !== this.props.size.width
-    const heightWasChanged =
-      prevProps.size.height !== 0 && prevProps.size.height !== this.props.size.height
-    const typeWasChanged = prevProps.type !== this.props.type
-
-    if (dataWasChanged || widthWasChanged || heightWasChanged || typeWasChanged) {
-      return this.calculateData()
-    }
-  }
-
   // To prevent tooltips from not showing on bar chart due to minification changing names
   declareBar = () => this.setState({ bar: true })
-
-  calculateData = () => {
-    const { children, size, xKey, yKey, type, margin, data } = this.props
-
-    if (isEmpty(data)) {
-      // eslint-disable-next-line
-      console.error('Data is empty, cannot calculate chart')
-      return null
-    }
-
-    const biaxialChildren = biaxial(children)
-    const dataKeys = extractLabels(data[0])
-    const width = size.width - margin.left - margin.right
-    const height = size.height === 0 ? 300 : size.height - margin.top - margin.bottom
-    const xPoints = uniq(getX(data, xKey))
-    const yPoints = getY(data, yKey)
-    const yScale = determineYScale({ type, yPoints, height, margin })
-    const yScales = biaxialChildren && createScalarData(data, dataKeys, height, margin)
-    const xScale = determineXScale({ type, width, xPoints, margin })
-    return this.setState({
-      width,
-      height,
-      xPoints,
-      xScale,
-      yScale,
-      yPoints,
-      biaxialChildren,
-      yScales,
-      dataKeys,
-      chartData: true
-    })
-  }
 
   mouseMove = ({ event, xPoints, xScale, yScale, yScales, dataKeys, datum }) => {
     const { data, updateTooltip, xKey, type } = this.props
@@ -141,21 +94,8 @@ class ChartArea extends Component {
     this.props.updateTooltip({ calculatedData: null, x: null, yCoords: null, showTooltip: false })
 
   render() {
+    const { bar } = this.state
     const {
-      bar,
-      width,
-      height,
-      xScale,
-      yScale,
-      yScales,
-      biaxialChildren,
-      chartData,
-      dataKeys,
-      yPoints,
-      xPoints
-    } = this.state
-    const {
-      size,
       children,
       determineViewBox,
       data,
@@ -193,121 +133,137 @@ class ChartArea extends Component {
       x
     } = this.props
     return (
-      chartData && (
-        <Fragment>
-          <svg
-            width={size.width}
-            height={height + margin.top + margin.bottom}
-            preserveAspectRatio="none"
-            viewBox={
-              determineViewBox
-                ? determineViewBox({ size, margin })
-                : `-10 0 ${size.width} ${size.height}`
-            }
-            ref={svg => (this.chart = svg)}
-          >
-            <Group left={margin.left}>
-              {!nogrid && (
-                <StyledGridRows
-                  scale={yScale}
-                  stroke={gridStroke || stroke}
-                  width={width - margin.left}
-                />
-              )}
-              {biaxialChildren ||
-                noYAxis || (
-                  <StyledLeftAxis
-                    scale={determineYScale({
-                      type,
-                      orientation,
-                      yPoints,
-                      height,
-                      margin
-                    })}
-                    {...{
-                      color,
-                      numTicks: numYTicks,
-                      tickLabelProps: yTickLabelProps,
-                      ...yAxisProps
-                    }}
-                    hideTicks
-                    tickFormat={formatY}
-                    label={labelY || ''}
-                    labelProps={labelYProps}
+      <DataContext {...{ data, xKey, yKey, type, margin, orientation, x }}>
+        {({
+          xScale,
+          size,
+          dataKeys,
+          biaxialChildren,
+          data,
+          width,
+          height,
+          yPoints,
+          xPoints,
+          yScale,
+          yScales
+        }) => (
+          <div style={{ width: size.width, height: size.height }}>
+            <svg
+              width={width + margin.left + margin.right}
+              height={height + margin.top + margin.bottom}
+              preserveAspectRatio="none"
+              viewBox={
+                determineViewBox
+                  ? determineViewBox({ size, margin })
+                  : `-10 0 ${size.width} ${size.height}`
+              }
+              ref={svg => (this.chart = svg)}
+            >
+              <Group left={margin.left}>
+                {!nogrid && (
+                  <StyledGridRows
+                    scale={yScale}
+                    stroke={gridStroke || stroke}
+                    width={width - margin.left}
                   />
                 )}
-            </Group>
-            {recursiveCloneChildren(children, {
-              data,
-              xScale,
-              margin,
-              height,
-              yPoints,
-              xPoints,
-              width,
-              notool,
-              declareBar: this.declareBar,
-              type,
-              orientation,
-              mouseMove: this.mouseMove,
-              mouseLeave: this.mouseLeave,
-              xKey,
-              yKey,
-              inheritedScale: yScale,
-              formatY,
-              numYTicks,
-              formatX
-            })}
-            <Group left={margin.left}>
-              {bar || (
-                <Bar
-                  width={width}
-                  height={height}
-                  fill="transparent"
-                  onMouseMove={() => event => {
-                    notool || this.mouseMove({ event, xPoints, xScale, yScale, yScales, dataKeys })
-                  }}
-                  onTouchMove={() => event => {
-                    notool || this.mouseMove({ event, xPoints, xScale, yScale, yScales, dataKeys })
-                  }}
-                  onTouchEnd={() => this.mouseLeave}
-                  onMouseLeave={() => this.mouseLeave}
-                />
-              )}
-            </Group>
-            {glyphRenderer && glyphRenderer({ width, height, xScale, yScale, margin })}
-            <StyledBottomAxis
-              scale={xScale}
-              {...{
-                color,
-                height,
+                {biaxialChildren ||
+                  noYAxis || (
+                    <StyledLeftAxis
+                      scale={determineYScale({
+                        type,
+                        orientation,
+                        yPoints,
+                        height,
+                        margin
+                      })}
+                      {...{
+                        color,
+                        numTicks: numYTicks,
+                        tickLabelProps: yTickLabelProps,
+                        ...yAxisProps
+                      }}
+                      hideTicks
+                      tickFormat={formatY}
+                      label={labelY || ''}
+                      labelProps={labelYProps}
+                    />
+                  )}
+              </Group>
+              {recursiveCloneChildren(children, {
+                data,
+                xScale,
                 margin,
-                numTicks: numXTicks,
-                tickLabelProps: xTickLabelProps,
-                ...xAxisProps
-              }}
-              hideTicks
-              tickFormat={formatX}
-              label={labelX || ''}
-              labelProps={labelXProps}
-            />
-            {x && !bar && <Indicator {...{ yCoords, x, stroke, color, height, mouseX }} />}
-          </svg>
-          {showTooltip &&
-            tooltipRenderer({
-              ...{
-                tooltipData: calculatedData,
-                tooltipContent,
-                yCoords,
-                x,
-                mouseX,
-                mouseY,
                 height,
-                color
-              }
-            })}
-        </Fragment>
-      )
+                yPoints,
+                xPoints,
+                width,
+                notool,
+                declareBar: this.declareBar,
+                type,
+                orientation,
+                mouseMove: this.mouseMove,
+                mouseLeave: this.mouseLeave,
+                xKey,
+                yKey,
+                inheritedScale: yScale,
+                formatY,
+                numYTicks,
+                formatX
+              })}
+              <Group left={margin.left}>
+                {bar || (
+                  <Bar
+                    width={width}
+                    height={height}
+                    fill="transparent"
+                    onMouseMove={() => event => {
+                      notool ||
+                        this.mouseMove({ event, xPoints, xScale, yScale, yScales, dataKeys })
+                    }}
+                    onTouchMove={() => event => {
+                      notool ||
+                        this.mouseMove({ event, xPoints, xScale, yScale, yScales, dataKeys })
+                    }}
+                    onTouchEnd={() => this.mouseLeave}
+                    onMouseLeave={() => this.mouseLeave}
+                  />
+                )}
+              </Group>
+              {glyphRenderer && glyphRenderer({ width, height, xScale, yScale, margin })}
+              <StyledBottomAxis
+                scale={xScale}
+                {...{
+                  color,
+                  height,
+                  margin,
+                  numTicks: numXTicks,
+                  tickLabelProps: xTickLabelProps,
+                  ...xAxisProps
+                }}
+                hideTicks
+                tickFormat={formatX}
+                label={labelX || ''}
+                labelProps={labelXProps}
+              />
+              {x && !bar && <Indicator {...{ yCoords, x, stroke, color, height, mouseX }} />}
+            </svg>
+            {showTooltip &&
+              tooltipRenderer({
+                ...{
+                  tooltipData: calculatedData,
+                  tooltipContent,
+                  yCoords,
+                  x,
+                  mouseX,
+                  mouseY,
+                  height,
+                  color
+                }
+              })}
+          </div>
+        )}
+      </DataContext>
     )
   }
 }
@@ -472,4 +428,4 @@ ChartArea.defaultProps = {
   margin: margin
 }
 
-export default withTooltip(withParentSize(ChartArea))
+export default withTooltip(ChartArea)
