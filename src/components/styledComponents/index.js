@@ -238,9 +238,7 @@ const boundsSetter = ({ left, rect, parentRect }) => {
  * @param {Function} getRects - function for calcuating the bounding rects of the tooltip
  * @param {Number} left - x coordinate of the mouse
  */
-const TooltipBounder = ({ children, getRects, left }) => {
-  const { rect, parentRect } = getRects()
-
+const TooltipBounder = ({ children, rect, parentRect, left }) => {
   const getBounds = () => {
     if (rect && parentRect) {
       return {
@@ -263,7 +261,7 @@ const BoundedTooltip = withBoundingRects(TooltipBounder)
 /**
  * Wraps a React component and passes the `getRects` function,
  * allowing the wrapped component to have access to both its own bounding rect
- * and the it's parent's bouding rect
+ * and the it's parent's bounding rect
  * @param {ReactElement} component
  */
 export const withBounds = component => withBoundingRects(component)
