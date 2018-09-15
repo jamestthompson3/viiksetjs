@@ -2,6 +2,9 @@ examples/
 src/
 .eslintrc
 .prettierrc
-.tern-project
+.tern-port
 .flow-config
 .dumbjumpignore
+.babelrc
+webpack.config.js
+jsconfig.json
