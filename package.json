@@ -4,15 +4,15 @@
   "homepage": "https://viiksetjs.com",
   "private": false,
   "dependencies": {
-    "@vx/shape": "^0.0.158",
-    "lodash": "^4.17.5",
-    "moment": "^2.21.0",
-    "prettier": "^1.11.1",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
-    "react-router-dom": "^4.2.2",
-    "react-scripts": "1.1.1",
-    "styled-components": "^3.2.1"
+    "@vx/shape": "^0.0.171",
+    "lodash": "^4.17.11",
+    "moment": "^2.22.2",
+    "prettier": "^1.14.2",
+    "react": "^16.5.1",
+    "react-dom": "^16.5.1",
+    "react-router-dom": "^4.3.1",
+    "react-scripts": "1.1.5",
+    "styled-components": "^3.4.6"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -21,7 +21,6 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
-    "flow-bin": "^0.67.1",
-    "react-styleguidist": "^7.0.14"
+    "flow-bin": "^0.81.0"
   }
 }
