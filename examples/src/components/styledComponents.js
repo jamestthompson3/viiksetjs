@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { withBounds } from 'viiksetjs'
+import { withBoundingRects } from '@vx/bounds'
 import { Line } from '@vx/shape'
 
 export const PageWrapper = styled.div`
@@ -150,7 +150,7 @@ const Container = styled.div.attrs({
   background: cornflowerblue;
   border-radius: 3px;
 `
-const BoundedContainer = withBounds(Container)
+const BoundedContainer = withBoundingRects(Container)
 export const Indicator = ({ x, color, yCoords, height }) => (
   <Line
     from={{ x: x, y: height }}
@@ -161,7 +161,7 @@ export const Indicator = ({ x, color, yCoords, height }) => (
     style={{ pointerEvents: 'none' }}
   />
 )
-const BoundedTooltip = withBounds(TooltipContainer)
+const BoundedTooltip = withBoundingRects(TooltipContainer)
 export const LinearTooltip = ({ tooltipData, x, yCoords }) => (
   <BoundedTooltip left={x - 15} yCoord={yCoords[1] - 15}>
     {tooltipData.y < 300 ? <span role="img">❄️</span> : <span role="img">🔥</span>}

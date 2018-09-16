@@ -1,17 +1,32 @@
-import { Component } from 'react'
-import PropTypes from 'prop-types'
+// @flow
+import * as React from 'react'
 import uniq from 'lodash/uniq'
 import isEmpty from 'lodash/isEmpty'
 
 import { getX, getY, extractLabels, createScalarData } from '../../utils/dataUtils'
 import { determineXScale, biaxial, determineYScale } from '../../utils/chartUtils'
 import withParentSize from '../Responsive/withParentSize'
+import { type Margin, type ScaleFunction } from '../../types/index'
 
 const margin = { top: 18, right: 15, bottom: 15, left: 30 }
 
-class DataContext extends Component {
+class DataContext extends React.Component<Props, State> {
+  static defaultProps = {
+    data: [],
+    margin: margin
+  }
+
   state = {
-    dataCalculated: false
+    dataCalculated: false,
+    width: null,
+    height: null,
+    yPoints: null,
+    xPoints: null,
+    xScale: null,
+    yScale: null,
+    yScales: null,
+    dataKeys: null,
+    biaxialChildren: null
   }
 
   componentDidMount() {
@@ -31,7 +46,7 @@ class DataContext extends Component {
   }
 
   calculateData = () => {
-    const { children, size, xKey, yKey, type, margin, data, orientation } = this.props
+    const { size, xKey, yKey, type, margin, data, orientation } = this.props
 
     if (isEmpty(data)) {
       // eslint-disable-next-line
@@ -39,14 +54,12 @@ class DataContext extends Component {
       return null
     }
 
-    const biaxialChildren = biaxial(children)
     const dataKeys = extractLabels(data[0])
     const width = size.width - margin.left - margin.right
     const height = size.height === 0 ? 300 : size.height - margin.top - margin.bottom
     const xPoints = uniq(getX(data, xKey))
     const yPoints = getY(data, yKey)
     const yScale = determineYScale({ type, yPoints, height, margin, orientation })
-    const yScales = biaxialChildren && createScalarData(data, dataKeys, height, margin)
     const xScale = determineXScale({ type, width, xPoints, margin })
     return this.setState({
       width,
@@ -55,8 +68,6 @@ class DataContext extends Component {
       xScale,
       yScale,
       yPoints,
-      biaxialChildren,
-      yScales,
       dataKeys,
       dataCalculated: true
     })
@@ -100,34 +111,33 @@ class DataContext extends Component {
   }
 }
 
-DataContext.propTypes = {
-  data: PropTypes.array.isRequired,
-  /*
-   * A string indicating the type of scale the type should have, defaults to timeseries
-   */
-  type: PropTypes.oneOf(['ordinal', 'linear']),
-  /**
-   * A string indicating the orientation the context should have
-   */
-  orientation: PropTypes.oneOf(['horizontal']),
-  /**
-   * A string indicating which data values should be used to create the xScale
-   */
-  xKey: PropTypes.string,
-  /**
-   * A string indicating which data values should be used to create the yScale
-   */
-  yKey: PropTypes.string,
-
-  /**
-   * An optional prop for context margins
-   */
-  margin: PropTypes.object
+export type Size = {
+  width: number,
+  height: number
 }
 
-DataContext.defaultProps = {
-  data: [],
-  margin: margin
+type State = {
+  dataCalculated: boolean,
+  width: ?number,
+  height: ?number,
+  xScale: ?ScaleFunction,
+  yScale: ?ScaleFunction,
+  yScales: ?{ [key: string]: ScaleFunction } | ?false,
+  biaxialChildren: ?boolean,
+  dataKeys: ?(string[]),
+  yPoints: ?(number[]) | ?(string[]),
+  xPoints: ?(number[]) | ?(string[])
+}
+
+type Props = {
+  data: any[],
+  type: 'ordinal' | 'linear',
+  orientation: 'horizontal',
+  children: React.Node[],
+  xKey: string,
+  yKey: string,
+  size: Size,
+  margin: Margin
 }
 
 export default withParentSize(DataContext)

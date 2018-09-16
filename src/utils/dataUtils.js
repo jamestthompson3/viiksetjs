@@ -1,85 +1,71 @@
+// @flow
 import { scaleLinear } from 'd3-scale'
 import flatten from 'lodash/flatten'
 import head from 'lodash/head'
 import last from 'lodash/last'
 import get from 'lodash/get'
-import moment from 'moment'
+import parse from 'date-fns/parse'
+import format from 'date-fns/format'
+import { type Margin } from '../types/index'
 
 /**
- * Checks for moment objects
- * @param {Object} data - object to check for moment instances
- * @returns {String} date - date string
+ * Checks for dates
  */
-export const checkMoment = data => {
-  switch (true) {
-    case typeof data === 'string' && moment(data).isValid():
-      return moment(data).format()
-    case moment.isMoment(data):
-      return data.toISOString()
-    case data instanceof Date:
-      return data.toISOString()
-    default:
-      return data
+export const checkDate = (data: Object): ?string => {
+  if (typeof data === 'string' || data instanceof Date) {
+    return format(parse(data))
   }
 }
 /**
  * Takes an object and argument and returns the values of the object according to the argument type and optional
  * applicator function
- * @param {Object} object - object which you wish to parse
- * @param {String} arg - one of the javascript types for variables
- * @param {Function} applicator - applicator function
- * @returns {Any[]} values - values of the object accordingt argument type and result of applicator function
  */
-export const parseObject = (object, arg, applicator) =>
+export const parseObject = (
+  object: Object,
+  arg: string,
+  applicator: any => mixed = value => value
+): any[] =>
   Object.values(object)
-    .map(value => (applicator ? applicator(value) : value))
+    .map(applicator)
     .filter(value => typeof value === arg)
 
 /**
  * Takes an array of objects and a datakey and returns an array of x-value points
- * @param {Object[]} data - an array of data objects
- * @param {String} xKey - a key for the xvalues, if they cannot be found by looking at the object itself
- * @returns {String[]} xValues - xValue points
  */
-export const getX = (data, xKey) =>
+export const getX = (data: Object[], xKey: string): any[] =>
   xKey
     ? data.map(datum => get(datum, xKey))
-    : flatten(data.map(datum => parseObject(datum, 'string', checkMoment)).map(i => new Date(i)))
+    : flatten(
+        data
+          .map(datum => parseObject(datum, 'string', checkDate))
+          /* eslint-disable-next-line */
+          .map(i => new Date(i[0]))
+      )
 
 /**
  * Takes an array of objects and returns an array of y-value points
- * @param {Object[]} data - an array of data objects
- * @param {String} yKey - a key for the yvalue, if not using categorical or timeseries data
  */
-export const getY = (data, yKey) =>
+export const getY = (data: Object[], yKey: string): any =>
   yKey
     ? data.map(datum => get(datum, yKey))
     : flatten(data.map(datum => parseObject(datum, 'number')))
 
 /**
  * Takes a data object and extracts all Y values
- * @param {Object} datum - the object which you want to extract the values from
- * @param {String} yKey - a key for the yvalue, if not using categorical or timeseries data
  */
-export const extractY = (datum, yKey) =>
+export const extractY = (datum: Object, yKey: string | null = null): any[] =>
   yKey ? [get(datum, yKey)] : flatten(parseObject(datum, 'number'))
 
 /**
  * Takes a data object and extracts all X values and parse them to date time objects if applicable
- * @param {Object} datum - the object which you want to extract the values from
- * @param {String} xKey - a key for the xvalue, if not using categorical or timeseries data
  */
-export const extractX = (datum, xKey) =>
-  xKey
-    ? [get(datum, xKey)]
-    : flatten(parseObject(datum, 'string')).map(i => new Date(checkMoment(i)))
+export const extractX = (datum: Object, xKey: string | null = null): any[] =>
+  xKey ? [get(datum, xKey)] : flatten(parseObject(datum, 'string', checkDate)).map(i => new Date(i))
 
 /**
  * Takes a data object and extracts all Y labels by parsing which values contain numbers
- * @param {Object} datum - the object which you want to extract the labels from
- * @returns {String[]} labels - an array of the labels
  */
-export const extractLabels = datum =>
+export const extractLabels = (datum: Object): string[] =>
   flatten(
     Object.entries(datum).map(value => {
       if (typeof last(value) === 'number') {
@@ -92,12 +78,13 @@ export const extractLabels = datum =>
 /**
  * Takes four parameters and produces and object with a scale for each column
  * in the dataset
- * @param {Object[]} data - an array of data objects
- * @param {Object[]} dataKeys - the keys or column names of the data objects
- * @param {Number} height - the height of the svg container
- * @param {Object} margin - the margin object used in the chartArea
  */
-export const createScalarData = (data, dataKeys, height, margin) => {
+export const createScalarData = (
+  data: Object[],
+  dataKeys: string[],
+  height: number,
+  margin: Margin
+) => {
   const scalarObject = {}
   dataKeys.map(
     key =>
@@ -115,7 +102,7 @@ export const createScalarData = (data, dataKeys, height, margin) => {
             })
           )
         ])
-        .range([height, margin.top + margin.top]))
+        .range([height, margin.top]))
   )
   return scalarObject
 }

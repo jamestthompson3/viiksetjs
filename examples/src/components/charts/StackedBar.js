@@ -25,6 +25,7 @@ class StackedBarExample extends Component {
 
   render() {
     const { orientation } = this.state
+    const isHorizontal = orientation === 'horizontal'
     return (
       <Fragment>
         <InputContainer>
@@ -34,16 +35,21 @@ class StackedBarExample extends Component {
         <GraphContainer>
           <ChartArea
             data={stackedData.data}
-            type={orientation === 'horizontal' ? 'linear' : 'ordinal'}
+            type={isHorizontal ? 'linear' : 'ordinal'}
             orientation={orientation}
             numXTicks={isMobile ? 1 : 4}
             color="grey"
             xKey="activity"
             stroke="grey"
             nogrid
-            yKey={orientation === 'horizontal' && 'activity'}
-            yTickLabelProps={() => ({ dx: '-3rem', fontSize: 10, strokeWidth: '0.5px' })}
-            noYaxis={orientation !== 'horizontal'}
+            yKey={isHorizontal && 'activity'}
+            yTickLabelProps={() => ({
+              dx: isHorizontal ? '0rem' : '-3rem',
+              fontSize: 10,
+              strokeWidth: '0.5px',
+              textAnchor: isHorizontal ? 'end' : 'middle'
+            })}
+            noYaxis={!isHorizontal}
           >
             <StackedBar
               colors={['#51344D', '#6F5060', '#A78682']}
@@ -55,21 +61,27 @@ class StackedBarExample extends Component {
           {`
         <ChartArea
             data={stackedData.data}
-            type={orientation}
+            type={isHorizontal ? 'linear' : 'ordinal'}
+            orientation={orientation}
+            numXTicks={isMobile ? 1 : 4}
             color="grey"
             xKey="activity"
             stroke="grey"
             nogrid
-            yKey={orientation === 'horizontal' && 'activity'}
-            yTickLabelProps={() => ({ dx: '-3rem', fontSize: 10, strokeWidth: '0.5px' })}
-            noYaxis={orientation !== 'horizontal'}
+            yKey={isHorizontal && 'activity'}
+            yTickLabelProps={() => ({
+              dx: isHorizontal ? '0rem' : '-3rem',
+              fontSize: 10,
+              strokeWidth: '0.5px',
+              textAnchor: isHorizontal ? 'end' : 'middle'
+            })}
+            noYaxis={!isHorizontal}
           >
             <StackedBar
               colors={['#51344D', '#6F5060', '#A78682']}
               keys={['often', 'sometimes', 'never']}
             />
-          </ChartArea>
-        `}
+          </ChartArea>        `}
         </Snippet>
       </Fragment>
     )

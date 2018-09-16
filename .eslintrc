@@ -1,5 +1,6 @@
 {
   "parser": "babel-eslint",
+  "plugins": ["flowtype"],
   "parserOptions": {
     "ecmaVersion": 6,
     "sourceType": "module",
@@ -38,7 +39,8 @@
   },
   "extends": [
     "eslint:recommended",
-    "plugin:react/recommended"
+    "plugin:react/recommended",
+    "plugin:flowtype/recommended"
   ],
   "rules": {
     "default-case": 1,

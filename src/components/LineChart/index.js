@@ -1,7 +1,7 @@
-import React, { Fragment, Component } from 'react'
+// @flow
+import * as React from 'react'
 import get from 'lodash/get'
 import { curveMonotoneX } from '@vx/curve'
-import PropTypes from 'prop-types'
 
 import {
   StyledGradient,
@@ -9,11 +9,18 @@ import {
   StyledLinePath,
   StyledAreaClosed
 } from '../styledComponents'
-import { parseObject, checkMoment } from '../../utils/dataUtils'
+import { extractX } from '../../utils/dataUtils'
 import { determineYScale } from '../../utils/chartUtils'
+import { type RenderedChildProps } from '../../types/index'
 
-class LineChart extends Component {
-  shouldComponentUpdate(prevProps) {
+class LineChart extends React.Component<Props> {
+  static defaultProps = {
+    color: 'rgb(0, 157, 253)',
+    nofill: false,
+    nopattern: false
+  }
+
+  shouldComponentUpdate(prevProps: Props) {
     return this.props.yPoints !== prevProps.yPoints || prevProps.dataKey !== this.props.dataKey
   }
 
@@ -25,7 +32,6 @@ class LineChart extends Component {
       xScale,
       xKey,
       nofill,
-      solidFill,
       height,
       margin,
       nopattern,
@@ -53,7 +59,7 @@ class LineChart extends Component {
     }
 
     const yPoints = d => get(d, dataKey)
-    const xPoints = d => (xKey ? get(d, xKey) : new Date(parseObject(d, 'string', checkMoment)))
+    const xPoints = d => (xKey ? get(d, xKey) : extractX(d))[0]
     const dataPoints = data.map(item => get(item, dataKey))
     const yScale = determineYScale({
       type: type || 'linear',
@@ -66,12 +72,12 @@ class LineChart extends Component {
     const findFill = gradient =>
       gradient ? `url(#gradient${gradientKey})` : `url(#dlines${gradientKey})`
     return (
-      <Fragment>
+      <>
         {!nofill && (
-          <Fragment>
+          <>
             <StyledGradient opacity={gradientOpacity} color={color} id={`gradient${gradientKey}`} />
             <StyledPatternLines color={color} id={`dlines${gradientKey}`} />
-          </Fragment>
+          </>
         )}
         <StyledLinePath
           {...{ data, color }}
@@ -87,7 +93,7 @@ class LineChart extends Component {
             {...{ data, color }}
             y={yPoints}
             x={xPoints}
-            fill={solidFill ? color : findFill('gradient')}
+            fill={findFill('gradient')}
             yScale={getAxis()}
             xScale={xScale}
             curve={curveMonotoneX}
@@ -107,39 +113,18 @@ class LineChart extends Component {
               {...areaProps}
             />
           ))}
-      </Fragment>
+      </>
     )
   }
 }
 
-LineChart.propTypes = {
-  /**
-   * Specifies which data points the chart should use to draw itself
-   **/
-  dataKey: PropTypes.string.isRequired,
-  /**
-   * Optional color prop
-   **/
-  color: PropTypes.string,
-  /**
-   * Optional opacity prop, values between 0 and 1
-   **/
-  opacity: PropTypes.array,
-
-  /**
-   * If true, there will be no fill on the line chart.
-   **/
-  nofill: PropTypes.bool,
-  /**
-   * If true, there will be no pattern on the line chart.
-   */
-  nopattern: PropTypes.bool
-}
-
-LineChart.defaultProps = {
-  color: 'rgb(0, 157, 253)',
-  nofill: false,
-  nopattern: false
+type Props = {
+  areaProps: Object,
+  lineProps: Object,
+  gradientOpacity: number[],
+  nofill: boolean,
+  nopattern: boolean,
+  ...RenderedChildProps
 }
 
 export default LineChart

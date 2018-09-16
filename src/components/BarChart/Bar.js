@@ -103,7 +103,7 @@ BarChart.propTypes = {
   /**
    * Indicates chart should go from top to bottom
    */
-  inverted: PropTypes.boolean,
+  inverted: PropTypes.bool,
   /**
    * Indicates the color of the BarChart
    */

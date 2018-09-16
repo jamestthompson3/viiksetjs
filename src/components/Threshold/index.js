@@ -1,14 +1,26 @@
-import React, { Component } from 'react'
+// @flow
+import * as React from 'react'
 import { scaleLinear } from 'd3-scale'
 import get from 'lodash/get'
 import { curveBasis } from '@vx/curve'
-import PropTypes from 'prop-types'
 
 import { StyledThreshold } from '../styledComponents'
-import { parseObject, checkMoment } from '../../utils/dataUtils'
+import { extractX } from '../../utils/dataUtils'
+import { type RenderedChildProps } from '../../types/index'
 
-class Threshold extends Component {
-  shouldComponentUpdate(prevProps) {
+class Threshold extends React.Component<Props> {
+  static defaultProps = {
+    aboveAreaProps: {
+      fill: 'green',
+      fillOpacity: 0.5
+    },
+    belowAreaProps: {
+      fill: 'red',
+      fillOpacity: 0.5
+    }
+  }
+
+  shouldComponentUpdate(prevProps: Props) {
     return this.props.yPoints !== prevProps.yPoints || prevProps.dataKey !== this.props.dataKey
   }
 
@@ -45,7 +57,7 @@ class Threshold extends Component {
       return null
     }
 
-    const xPoints = d => (xKey ? get(d, xKey) : new Date(parseObject(d, 'string', checkMoment)))
+    const xPoints = d => (xKey ? get(d, xKey) : extractX(d)[0])
     const dataPoints = [...data.map(item => get(item, y0)), ...data.map(item => get(item, y1))]
     const yScale = scaleLinear()
       .domain([0, Math.max(...dataPoints)])
@@ -68,42 +80,15 @@ class Threshold extends Component {
   }
 }
 
-Threshold.propTypes = {
-  /**
-   * Specifies first threshold category
-   */
-  y0: PropTypes.string.isRequired,
-  /**
-   * Specifies second threshold category
-   */
-  y1: PropTypes.string.isRequired,
-  /**
-   * Specifies props to area above threshold
-   */
-  aboveAreaProps: PropTypes.object,
-  /**
-   * Specifies props to area below threshold
-   */
-  belowAreaProps: PropTypes.object,
-  /**
-   * Specifies the clip below
-   */
-  clipBelowTo: PropTypes.number,
-  /**
-   * species the clip above
-   */
-  clipAboveTo: PropTypes.number
-}
-
-Threshold.defaultProps = {
-  aboveAreaProps: {
-    fill: 'green',
-    fillOpacity: 0.5
-  },
-  belowAreaProps: {
-    fill: 'red',
-    fillOpacity: 0.5
-  }
+type Props = {
+  y0: string,
+  y1: string,
+  aboveAreaProps: Object,
+  belowAreaProps: Object,
+  clipBelowTo: number,
+  clipAboveTo: number,
+  lineProps: Object,
+  ...RenderedChildProps
 }
 
 export default Threshold

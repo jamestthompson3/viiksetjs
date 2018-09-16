@@ -19,8 +19,6 @@ const findFill = p => (p.theme ? p.theme[p.fill] || p.fill || p.theme.primaryCol
 
 /**
  * Takes a function and returns the another function containing the correct props for axes
- * @param {Function} func - function that returns the current axis props
- * @param {Object} p - props object
  */
 const propsColorSetter = (func, p, value, index) => {
   const exec = func(value, index)
@@ -179,7 +177,7 @@ StyledAreaClosed.defaultProps = {
   strokeWidth: 1
 }
 
-export const StyledPie = withTheme(props => <Pie {...{ ...props, fill: findColor(props) }} />)
+export const StyledPie = withTheme(props => <Pie {...{ ...props, fill: findFill(props) }} />)
 
 export const StyledThreshold = withTheme(props => (
   <Threshold
@@ -234,9 +232,6 @@ const boundsSetter = ({ left, rect, parentRect }) => {
 
 /**
  * TooltipBounder sets bounds for the tooltip and passes them down
- * @param {ReactElement} children - children to be rendered
- * @param {Function} getRects - function for calcuating the bounding rects of the tooltip
- * @param {Number} left - x coordinate of the mouse
  */
 const TooltipBounder = ({ children, rect, parentRect, left }) => {
   const getBounds = () => {
@@ -262,16 +257,11 @@ const BoundedTooltip = withBoundingRects(TooltipBounder)
  * Wraps a React component and passes the `getRects` function,
  * allowing the wrapped component to have access to both its own bounding rect
  * and the it's parent's bounding rect
- * @param {ReactElement} component
  */
 export const withBounds = component => withBoundingRects(component)
 
 /**
  * Wrapper component for default tooltip
- * @param {Object} tooltipData - data calculated from ChartArea
- * @param {String} color - color from ChartArea
- * @param {Number} x - svg x coordinate
- * @param {ReactElement} tooltipContent - prop passed from user
  */
 export const defaultTooltipRenderer = ({ tooltipData, tooltipContent, color, x }) => (
   <BoundedTooltip left={x}>
@@ -281,8 +271,6 @@ export const defaultTooltipRenderer = ({ tooltipData, tooltipContent, color, x }
 
 /**
  * Default tooltip content function
- * @param {Object} tooltipData - tooltipData
- * @returns {ReactElement} tooltipContent
  */
 export const defaultTooltipContent = ({ tooltipData }) =>
   Object.entries(tooltipData).map((entry, i) => <p key={i}>{`${entry[0]}: ${entry[1]}`}</p>)

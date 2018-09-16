@@ -1,11 +1,14 @@
-import React, { Component, Fragment } from 'react'
-import PropTypes from 'prop-types'
+// @flow
+import * as React from 'react'
 import { Group } from '@vx/group'
 import get from 'lodash/get'
 import styled from 'styled-components'
 
 import { StyledText, StyledPie, findColor, defaultTooltipContent } from '../styledComponents'
+import DataContext from '../DataContext'
 import withParentSize from '../Responsive/withParentSize'
+import { type TooltipData } from '../ChartArea/index'
+import { type RenderedChildProps } from '../../types/index'
 import withTooltip from '../Tooltip/withTooltip'
 
 const Label = ({ x, y, labelProps, labelText }) => (
@@ -53,7 +56,16 @@ const defaultPieTooltip = ({
   )
 }
 
-class PieChart extends Component {
+class PieChart extends React.Component<Props> {
+  static defaultProps = {
+    determineOpacity: () => 0.5,
+    tooltipRenderer: defaultPieTooltip,
+    tooltipContent: defaultTooltipContent,
+    innerRadius: 0,
+    outerRadius: 0,
+    margin: { top: 10, bottom: 10, left: 10, right: 10 }
+  }
+
   mouseMove = ({ d: { data, centroid } }) => {
     const { updateTooltip } = this.props
     return updateTooltip({
@@ -67,14 +79,16 @@ class PieChart extends Component {
   mouseLeave = () =>
     this.props.updateTooltip({ calculatedData: null, showTooltip: false, x: null, yCoords: null })
 
+  calcRadius = (width: number, height: number): number => Math.min(width, height) / 2
+
   render() {
     const {
-      data,
       color,
+      data,
       dataKey,
-      size: { height, width },
       labelKey,
       determineOpacity,
+      margin,
       innerRadius,
       mouseY,
       mouseX,
@@ -83,80 +97,65 @@ class PieChart extends Component {
       tooltipRenderer,
       tooltipContent,
       outerRadius,
-      ...rest
+      pieProps
     } = this.props
-    const radius = Math.min(width, height) / 2
     return (
-      <Fragment>
-        <svg width={width} height={height}>
-          <Group top={height / 2} left={width / 2}>
-            <StyledPie
-              data={data}
-              pieValue={d => get(d, dataKey)}
-              innerRadius={radius - innerRadius}
-              outerRadius={radius - outerRadius}
-              fill={color}
-              fillOpacity={({ data }) => determineOpacity(data)}
-              onMouseEnter={d => () => this.mouseMove({ d })}
-              onMouseLeave={() => this.mouseLeave}
-              centroid={(centroid, arc) => {
-                const [x, y] = centroid
-                const { data } = arc
-                return <Label x={x} y={y} labelText={get(data, labelKey)} />
-              }}
-              {...rest}
-            />
-          </Group>
-        </svg>
-        {showTooltip &&
-          tooltipRenderer({
-            ...{
-              tooltipData: calculatedData,
-              tooltipContent,
-              mouseX,
-              mouseY,
-              height,
-              color,
-              width
-            }
-          })}
-      </Fragment>
+      <DataContext {...{ data, margin, dataKey }}>
+        {({ width, height, data, size }) => (
+          <div style={{ width: size.width, height: size.height }}>
+            <svg width={width} height={height}>
+              <Group top={height / 2} left={width / 2}>
+                <StyledPie
+                  data={data}
+                  pieValue={d => get(d, dataKey)}
+                  innerRadius={this.calcRadius(width, height) - innerRadius}
+                  outerRadius={this.calcRadius(width, height) - outerRadius}
+                  fill={color}
+                  fillOpacity={({ data }) => determineOpacity(data)}
+                  onMouseEnter={d => () => this.mouseMove({ d })}
+                  onMouseLeave={() => this.mouseLeave}
+                  centroid={(centroid, arc) => {
+                    const [x, y] = centroid
+                    const { data } = arc
+                    return <Label x={x} y={y} labelText={get(data, labelKey)} />
+                  }}
+                  {...pieProps}
+                />
+              </Group>
+            </svg>
+            {showTooltip &&
+              tooltipRenderer({
+                ...{
+                  tooltipData: calculatedData,
+                  tooltipContent,
+                  mouseX,
+                  mouseY,
+                  height,
+                  color,
+                  width
+                }
+              })}
+          </div>
+        )}
+      </DataContext>
     )
   }
 }
 
-PieChart.propTypes = {
-  data: PropTypes.array.isRequired,
-  color: PropTypes.string,
-  /**
-   * Prop for the key containing the label names
-   */
-  labelKey: PropTypes.string.isRequired,
-  /**
-   * Prop for the key containing the data
-   */
-  dataKey: PropTypes.string.isRequired,
-  /**
-   * Prop for determining the opacity of the pie pieces
-   */
-  determineOpacity: PropTypes.func,
-  /**
-   * innerRadius offset
-   */
-  innerRadius: PropTypes.number,
-  /**
-   * outerRadius offset
-   */
-  outerRadius: PropTypes.number
-}
-
-PieChart.defaultProps = {
-  determineOpacity: () => 0.5,
-  tooltipRenderer: defaultPieTooltip,
-  tooltipContent: defaultTooltipContent,
-  innerRadius: 0,
-  outerRadius: 0,
-  margin: { top: 10, bottom: 10, left: 10, right: 10 }
+type Props = {
+  labelKey: string,
+  determineOpacity: any => number,
+  mouseX: number,
+  mouseY: number,
+  tooltipRenderer: ($Shape<TooltipData>) => React.Node,
+  tooltipContent: (tooltipData: Object) => React.Node,
+  calculatedData: Object[],
+  showTooltip: boolean,
+  innerRadius: number,
+  outerRadius: number,
+  pieProps: Object,
+  updateTooltip: ($Shape<TooltipData>) => mixed,
+  ...RenderedChildProps
 }
 
 export default withTooltip(withParentSize(PieChart))

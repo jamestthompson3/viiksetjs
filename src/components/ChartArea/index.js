@@ -1,34 +1,24 @@
-import React, { Component, Fragment } from 'react'
-import PropTypes from 'prop-types'
+// @flow
+import * as React from 'react'
 import { Group } from '@vx/group'
 import { Bar } from '@vx/shape'
 import { bisect } from 'd3-array'
 import flow from 'lodash/flow'
-import uniq from 'lodash/uniq'
 import head from 'lodash/head'
-import isEmpty from 'lodash/isEmpty'
 import get from 'lodash/get'
 
-import {
-  getX,
-  getY,
-  extractLabels,
-  extractX,
-  extractY,
-  createScalarData
-} from '../../utils/dataUtils'
+import { extractX, extractY, createScalarData } from '../../utils/dataUtils'
 import { formatTicks, formatXTicks } from '../../utils/formatUtils'
 import {
-  determineXScale,
-  biaxial,
   localPoint,
   determineYScale,
   findTooltipX,
-  recursiveCloneChildren
+  recursiveCloneChildren,
+  biaxial
 } from '../../utils/chartUtils'
 import DataContext from '../DataContext'
+import { type Size } from '../DataContext'
 import withTooltip from '../Tooltip/withTooltip'
-import withParentSize from '../Responsive/withParentSize'
 import {
   Indicator,
   StyledGridRows,
@@ -38,18 +28,58 @@ import {
   StyledBottomAxis
 } from '../styledComponents'
 
+import { type Margin, type ScaleFunction } from '../../types/index'
+
 const margin = { top: 18, right: 15, bottom: 15, left: 30 }
 
-class ChartArea extends Component {
+class ChartArea extends React.Component<Props, State> {
+  static defaultProps = {
+    data: [],
+    color: '#000',
+    stroke: '#000',
+    nogrid: false,
+    notool: false,
+    noYAxis: false,
+    glyphRenderer: () => null,
+    indicator: Indicator,
+    tooltipRenderer: defaultTooltipRenderer,
+    tooltipContent: defaultTooltipContent,
+    formatY: formatTicks,
+    labelY: '',
+    labelX: '',
+    numXTicks: 6,
+    numYTicks: 4,
+    yTickLabelProps: () => ({
+      dy: '-0.25rem',
+      dx: '-0.75rem',
+      strokeWidth: '0.5px',
+      fontWeight: 400,
+      textAnchor: 'end',
+      fontSize: 12
+    }),
+    xTickLabelProps: () => ({
+      dy: '-0.25rem',
+      fontWeight: 400,
+      strokeWidth: '0.5px',
+      textAnchor: 'start',
+      fontSize: 12
+    }),
+    labelYProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' },
+    labelXProps: { fontSize: 12, textAnchor: 'middle', fill: 'black', dy: '-0.5rem' },
+    formatX: formatXTicks,
+    margin: margin
+  }
+
+  chart = null
+
   state = {
-    bar: false,
-    chartData: false
+    bar: false
   }
 
   // To prevent tooltips from not showing on bar chart due to minification changing names
   declareBar = () => this.setState({ bar: true })
 
-  mouseMove = ({ event, xPoints, xScale, yScale, yScales, dataKeys, datum }) => {
+  mouseMove = ({ event, xPoints, xScale, yScale, yScales, dataKeys, datum }: MouseMove): mixed => {
     const { data, updateTooltip, xKey, type } = this.props
     const svgPoint = localPoint(this.chart, event)
 
@@ -132,21 +162,10 @@ class ChartArea extends Component {
       mouseY,
       x
     } = this.props
+    const biaxialChildren = children && biaxial(children)
     return (
       <DataContext {...{ data, xKey, yKey, type, margin, orientation, x }}>
-        {({
-          xScale,
-          size,
-          dataKeys,
-          biaxialChildren,
-          data,
-          width,
-          height,
-          yPoints,
-          xPoints,
-          yScale,
-          yScales
-        }) => (
+        {({ xScale, size, dataKeys, data, width, height, yPoints, xPoints, yScale }) => (
           <div style={{ width: size.width, height: size.height }}>
             <svg
               width={width + margin.left + margin.right}
@@ -219,11 +238,27 @@ class ChartArea extends Component {
                     fill="transparent"
                     onMouseMove={() => event => {
                       notool ||
-                        this.mouseMove({ event, xPoints, xScale, yScale, yScales, dataKeys })
+                        this.mouseMove({
+                          event,
+                          xPoints,
+                          xScale,
+                          yScale,
+                          yScales:
+                            biaxialChildren && createScalarData(data, dataKeys, height, margin),
+                          dataKeys
+                        })
                     }}
                     onTouchMove={() => event => {
                       notool ||
-                        this.mouseMove({ event, xPoints, xScale, yScale, yScales, dataKeys })
+                        this.mouseMove({
+                          event,
+                          xPoints,
+                          xScale,
+                          yScale,
+                          yScales:
+                            biaxialChildren && createScalarData(data, dataKeys, height, margin),
+                          dataKeys
+                        })
                     }}
                     onTouchEnd={() => this.mouseLeave}
                     onMouseLeave={() => this.mouseLeave}
@@ -268,164 +303,79 @@ class ChartArea extends Component {
   }
 }
 
-ChartArea.propTypes = {
-  data: PropTypes.array.isRequired,
-  /**
-   * Optional prop to apply color axes and x-ticks
-   */
-  color: PropTypes.string,
-  /**
-   * Optional prop to apply color gridlines and/or indicator
-   */
-  stroke: PropTypes.string,
-  /**
-   * Optional prop to apply color gridlines
-   */
-  gridStroke: PropTypes.string,
-  /**
-   * A string indicating the type of scale the type should have, defaults to timeseries
-   */
-  type: PropTypes.oneOf(['ordinal', 'linear']),
-  /**
-   * A string indicating the orientation the chart should have
-   */
-  orientation: PropTypes.oneOf(['horizontal']),
-
-  /**
-   * A string indicating which data values should be used to create the x-axis
-   */
-  xKey: PropTypes.string,
-  /**
-   * A function that returns React component to return as a tooltip receives as props the following:
-   * @param {Object} tooltipData - calculated data returned from tooltip calculations
-   * @param {Number} x - x coordinate of closest data point
-   * @param {Number} mouseX - x coordinate of mouse position
-   * @param {Number} mouseY - y coordinate of mouse position
-   * @param {Object[]} yCoords - array of y coordinates of closest data point(s)
-   * @param {String} color - string of color inherited from ChartArea
-   * @returns {ReactElement} Tooltip - TooltipComponent
-   */
-  tooltipRenderer: PropTypes.func,
-  /**
-   * A function that returns a React Component that renders inside the default tooltip container
-   * @param {Object} tooltipData - calculated data returned from tooltip calculations
-   * @returns {ReactElement} TooltipContent
-   */
-  tooltipContent: PropTypes.func,
-  /**
-   * A React component made with SVG to indicate the tooltip position
-   */
-  indicator: PropTypes.func,
-  /**
-   * A function which formats the yAxis
-   */
-  formatY: PropTypes.func,
-  /**
-   * If true, no Yaxis will be shown
-   */
-  noYAxis: PropTypes.bool,
-  /**
-   * A label for the yAxis
-   */
-  labelY: PropTypes.string,
-  /**
-   * Label props object for yLabel
-   */
-  labelYProps: PropTypes.object,
-  /**
-   * Label props for y ticks
-   */
-  yTickLabelProps: PropTypes.func,
-  /**
-   * A label for the xAxis
-   */
-  labelX: PropTypes.string,
-  /**
-   * Label props object for xLabel
-   */
-  labelXProps: PropTypes.object,
-  /**
-   * Optional props object to be applied to the xAxis
-   */
-  xAxisProps: PropTypes.object,
-  /**
-   * Optional props object to be applied to the yAxis
-   */
-  yAxisProps: PropTypes.object,
-  /**
-   * Label props for x ticks
-   */
-  xTickLabelProps: PropTypes.func,
-  /**
-   * Number of ticks for xAxis
-   */
-  numXTicks: PropTypes.number,
-  /**
-   * Number of ticks for yAxis
-   */
-  numYTicks: PropTypes.number,
-  /*
-   * A function that recieves `width`, `height`, `xScale`, `yScale`, and `margin` from the `ChartArea` and
-   * renders a glyph or series of glyphs with a `z-index` above all chart elements.
-   */
-  glyphRenderer: PropTypes.function,
-  /**
-   * A function which formats the xAxis
-   */
-  formatX: PropTypes.func,
-  /**
-   * An optional function for the chart viewbox, passed size and margin props
-   */
-  determineViewBox: PropTypes.func,
-  /**
-   * If true, no gridlines will be shown.
-   */
-  nogrid: PropTypes.bool,
-  /**
-   * If true, no tooltip will be shown.
-   */
-  notool: PropTypes.bool,
-  /**
-   * An optional prop for chart margins
-   */
-  margin: PropTypes.object
+type MouseMove = {
+  event: SyntheticMouseEvent<SVGMatrix>,
+  xPoints: number[],
+  xScale: ScaleFunction,
+  yScale: ScaleFunction,
+  yScales: false | { [key: string]: ScaleFunction },
+  dataKeys: string[],
+  datum?: Object
 }
 
-ChartArea.defaultProps = {
-  data: [],
-  color: '#000',
-  stroke: '#000',
-  nogrid: false,
-  notool: false,
-  noYAxis: false,
-  glyphRenderer: () => null,
-  indicator: Indicator,
-  tooltipRenderer: defaultTooltipRenderer,
-  tooltipContent: defaultTooltipContent,
-  formatY: formatTicks,
-  labelY: '',
-  labelX: '',
-  numXTicks: 6,
-  numYTicks: 4,
-  yTickLabelProps: () => ({
-    dy: '-0.25rem',
-    dx: '-0.75rem',
-    strokeWidth: '0.5px',
-    fontWeight: 400,
-    textAnchor: 'end',
-    fontSize: 12
-  }),
-  xTickLabelProps: () => ({
-    dy: '-0.25rem',
-    fontWeight: 400,
-    strokeWidth: '0.5px',
-    textAnchor: 'start',
-    fontSize: 12
-  }),
-  labelYProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' },
-  labelXProps: { fontSize: 12, textAnchor: 'middle', fill: 'black', dy: '-0.5rem' },
-  formatX: formatXTicks,
-  margin: margin
+export type TooltipData = {
+  calculatedData?: ?Object,
+  tooltipData?: Object,
+  tooltipContent: Object => React.Node,
+  x: ?number,
+  mouseX: number,
+  mouseY: number,
+  showTooltip: boolean,
+  yCoords: ?(number[]),
+  stroke: string,
+  color: string,
+  height: number
+}
+
+type State = {
+  bar: boolean
+}
+
+type Props = {
+  data: Object[],
+  calculatedData?: Object,
+  yCoords?: number[],
+  yKey?: string,
+  mouseX?: number,
+  mouseY?: number,
+  x: number,
+  tooltipData?: Object,
+  showTooltip: boolean,
+  children: React.Node,
+  color: string,
+  stroke: string,
+  gridStroke: string,
+  type: 'ordinal' | 'linear',
+  orientation?: 'horizontal',
+  xKey?: string,
+  tooltipRenderer: ($Shape<TooltipData>) => React.Node,
+  tooltipContent: (tooltipData: Object) => React.Node,
+  indicator: ($Shape<TooltipData>) => React.Node,
+  formatY: (d: any, i: number) => string,
+  noYAxis: boolean,
+  labelY: string,
+  labelYProps: Object,
+  yTickLabelProps: (d: any, i: number) => Function,
+  labelX: string,
+  labelXProps: Object,
+  updateTooltip: ($Shape<TooltipData>) => mixed,
+  xAxisProps: Object,
+  yAxisProps: Object,
+  xTickLabelProps: (d: any, i: number) => Function,
+  numXTicks: number,
+  numYTicks: number,
+  glyphRenderer: ({
+    width: number,
+    height: number,
+    xScale: ScaleFunction,
+    yScale: ScaleFunction,
+    margin: Margin
+  }) => React.Node,
+  formatX: (d: any, i: number) => string,
+  determineViewBox: ({ size: Size, margin: Margin }) => string,
+  nogrid: boolean,
+  notool: boolean,
+  margin: Margin
 }
 
 export default withTooltip(ChartArea)

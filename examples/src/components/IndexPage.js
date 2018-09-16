@@ -58,6 +58,7 @@ class IndexPage extends Component {
   state = {
     active: 'time'
   }
+
   render() {
     const { active } = this.state
     return (
