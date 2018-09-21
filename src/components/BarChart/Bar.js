@@ -1,23 +1,31 @@
-import React, { Fragment, Component } from 'react'
+// @flow
+import * as React from 'react'
 import get from 'lodash/get'
 import { Group } from '@vx/group'
 import { scaleBand, scaleLinear, scaleTime } from 'd3-scale'
-import PropTypes from 'prop-types'
 
 import { StyledGradient, StyledBar } from '../styledComponents'
 import { extractX } from '../../utils/dataUtils'
+import { determineYScale } from '../../utils/chartUtils'
+import { type ScaleFunction, type Margin } from '../../types/index'
 
-class BarChart extends Component {
+class BarChart extends React.Component<Props> {
+  static defaultProps = {
+    color: 'rgb(0, 157, 253)',
+    nofill: false,
+    inverted: false
+  }
+
   componentDidMount() {
     this.props.declareBar()
   }
 
-  shouldComponentUpdate(prevProps) {
+  shouldComponentUpdate(prevProps: Props) {
     return prevProps.yPoints !== this.props.yPoints || prevProps.dataKey !== this.props.dataKey
   }
 
-  determineScales = ({ type, orientation }) => {
-    const { margin, height, width, yPoints, xPoints } = this.props
+  determineScales = ({ type, orientation }: { type: string, orientation: string }) => {
+    const { margin, height, width, yPoints, xPoints, axisId, inheritedScale } = this.props
     const scalar = type === 'linear' ? scaleLinear : scaleTime
 
     if (orientation === 'horizontal') {
@@ -35,9 +43,14 @@ class BarChart extends Component {
         .domain(xPoints)
         .range([margin.left, width])
         .padding(0.1)
-      const yScale = scalar()
-        .domain([Math.max(...yPoints), 0])
-        .range([height, margin.top])
+      const yScale = axisId
+        ? determineYScale({
+            type: 'linear',
+            yPoints,
+            height,
+            margin
+          })
+        : inheritedScale
 
       return { xScale, yScale }
     }
@@ -72,7 +85,7 @@ class BarChart extends Component {
     const barHeight = d => yScale(get(d, dataKey))
     const isHorizontal = orientation === 'horizontal'
     return (
-      <Fragment>
+      <>
         <StyledGradient color={color} id={`gradient${xKey}`} />
         {data.map(d => (
           <Group key={`bar${xPoint(d)}`}>
@@ -90,30 +103,33 @@ class BarChart extends Component {
             />
           </Group>
         ))}
-      </Fragment>
+      </>
     )
   }
 }
 
-BarChart.propTypes = {
-  /**
-   * Indicates which data column should draw the BarChart
-   */
-  dataKey: PropTypes.string.isRequired,
-  /**
-   * Indicates chart should go from top to bottom
-   */
-  inverted: PropTypes.bool,
-  /**
-   * Indicates the color of the BarChart
-   */
-  color: PropTypes.string
-}
-
-BarChart.defaultProps = {
-  color: 'rgb(0, 157, 253)',
-  nofill: false,
-  inverted: false
+type Props = {
+  data: Object[],
+  dataKey: string,
+  mouseMove: any => mixed,
+  mouseLeave: () => mixed,
+  height: number,
+  notool: boolean,
+  nofill: boolean,
+  inheritedScale: ScaleFunction,
+  type: string,
+  barProps: Object,
+  margin: Margin,
+  width: number,
+  axisId: string,
+  orientation: string,
+  xKey: string,
+  declareBar: () => mixed,
+  yKey: string,
+  yPoints: any[],
+  xPoints: any[],
+  inverted: boolean,
+  color: string
 }
 
 export default BarChart
