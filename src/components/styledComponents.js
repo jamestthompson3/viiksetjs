@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { withBoundingRects } from '@vx/bounds'
+import { get } from 'lodash'
 import { Line } from '@vx/shape'
 
 export const PageWrapper = styled.div`
@@ -162,13 +163,14 @@ export const Indicator = ({ x, color, yCoords, height }) => (
   />
 )
 const BoundedTooltip = withBoundingRects(TooltipContainer)
+
 export const LinearTooltip = ({ tooltipData, x, yCoords }) => (
-  <BoundedTooltip left={x - 15} yCoord={yCoords[1] - 15}>
+  <BoundedTooltip left={x - 15} yCoord={get(yCoords, '[1]', 0) - 15}>
     {tooltipData.y < 300 ? <span role="img">❄️</span> : <span role="img">🔥</span>}
   </BoundedTooltip>
 )
 export const BiaxialTooltip = ({ tooltipData, x, yCoords }) => (
-  <BoundedContainer left={x - 10} yCoord={yCoords[1]}>
+  <BoundedContainer left={x - 10} yCoord={get(yCoords, '[1]', 0)}>
     <p>
       <span role="img">👩‍💻</span>: {tooltipData.users}
     </p>
