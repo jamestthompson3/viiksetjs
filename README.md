@@ -18,6 +18,8 @@ It is meant to serve both those who want a high level of control (see the 'Inter
 
 `npm install viiksetjs`
 
+To run the examples folder, use [npm link](https://docs.npmjs.com/cli/link) for the local installation of viiksetjs.
+
 ### Interop with vx
 
 Since Viikset is built on top of vx, you can use any vx components with any Viikset components. The `ChartArea` component will supply your custom vx components with the following props:

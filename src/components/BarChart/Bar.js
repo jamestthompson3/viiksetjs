@@ -4,9 +4,9 @@ import get from 'lodash/get'
 import { Group } from '@vx/group'
 import { scaleBand, scaleLinear, scaleTime } from 'd3-scale'
 
-import { StyledGradient, StyledBar } from '../styledComponents'
-import { extractX } from '../../utils/dataUtils'
-import { determineYScale } from '../../utils/chartUtils'
+import { StyledGradient, StyledBar } from '../styledComponents/index'
+import { extractX, getY } from '../../utils/dataUtils'
+import { determineYScale, determineXScale } from '../../utils/chartUtils'
 import { type ScaleFunction, type Margin } from '../../types/index'
 
 class BarChart extends React.Component<Props> {
@@ -25,7 +25,8 @@ class BarChart extends React.Component<Props> {
   }
 
   determineScales = ({ type, orientation }: { type: string, orientation: string }) => {
-    const { margin, height, width, yPoints, xPoints, axisId, inheritedScale } = this.props
+    const { margin, height, width, data, xPoints, yPoints: inheritedPoints, axisId } = this.props
+    const yPoints = getY(data, axisId)
     const scalar = type === 'linear' ? scaleLinear : scaleTime
 
     if (orientation === 'horizontal') {
@@ -39,18 +40,18 @@ class BarChart extends React.Component<Props> {
 
       return { xScale, yScale }
     } else {
-      const xScale = scaleBand()
-        .domain(xPoints)
-        .range([margin.left, width])
-        .padding(0.1)
+      const xScale = determineXScale({ type: 'ordinal', xPoints, width, margin })
       const yScale = axisId
         ? determineYScale({
             type: 'linear',
             yPoints,
             height,
+            invertedRange: true,
             margin
           })
-        : inheritedScale
+        : scalar()
+            .domain([Math.max(...inheritedPoints), 0])
+            .range([height, margin.top])
 
       return { xScale, yScale }
     }

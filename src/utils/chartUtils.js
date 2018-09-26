@@ -27,6 +27,7 @@ type ScaleProps = {
   xPoints: number[],
   yPoints: number[],
   width: number,
+  invertedRange: boolean,
   height: number,
   orientation: string,
   margin: Margin
@@ -69,15 +70,17 @@ export const determineYScale = ({
   orientation,
   yPoints,
   height,
+  invertedRange,
   margin
 }: $Shape<ScaleProps>): ScaleFunction => {
   const range = [height, margin.top]
+  const reverseRange = [margin.top, height]
 
   switch (type) {
     case 'ordinal':
       return scaleLinear()
         .domain([Math.max(...yPoints), 0])
-        .range(range)
+        .range(reverseRange)
     case 'linear':
       return orientation === 'horizontal'
         ? scaleBand()
@@ -86,7 +89,7 @@ export const determineYScale = ({
             .padding(0.1)
         : scaleLinear()
             .domain([0, Math.max(...yPoints)])
-            .range(range)
+            .range(invertedRange ? reverseRange : range)
     default:
       return scaleLinear()
         .domain([0, Math.max(...yPoints)])
