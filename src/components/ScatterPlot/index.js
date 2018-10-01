@@ -12,24 +12,37 @@ class ScatterPlot extends React.Component<Props> {
     color: '#000',
     stroke: '#000',
     opacity: 0.8,
-    radius: 8
+    radius: 8,
+    data: []
   }
 
   shouldComponentUpdate(prevProps: Props) {
     return this.props.yPoints !== prevProps.yPoints || prevProps.dataKey !== this.props.dataKey
   }
 
+  getColor = d => {
+    const { color } = this.props
+    return typeof color === 'string' ? color : color(d)
+  }
+
+  getOpacity = d => {
+    const { opacity } = this.props
+    return typeof opacity === 'number' ? opacity : opacity(d)
+  }
+
+  getRadius = d => {
+    const { radius } = this.props
+    return typeof radius === 'number' ? radius : radius(d)
+  }
+
   render() {
     const {
       data,
-      color,
       dataKey,
       xScale,
       xKey,
       height,
       margin,
-      opacity,
-      radius,
       inheritedScale,
       axisId,
       type,
@@ -67,10 +80,10 @@ class ScatterPlot extends React.Component<Props> {
         key={i}
         x={xPoints(d)}
         y={yPoints(d)}
-        radius={radius}
+        radius={this.getRadius(d)}
         stroke={stroke}
-        opacity={opacity}
-        color={color}
+        opacity={this.getOpacity(d)}
+        color={this.getColor(d)}
         {...pointProps}
       />
     ))
@@ -78,10 +91,10 @@ class ScatterPlot extends React.Component<Props> {
 }
 
 type Props = {
-  radius: number,
+  radius: number | (any => number),
   stroke: string,
   pointProps: number,
-  opacity: number,
+  opacity: number | (any => number),
   ...RenderedChildProps
 }
 

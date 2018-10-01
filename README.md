@@ -321,14 +321,14 @@ The `ScatterPlot` component inherits the data from the `ChartArea` which wraps i
 
 ### Props
 
-| Prop    | Default | Type    | Desc                                                                   |
-| :------ | :-----: | :------ | :--------------------------------------------------------------------- |
-| color   | #000    | String  | Color string. Supports colors from styled-components' `themeProvider`. |
-| dataKey | ''      | String  | Key for data to be graphed, supports nested keys such as `'data.users'`                                             |
-| opacity | 0.8     | Number  | The opacity of the points in the Scatterplot                           |
-| pointProps  | {}  | Object  | Additional props to be applied to each point                           |
-| radius  | 8       | Number  | The radius of the points in the Scatterplot                            |
-| stroke  | #000    | String  | Color string. Supports colors from styled-components' `themeProvider`. |
+| Prop        | Default | Type                                     | Desc                                                                                                                                      |
+| :-----------| :-----: | :--------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------- |
+| color       | #000    | Enum ( String,  (d: Object) => string )  | Color string or function that takes the current data point and returns a string. Supports colors from styled-components' `themeProvider`. |
+| dataKey     | ''      | String                                   | Key for data to be graphed, supports nested keys such as `'data.users'`                                                                   |
+| opacity     | 0.8     | Enum ( Number, (d: Object) => string )   | The opacity of the points, is either a number from 0 to 1, or a function that takes the current data point and returns such a number      |
+| pointProps  | {}      | Object                                   | Additional props to be applied to each point                                                                                              |
+| radius      | 8       | Enum ( Number, (d: Object) => string )   | The radius of the points in the Scatterplot, either a number, or a function that takes the current datapoint and returns a number         |
+| stroke      | #000    | String                                   | Color string. Supports colors from styled-components' `themeProvider`.                                                                    |
 
 ```js
         <ChartArea

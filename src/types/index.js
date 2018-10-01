@@ -12,7 +12,7 @@ export type RenderedChildProps = {
   dataKey: string,
   axisId?: string,
   type?: string,
-  color: string,
+  color: string | (any => string),
   height: number,
   width: number,
   margin: Margin,
