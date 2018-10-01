@@ -122,9 +122,12 @@ export const findTooltipX = ({
 /**
  * Takes React Chilren and returns true or false if unique axis Id is found
  */
-export const biaxial = (children: React.Node): boolean => {
-  return React.Children.map(children, child => child.props.hasOwnProperty('axisId')).includes(true)
-}
+export const biaxial = (children: React.Node): boolean =>
+  React.Children.map(
+    children,
+    child => React.isValidElement(child) && child.props.hasOwnProperty('axisId')
+  ).includes(true)
+
 /**
  * Own implementation of localPoint from VX. Makes it work on Firefox
  */
