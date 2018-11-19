@@ -233,7 +233,7 @@ const boundsSetter = ({ left, rect, parentRect }) => {
 /**
  * TooltipBounder sets bounds for the tooltip and passes them down
  */
-const TooltipBounder = ({ children, rect, parentRect, left }) => {
+const TooltipBounder = ({ children, rect, parentRect, left, style }) => {
   const getBounds = () => {
     if (rect && parentRect) {
       return {
@@ -248,7 +248,11 @@ const TooltipBounder = ({ children, rect, parentRect, left }) => {
     }
   }
 
-  return <TooltipContainer bounds={getBounds()}>{children}</TooltipContainer>
+  return (
+    <TooltipContainer style={style} bounds={getBounds()}>
+      {children}
+    </TooltipContainer>
+  )
 }
 
 const BoundedTooltip = withBoundingRects(TooltipBounder)
@@ -263,9 +267,17 @@ export const withBounds = component => withBoundingRects(component)
 /**
  * Wrapper component for default tooltip
  */
-export const defaultTooltipRenderer = ({ tooltipData, tooltipContent, color, x }) => (
-  <BoundedTooltip left={x}>
-    <TooltipWrapper color={color}>{tooltipContent({ tooltipData })}</TooltipWrapper>
+export const defaultTooltipRenderer = ({
+  tooltipData,
+  tooltipContent,
+  color,
+  x,
+  tooltipStyles
+}) => (
+  <BoundedTooltip left={x} style={tooltipStyles.wrapper}>
+    <TooltipWrapper style={tooltipStyles.content} color={color}>
+      {tooltipContent({ tooltipData })}
+    </TooltipWrapper>
   </BoundedTooltip>
 )
 

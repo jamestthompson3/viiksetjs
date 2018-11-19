@@ -41,6 +41,7 @@ class ChartArea extends React.Component<Props, State> {
     notool: false,
     noYAxis: false,
     glyphRenderer: () => null,
+    tooltipStyles: {},
     indicator: Indicator,
     tooltipRenderer: defaultTooltipRenderer,
     tooltipContent: defaultTooltipContent,
@@ -130,6 +131,7 @@ class ChartArea extends React.Component<Props, State> {
       determineViewBox,
       data,
       noYAxis,
+      tooltipStyles,
       xKey,
       formatY,
       formatX,
@@ -289,6 +291,7 @@ class ChartArea extends React.Component<Props, State> {
                   tooltipData: calculatedData,
                   tooltipContent,
                   yCoords,
+                  tooltipStyles,
                   x,
                   mouseX,
                   mouseY,
@@ -375,7 +378,11 @@ type Props = {
   determineViewBox: ({ size: Size, margin: Margin }) => string,
   nogrid: boolean,
   notool: boolean,
-  margin: Margin
+  margin: Margin,
+  tooltipStyles: {
+    wrapper: Object,
+    content: Object
+  }
 }
 
 export default withTooltip(ChartArea)
