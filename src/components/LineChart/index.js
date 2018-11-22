@@ -59,7 +59,7 @@ class LineChart extends React.Component<Props> {
     }
 
     const yPoints = d => get(d, dataKey)
-    const xPoints = d => (xKey ? get(d, xKey) : extractX(d))[0]
+    const xPoints = d => (xKey ? get(d, xKey) : extractX(d)[0])
     const dataPoints = data.map(item => get(item, dataKey))
     const yScale = determineYScale({
       type: type || 'linear',

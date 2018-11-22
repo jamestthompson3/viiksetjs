@@ -79,8 +79,8 @@ export const determineYScale = ({
   switch (type) {
     case 'ordinal':
       return scaleLinear()
-        .domain([Math.max(...yPoints), 0])
-        .range(reverseRange)
+        .domain([0, Math.max(...yPoints)])
+        .range(range)
     case 'linear':
       return orientation === 'horizontal'
         ? scaleBand()
