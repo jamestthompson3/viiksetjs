@@ -4,15 +4,31 @@
 
 A lightweight Javascript graphing library for React based on styled-components and vx
 
-[ChartArea](https://github.com/jamestthompson3/viiksetjs#chartarea) | [StreamableChart](https://github.com/jamestthompson3/viiksetjs#streamablechart) | [DataContext](https://github.com/jamestthompson3/viiksetjs#datacontext) | [LineChart](https://github.com/jamestthompson3/viiksetjs#linechart)
-| [BarChart](https://github.com/jamestthompson3/viiksetjs#barchart) | [StackedBar](https://github.com/jamestthompson3/viiksetjs#stackedbar) | [ScatterPlot](https://github.com/jamestthompson3/viiksetjs#scatterplot)
-| [PieChart](https://github.com/jamestthompson3/viiksetjs#piechart) | [Threshold](https://github.com/jamestthompson3/viiksetjs#threshold) | [StyledPoint](https://github.com/jamestthompson3/viiksetjs#styledpoint) | [YAxis](https://github.com/jamestthompson3/viiksetjs#yaxis) | [StyledLine](https://github.com/jamestthompson3/viiksetjs#styledline) | [Tooltips](https://github.com/jamestthompson3/viiksetjs#tooltips)
+| [BarChart](https://github.com/jamestthompson3/viiksetjs#barchart)
+| [ChartArea](https://github.com/jamestthompson3/viiksetjs#chartarea)
+| [DataContext](https://github.com/jamestthompson3/viiksetjs#datacontext)
+| [LineChart](https://github.com/jamestthompson3/viiksetjs#linechart)
+| [PieChart](https://github.com/jamestthompson3/viiksetjs#piechart)
+| [ScatterPlot](https://github.com/jamestthompson3/viiksetjs#scatterplot) |
+
+| [StackedBar](https://github.com/jamestthompson3/viiksetjs#stackedbar)
+| [StreamableChart](https://github.com/jamestthompson3/viiksetjs#streamablechart)
+| [StyledLine](https://github.com/jamestthompson3/viiksetjs#styledline)
+| [StyledPoint](https://github.com/jamestthompson3/viiksetjs#styledpoint)
+| [Threshold](https://github.com/jamestthompson3/viiksetjs#threshold)
+| [Tooltips](https://github.com/jamestthompson3/viiksetjs#tooltips)
+| [YAxis](https://github.com/jamestthompson3/viiksetjs#yaxis) |
 
 ## About
 
-Viikset is the halfway point between visualization libraries with atomic control like d3 and out of the box solutions like recharts or chartjs. Big shout out to Harrison Shoff [@hshoff](https://github.com/hshoff) and the people over at [vx](https://github.com/hshoff/vx) who helped shape the thinking for this type of visualization library.
+Viikset is the halfway point between visualization libraries with atomic control like d3 and out of the box solutions
+like recharts or chartjs. Big shout out to Harrison Shoff [@hshoff](https://github.com/hshoff) and the people over at
+[vx](https://github.com/hshoff/vx) who helped shape the thinking for this type of visualization library.
 
-It is meant to serve both those who want a high level of control (see the 'Interop with vx' section) and those who want throw together charts quickly with little to no configuration. If you like this library and want to have more granular control over your chart components, I would strongly suggest checking out the [vx](https://github.com/hshoff/vx) repo and familiarizing yourself with it, as any vx components can be used in tandem with Viikset.
+It is meant to serve both those who want a high level of control (see the 'Interop with vx' section) and those who want
+to throw together charts quickly with little to no configuration. If you like this library and want to have more
+granular control over your chart components, I would strongly suggest checking out the [vx](https://github.com/hshoff/vx)
+repo and familiarizing yourself with it, as any vx components can be used in tandem with Viikset.
 
 ### Getting started
 
@@ -22,13 +38,44 @@ To run the examples folder, use [npm link](https://docs.npmjs.com/cli/link) for 
 
 ### Interop with vx
 
-Since Viikset is built on top of vx, you can use any vx components with any Viikset components. The `ChartArea` component will supply your custom vx components with the following props:
+### New API
 
-`xScale, yScale (as inheritedScale), data, margin, height, width, type, xKey, yKey, formatY, formatX, numYTicks` as well as the `mouseMove` and `mouseLeave` functions for tooltips.
+```js
+<ChartArea
+  axes={(defaultProps) => ({
+    ...defaultProps,
+    xAxis: {
+      label: "Time",
+      tickLabelProps: (v, i) => ({
+          ..stuff
+        }),
+      numTicks: 4
+    }
+    })
+   grid="mesh"
+  }
+  tooltip={(defaultProps) => ({
+    styles: {
+      wrapper: { display: 'flex' },
+    },
+    content: TooltipContent
+    })
+  }
+  >
+  <LineChart />
+</ChartArea>
+```
+
+Since Viikset is built on top of vx, you can use any vx components with any Viikset components.
+The `ChartArea` component will supply your custom vx components with the following props:
+
+`xScale, yScale (as inheritedScale), data, margin, height, width, type, xKey, yKey, formatY, formatX, numYTicks`
+as well as the `mouseMove` and `mouseLeave` functions for tooltips.
 
 ### Use with styled-components
 
-In order to use Viikset with the styled-components, you need to have your components wrapped in a [theme provider](https://www.styled-components.com/docs/advanced#theming). This will give your chart components access to the theming api and allow to pass your predefined theme colors to your charts.
+In order to use Viikset with the styled-components, you need to have your components wrapped in a [theme provider](https://www.styled-components.com/docs/advanced#theming).
+This will give your chart components access to the theming api and allow to pass your predefined theme colors to your charts.
 
 ### Data structure
 
@@ -45,7 +92,8 @@ In order to use Viikset with the styled-components, you need to have your compon
   ]
 ```
 
-Viikset will detect the x and y values for you, however, if you choose to work with data like x and y coordinates, you must specify your x-values through the `xKey` prop. This is discussed more at length in the `ChartArea` component.
+Viikset will detect the x and y values for you, however, if you choose to work with data like x and y coordinates,
+you must specify your x-values through the `xKey` prop. This is discussed more at length in the `ChartArea` component.
 
 ## ChartArea
 
@@ -54,7 +102,10 @@ Viikset will detect the x and y values for you, however, if you choose to work w
 </ChartArea>
 ```
 
-The `ChartArea` component will construct a grid and axes on which it will render its children. It detects the x-values by looking at each data object selecting categorical data types. However, if you wish to plot data that is not categorical, you must pass the `xKey` prop:
+The `ChartArea` component will construct a grid and axes on which it will render its children.
+It detects the x-values by looking at each data object selecting categorical data types.
+However, if you wish to plot data that is not categorical, you must pass the `xKey` prop:
+
 `<ChartData data={dataArray} xKey='xvalues'>`
 
 `ChartArea` takes the size of the its parent component and is responsive by default.
@@ -62,7 +113,7 @@ The `ChartArea` component will construct a grid and axes on which it will render
 ### Props
 
 | Prop            | Default                                                                                                                 | Type                                         | Desc                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| :----------     | :------------------------------------------------------                                                                 | :---------------------------------           | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| :----------     | :---------------------------------------------------------------------------------------------------------------------  | :---------------------------------           | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | color           | #000                                                                                                                    | String                                       | color applied to the axes                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | data            | [ ]                                                                                                                     | Array                                        | An array containing data objects.                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | determineViewBox|                                                                                                                         | Function                                     | A function for determining the SVG viewBox for the chart area, passed `size` and `margin` as arguments                                                                                                                                                                                                                                                                                                                                                                             |
@@ -94,18 +145,20 @@ The `ChartArea` component will construct a grid and axes on which it will render
 | yAxisProps      | {}                                                                                                                      | Object                                       | A Props Object passed to the  yAxis                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 
 ## DataContext
-The `DataContext` component allows even greater flexibility for working with your data. It takes a set of props needed to create scales, and returns these scale values to you which can be used with svg, d3, canvas, or even DOM nodes.
+The `DataContext` component allows even greater flexibility for working with your data. It takes a set of props needed to create scales,
+and returns these scale values to you which can be used with svg, d3, canvas, or even DOM nodes.
 
 ### Props
 
-| Prop            | Default       | Type                                          | Desc                                                                                          |
-| :----------     | :-----------  | :---------------------------------------------| :-------------------------------------------------------------------------------------------- |
-| data            | []            |  Array                                        | Array of chart data                                                                           |
-| xKey            |               | String                                        | An optional string denoting the data key for x values, supports nesting such as `'some.thing'`|
-| yKey            |               | String                                        | An optional string denoting the data key for y values, supports nesting such as `'some.thing'`|
-| type            | ''            | `oneOf(['ordinal', 'linear', 'horizontal'])`  | An optional string indicating the type of scale the type should have, defaults to timeseries  |
-| margin          | `{ top: 18, right: 15, bottom: 0, left: 30 }` | Object        | An optional object delineating margin values                                                  |
-| orientation     | ''            | String                                        | An optional string denoting the orientation of the `DataContext`                              |
+| Prop            | Defaults                                      | Type                                          | Desc                                                                                          |
+| :-------------- | :-------------------------------------------- | :---------------------------------------------| :-------------------------------------------------------------------------------------------- |
+| data            | []                                            |  Array                                        | Array of chart data                                                                           |
+| margin          | `{ top: 18, right: 15, bottom: 0, left: 30 }` | Object                                        | An optional object delineating margin values                                                  |
+| orientation     | ''                                            | String                                        | An optional string denoting the orientation of the `DataContext`                              |
+| type            | ''                                            | `oneOf(['ordinal', 'linear', 'horizontal'])`  | An optional string indicating the type of scale the type should have, defaults to timeseries  |
+| xKey            |  null                                         | String                                        | An optional string denoting the data key for x values, supports nesting such as `'some.thing'`|
+| yKey            |  null                                         | String                                        | An optional string denoting the data key for y values, supports nesting such as `'some.thing'`|
+
 ```js
 <DataContext data={chartdata} margin={margin}>
 {
@@ -127,7 +180,9 @@ The `DataContext` component allows even greater flexibility for working with you
 ```
 
 ## StreamableChart
-The `StreamableChart` component takes a `connection` string which is a URL for a WebSocket. The chart will then begin streaming the data from the connection.
+The `StreamableChart` component takes a `connection` string which is a URL for a WebSocket.
+The chart will then begin streaming the data from the connection.
+
 ```js
  <StreamableChart
     connection="ws://wiki-update-sockets.herokuapp.com/"
@@ -186,7 +241,8 @@ d => {
 
 ## LineChart
 
-The `LineChart` component inherits the data from the `ChartArea` which wraps it. Using this data, it scales itself accordingly. A `dataKey` prop must be provided in order for the component to know which data points it should render.
+The `LineChart` component inherits the data from the `ChartArea` which wraps it. Using this data, it scales itself accordingly.
+A `dataKey` prop must be provided in order for the component to know which data points it should render.
 
 ### Props
 
@@ -209,11 +265,16 @@ There can be multiple `LineChart` components within a single `ChartArea`:
 
 ```js
 const data = [
-  {"day":"2017-11-14","northAmerica":84,"southAmerica":254, "asia": 122, "europe": 23},{"day":"2017-11-15","northAmerica":103,"southAmerica":393, "asia": 55 , "europe": 455},
-  {"day":"2017-11-16","northAmerica":130,"southAmerica":375, "asia": 344, "europe": 54},{"day":"2017-11-17","northAmerica":142,"southAmerica":495, "asia": 100, "europe": 455},
-  {"day":"2017-11-18","northAmerica":148,"southAmerica":631, "asia": 322, "europe": 87},{"day":"2017-11-19","northAmerica":141,"southAmerica":628, "asia": 445, "europe": 277},
-  {"day":"2017-11-20","northAmerica":157,"southAmerica":445, "asia": 65, "europe": 213},{"day":"2017-11-21","northAmerica":168,"southAmerica":407, "asia": 55, "europe": 56},
-  {"day":"2017-11-22","northAmerica":100,"southAmerica":351, "asia": 43, "europe": 76},{"day":"2017-11-23","northAmerica":135,"southAmerica":382, "asia": 455, "europe": 76},
+  {"day":"2017-11-14","northAmerica":84,"southAmerica":254, "asia": 122, "europe": 23},
+  {"day":"2017-11-15","northAmerica":103,"southAmerica":393, "asia": 55 , "europe": 455},
+  {"day":"2017-11-16","northAmerica":130,"southAmerica":375, "asia": 344, "europe": 54},
+  {"day":"2017-11-17","northAmerica":142,"southAmerica":495, "asia": 100, "europe": 455},
+  {"day":"2017-11-18","northAmerica":148,"southAmerica":631, "asia": 322, "europe": 87},
+  {"day":"2017-11-19","northAmerica":141,"southAmerica":628, "asia": 445, "europe": 277},
+  {"day":"2017-11-20","northAmerica":157,"southAmerica":445, "asia": 65, "europe": 213},
+  {"day":"2017-11-21","northAmerica":168,"southAmerica":407, "asia": 55, "europe": 56},
+  {"day":"2017-11-22","northAmerica":100,"southAmerica":351, "asia": 43, "europe": 76},
+  {"day":"2017-11-23","northAmerica":135,"southAmerica":382, "asia": 455, "europe": 76},
   ...
   ]
     <ChartArea
@@ -231,17 +292,21 @@ const data = [
 
 ## BarChart
 
-The `BarChart` component inherits the data from the `ChartArea` which wraps it. Using this data, it scales itself accordingly. When creating a categorical `BarChart` component, it is necessary to pass `type='ordinal'` to the parent `ChartArea`. A `dataKey` prop must be provided in order for the component to know which data points it should render. Passing an `xKey` prop to the `ChartArea` component is also required to denote which values should be graphed across the xValue, as is passing a `yKey` if there is more than one item in the data object that is an integer or float.
+The `BarChart` component inherits the data from the `ChartArea` which wraps it. Using this data, it scales itself accordingly.
+When creating a categorical `BarChart` component, it is necessary to pass `type='ordinal'` to the parent `ChartArea`.
+A `dataKey` prop must be provided in order for the component to know which data points it should render.
+Passing an `xKey` prop to the `ChartArea` component is also required to denote which values should be graphed across the xValue,
+as is passing a `yKey` if there is more than one item in the data object that is an integer or float.
 
 
 ### Props
 
-| Prop    | Default | Type    | Desc                                                                   |
-| :------ | :-----: | :------ | :--------------------------------------------------------------------- |
-| color   | #000    | String  | Color string. Supports colors from styled-components' `themeProvider`. |
-| dataKey | ''      | String  | Key for data to be graphed, supports nested keys  such as `'data.users'`     |
-| inverted | false   | Boolean | If `true`, the BarChart will start from the top and go to the bottom                             |
-| nofill  | false   | Boolean | If `true`, the BarChart will have no fill                              |
+| Prop     | Default | Type    | Desc                                                                     |
+| :------- | :-----: | :------ | :----------------------------------------------------------------------- |
+| color    | #000    | String  | Color string. Supports colors from styled-components' `themeProvider`.   |
+| dataKey  | ''      | String  | Key for data to be graphed, supports nested keys  such as `'data.users'` |
+| inverted | false   | Boolean | If `true`, the BarChart will start from the top and go to the bottom     |
+| nofill   | false   | Boolean | If `true`, the BarChart will have no fill                                |
 
 #### data
 
@@ -272,7 +337,9 @@ The `BarChart` component inherits the data from the `ChartArea` which wraps it. 
 
 ## StackedBar
 
-The `StackedBar` component is nearly identical to the `Barchart` in the props that it inherits from the `ChartArea`. It takes an two additional props, `colors` and `keys` which corresponde to the data you want displayed in the stack. You may also pass a boolean prop called `horizontal` to flip the `StackedBar` on its side.
+The `StackedBar` component is nearly identical to the `Barchart` in the props that it inherits from the `ChartArea`.
+It takes an two additional props, `colors` and `keys` which corresponde to the data you want displayed in the stack.
+You may also pass a boolean prop called `horizontal` to flip the `StackedBar` on its side.
 
 ### Props
 
@@ -318,7 +385,8 @@ The `StackedBar` component is nearly identical to the `Barchart` in the props th
 
 
 ## ScatterPlot
-The `ScatterPlot` component inherits the data from the `ChartArea` which wraps it. Using this data, it scales itself accordingly. A `dataKey` prop must be provided in order for the component to know which data points it should render.
+The `ScatterPlot` component inherits the data from the `ChartArea` which wraps it. Using this data, it scales itself accordingly.
+A `dataKey` prop must be provided in order for the component to know which data points it should render.
 
 ### Props
 
@@ -346,10 +414,11 @@ The `ScatterPlot` component inherits the data from the `ChartArea` which wraps i
           <ScatterPlot dataKey="y" color="#42f4c2" />
         </ChartArea>
 ```
+
 ## PieChart
-The `PieChart` component is independent of the `ChartArea`. It takes it's own
-data prop and exposes the following props to `Tooltip` components:
-`tooltipData`, `height`, `width`, `mouseX`, `mouseY`, `color`
+
+The `PieChart` component is independent of the `ChartArea`. It takes it's own data prop and exposes the following props
+to `Tooltip` components: `tooltipData`, `height`, `width`, `mouseX`, `mouseY`, `color`
 
 ### Props
 
@@ -376,20 +445,23 @@ data prop and exposes the following props to `Tooltip` components:
     innerRadius={80}
    />
 ```
+
 ## Threshold
+
 A threshold graph that displays the differences between two sets of datapoint
 
 ### Props
-| Prop           | Default                             | Type    | Desc                                                                   |
-| :------        | :-----:                             | :------ | :--------------------------------------------------------------------- |
-| aboveAreaProps | { fill: 'green', fillOpacity: 0.5 } | Object  | Props object for the Area above the threshold cutoff                   |
-| belowAreaProps | { fill: 'red, fillOpacity: 0.5 }    | Object  | Props object for the Area below the threshold cutoff                   |
-| clipAboveTo    | 0                                   | Number  | Above clip limit                                                       |
-| clipBelowTo    | height                              | Number  | Below clip limit                                                       |
-| y0             | -                                   | String  | Specifies the first threshold data category, can be nested like other data keys                            |
-| y1             | -                                   | String  | Specifies the second threshold data category, can be nested like other data keys                           |
+| Prop           | Default                             | Type    | Desc                                                                              |
+| :------        | :---------------------------------: | :------ | :-------------------------------------------------------------------------------- |
+| aboveAreaProps | { fill: 'green', fillOpacity: 0.5 } | Object  | Props object for the Area above the threshold cutoff                              |
+| belowAreaProps | { fill: 'red, fillOpacity: 0.5 }    | Object  | Props object for the Area below the threshold cutoff                              |
+| clipAboveTo    | 0                                   | Number  | Above clip limit                                                                  |
+| clipBelowTo    | height                              | Number  | Below clip limit                                                                  |
+| y0             | -                                   | String  | Specifies the first threshold data category, can be nested like other data keys   |
+| y1             | -                                   | String  | Specifies the second threshold data category, can be nested like other data keys  |
 
 ## StyledPoint
+
 A simple point component.
 
 ### Props
@@ -403,6 +475,7 @@ A simple point component.
 | radius  | -       | Number  | Size of point radius                                                   |
 
 ## StyledLine
+
 A simple line component.
 
 ### Props
@@ -465,6 +538,7 @@ recieves the following props:
 The default tooltip uses this function to move the move the toolitp to the side when it reaches the end of the chart area.
 It recieves the
 First, construct component to be rendered as a tooltip
+
 ```js
 const TooltipContainer = styled.div.attrs({
   style: ({ bounds }) => ({
@@ -498,7 +572,9 @@ const TooltipWrapper = ({ children, getRects, getRects, left }) => {
 }
 
 ```
+
 Next, pass it as the `tooltipRenderer` prop within the `ChartArea` component
+
 ```js
 <ChartArea
   tooltipRender={TooltipWrapper}

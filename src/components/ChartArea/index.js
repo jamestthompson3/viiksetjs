@@ -33,42 +33,57 @@ import { type Margin, type ScaleFunction } from '../../types/index'
 const margin = { top: 18, right: 15, bottom: 15, left: 30 }
 
 class ChartArea extends React.Component<Props, State> {
+  static axes = {
+    x: {
+      tickLabelProps: () => ({
+        dy: '-0.25rem',
+        fontWeight: 400,
+        strokeWidth: '0.5px',
+        textAnchor: 'start',
+        fontSize: 12
+      }),
+      numTicks: 6,
+      label: '',
+      stroke: '#000',
+      labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black', dy: '-0.5rem' },
+      format: formatXTicks
+    },
+    y: {
+      tickLabelProps: () => ({
+        dy: '-0.25rem',
+        dx: '-0.75rem',
+        strokeWidth: '0.5px',
+        fontWeight: 400,
+        textAnchor: 'end',
+        fontSize: 12
+      }),
+      numTicks: 4,
+      label: '',
+      stroke: '#000',
+      format: formatTicks
+    },
+    labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' }
+  }
+
+  static grid = {
+    stroke: '#000',
+    type: 'horizontal'
+  }
+
+  static tooltip = {
+    indicator: Indicator,
+    renderer: defaultTooltipRenderer,
+    content: defaultTooltipContent,
+    styles: {}
+  }
+
   static defaultProps = {
     data: [],
-    color: '#000',
-    stroke: '#000',
-    nogrid: false,
-    notool: false,
-    noYAxis: false,
-    glyphRenderer: () => null,
-    tooltipStyles: {},
-    indicator: Indicator,
-    tooltipRenderer: defaultTooltipRenderer,
-    tooltipContent: defaultTooltipContent,
-    formatY: formatTicks,
-    labelY: '',
-    labelX: '',
-    numXTicks: 6,
-    numYTicks: 4,
-    yTickLabelProps: () => ({
-      dy: '-0.25rem',
-      dx: '-0.75rem',
-      strokeWidth: '0.5px',
-      fontWeight: 400,
-      textAnchor: 'end',
-      fontSize: 12
-    }),
-    xTickLabelProps: () => ({
-      dy: '-0.25rem',
-      fontWeight: 400,
-      strokeWidth: '0.5px',
-      textAnchor: 'start',
-      fontSize: 12
-    }),
-    labelYProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' },
-    labelXProps: { fontSize: 12, textAnchor: 'middle', fill: 'black', dy: '-0.5rem' },
-    formatX: formatXTicks,
-    margin: margin
+    margin: margin,
+    axes: () => this.axes,
+    tooltip: () => this.tooltip,
+    grid: this.grid,
+    glyphRenderer: () => null
   }
 
   chart = null
@@ -130,35 +145,17 @@ class ChartArea extends React.Component<Props, State> {
       children,
       determineViewBox,
       data,
-      noYAxis,
-      tooltipStyles,
       xKey,
-      formatY,
-      formatX,
       yKey,
-      labelY,
-      labelYProps,
-      labelX,
-      labelXProps,
-      yTickLabelProps,
-      xTickLabelProps,
-      xAxisProps,
-      yAxisProps,
-      numXTicks,
-      numYTicks,
       type,
       orientation,
-      stroke,
-      nogrid,
-      notool,
-      gridStroke,
+      axes,
+      tooltip,
+      grid,
       color,
       yCoords,
       calculatedData,
       glyphRenderer,
-      tooltipRenderer,
-      tooltipContent,
-      indicator: Indicator,
       mouseX,
       showTooltip,
       mouseY,
@@ -334,6 +331,30 @@ type State = {
   bar: boolean
 }
 
+type AxisProps = {
+  format: (d: any, i: number) => string,
+  tickLabelProps: (d: any, i: number) => Function,
+  labelProps: Object,
+  label: string,
+  numTicks: number,
+  stroke: string
+}
+
+type TooltipProps = {
+  indicator: ($Shape<TooltipData>) => React.Node,
+  renderer: ($Shape<TooltipData>) => React.Node,
+  content: (tooltipData: Object) => React.Node,
+  styles: {
+    wrapper: Object,
+    content: Object
+  }
+}
+
+type GridProps = {
+  type: 'mesh' | 'horizontal' | 'vertical',
+  stroke: string
+}
+
 type Props = {
   data: Object[],
   calculatedData?: Object,
@@ -346,27 +367,13 @@ type Props = {
   showTooltip: boolean,
   children: React.Node,
   color: string,
-  stroke: string,
-  gridStroke: string,
   type: 'ordinal' | 'linear',
   orientation?: 'horizontal',
+  axes: ({ x: AxisProps, y: AxisProps }) => { x: $Shape<AxisProps>, y: $Shape<AxisProps> },
+  grid: GridProps,
+  tooltip: ($Shape<TooltipData>) => $Shape<TooltipProps>,
   xKey?: string,
-  tooltipRenderer: ($Shape<TooltipData>) => React.Node,
-  tooltipContent: (tooltipData: Object) => React.Node,
-  indicator: ($Shape<TooltipData>) => React.Node,
-  formatY: (d: any, i: number) => string,
-  noYAxis: boolean,
-  labelY: string,
-  labelYProps: Object,
-  yTickLabelProps: (d: any, i: number) => Function,
-  labelX: string,
-  labelXProps: Object,
   updateTooltip: ($Shape<TooltipData>) => mixed,
-  xAxisProps: Object,
-  yAxisProps: Object,
-  xTickLabelProps: (d: any, i: number) => Function,
-  numXTicks: number,
-  numYTicks: number,
   glyphRenderer: ({
     width: number,
     height: number,
@@ -374,15 +381,8 @@ type Props = {
     yScale: ScaleFunction,
     margin: Margin
   }) => React.Node,
-  formatX: (d: any, i: number) => string,
   determineViewBox: ({ size: Size, margin: Margin }) => string,
-  nogrid: boolean,
-  notool: boolean,
-  margin: Margin,
-  tooltipStyles: {
-    wrapper: Object,
-    content: Object
-  }
+  margin: Margin
 }
 
 export default withTooltip(ChartArea)
