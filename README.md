@@ -38,7 +38,7 @@ To run the examples folder, use [npm link](https://docs.npmjs.com/cli/link) for 
 
 ### Interop with vx
 
-### New API
+### New API ( experimental, not released )
 
 ```js
 <ChartArea
