@@ -123,12 +123,14 @@ export const StyledBottomAxis = withTheme(props => (
     {...{
       ...props,
       stroke: findColor(props),
-      tickLabelProps: (value, index) => propsColorSetter(props.tickLabelProps, props, value, index),
+      tickLabelProps: (value, index) =>
+      propsColorSetter(props.tickLabelProps, props, value, index),
       top: props.height,
       labelProps: colorSetter(props.labelProps, props)
     }}
   />
-))
+)
+)
 
 StyledBottomAxis.defaultProps = {
   tickLabelProps: () => ({ fill: 'black', textAnchor: 'middle', fontSize: 12 })

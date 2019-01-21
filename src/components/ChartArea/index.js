@@ -7,6 +7,7 @@ import flow from 'lodash/flow'
 import head from 'lodash/head'
 import get from 'lodash/get'
 import memoize from 'lodash/memoize'
+import merge from 'lodash/merge'
 
 import { extractX, extractY, createScalarData } from '../../utils/dataUtils'
 import { formatTicks, formatXTicks } from '../../utils/formatUtils'
@@ -34,7 +35,7 @@ import { type Margin, type ScaleFunction } from '../../types/index'
 const margin = { top: 18, right: 15, bottom: 15, left: 30 }
 
 class ChartArea extends React.PureComponent<Props, State> {
-  static axes = {
+  axes = {
     x: {
       tickLabelProps: () => ({
         dy: '-0.25rem',
@@ -47,7 +48,7 @@ class ChartArea extends React.PureComponent<Props, State> {
       label: '',
       stroke: '#000',
       labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black', dy: '-0.5rem' },
-      format: formatXTicks
+      tickFormat: formatXTicks
     },
     y: {
       tickLabelProps: () => ({
@@ -61,12 +62,12 @@ class ChartArea extends React.PureComponent<Props, State> {
       numTicks: 4,
       label: '',
       stroke: '#000',
-      format: formatTicks
-    },
-    labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' }
+      tickFormat: formatTicks,
+      labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' }
+    }
   }
 
-  static tooltip = {
+  tooltip = {
     Indicator: Indicator,
     renderer: defaultTooltipRenderer,
     content: defaultTooltipContent,
@@ -93,7 +94,7 @@ class ChartArea extends React.PureComponent<Props, State> {
 
   buildAxis = (biaxialChildren, position) => {
     const { axes, color } = this.props
-    const { y, x } = axes(this.axes)
+    const { y, x } = merge(this.axes, axes)
 
     if (position === 'left') {
       if (biaxialChildren || typeof axes !== 'function') return () => null
@@ -124,13 +125,14 @@ class ChartArea extends React.PureComponent<Props, State> {
     }
 
     if (position === 'bottom') {
-      return React.memo(function BottomAxis({ height, margin }) {
+      return React.memo(function BottomAxis({ height, margin, scale }) {
         const { label, numTicks, tickLabelProps, tickFormat, labelProps, ...rest } = x
         return (
           <StyledBottomAxis
             {...{
               color,
               height,
+              scale,
               margin,
               numTicks,
               tickLabelProps,
@@ -148,8 +150,8 @@ class ChartArea extends React.PureComponent<Props, State> {
   buildGrid = () => {
     const { grid, noGrid } = this.props
     if (noGrid) return () => null
-    return React.memo(function Grid({ yScale, width, margin }) {
-      return <StyledGridRows scale={yScale} stroke={grid.stroke} width={width - margin.left} />
+    return React.memo(function Grid({ yScale, width, left }) {
+      return <StyledGridRows scale={yScale} stroke={grid.stroke} width={width - left} />
     })
   }
 
@@ -213,7 +215,6 @@ class ChartArea extends React.PureComponent<Props, State> {
       xKey,
       yKey,
       type,
-      grid,
       orientation,
       axes,
       stroke,
@@ -237,7 +238,6 @@ class ChartArea extends React.PureComponent<Props, State> {
       styles: tooltipStyles,
       content: tooltipContent
     } = tooltip(this.tooltip)
-    console.log(grid)
     return (
       <DataContext {...{ data, xKey, yKey, type, margin, orientation, x }}>
         {({ xScale, size, dataKeys, data, width, height, yPoints, xPoints, yScale }) => (
@@ -254,7 +254,7 @@ class ChartArea extends React.PureComponent<Props, State> {
               ref={svg => (this.chart = svg)}
             >
               <Group left={margin.left}>
-                <Grid />
+                <Grid yScale={yScale} width={width} left={margin.left} />
                 <LeftAxis {...{ type, orientation, color, yPoints, height, margin }} />
               </Group>
               {recursiveCloneChildren(children, {
