@@ -3,14 +3,14 @@ import * as React from 'react'
 import uniq from 'lodash/uniq'
 import isEmpty from 'lodash/isEmpty'
 
-import { getX, getY, extractLabels, createScalarData } from '../../utils/dataUtils'
-import { determineXScale, biaxial, determineYScale } from '../../utils/chartUtils'
+import { getX, getY, extractLabels } from '../../utils/dataUtils'
+import { determineXScale, determineYScale } from '../../utils/chartUtils'
 import withParentSize from '../Responsive/withParentSize'
 import { type Margin, type ScaleFunction } from '../../types/index'
 
 const margin = { top: 18, right: 15, bottom: 15, left: 30 }
 
-class DataContext extends React.Component<Props, State> {
+class DataContext extends React.PureComponent<Props, State> {
   static defaultProps = {
     data: [],
     margin: margin

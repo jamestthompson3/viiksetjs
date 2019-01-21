@@ -6,6 +6,7 @@ import { bisect } from 'd3-array'
 import flow from 'lodash/flow'
 import head from 'lodash/head'
 import get from 'lodash/get'
+import memoize from 'lodash/memoize'
 
 import { extractX, extractY, createScalarData } from '../../utils/dataUtils'
 import { formatTicks, formatXTicks } from '../../utils/formatUtils'
@@ -32,7 +33,7 @@ import { type Margin, type ScaleFunction } from '../../types/index'
 
 const margin = { top: 18, right: 15, bottom: 15, left: 30 }
 
-class ChartArea extends React.Component<Props, State> {
+class ChartArea extends React.PureComponent<Props, State> {
   static axes = {
     x: {
       tickLabelProps: () => ({
@@ -65,13 +66,8 @@ class ChartArea extends React.Component<Props, State> {
     labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' }
   }
 
-  static grid = {
-    stroke: '#000',
-    type: 'horizontal'
-  }
-
   static tooltip = {
-    indicator: Indicator,
+    Indicator: Indicator,
     renderer: defaultTooltipRenderer,
     content: defaultTooltipContent,
     styles: {}
@@ -80,9 +76,12 @@ class ChartArea extends React.Component<Props, State> {
   static defaultProps = {
     data: [],
     margin: margin,
-    axes: () => this.axes,
-    tooltip: () => this.tooltip,
-    grid: this.grid,
+    axes: args => this.axes,
+    tooltip: args => this.tooltip,
+    grid: {
+      stroke: '#000',
+      type: 'horizontal'
+    },
     glyphRenderer: () => null
   }
 
@@ -92,49 +91,115 @@ class ChartArea extends React.Component<Props, State> {
     bar: false
   }
 
-  // To prevent tooltips from not showing on bar chart due to minification changing names
-  declareBar = () => this.setState({ bar: true })
+  buildAxis = (biaxialChildren, position) => {
+    const { axes, color } = this.props
+    const { y, x } = axes(this.axes)
 
-  mouseMove = ({ event, xPoints, xScale, yScale, yScales, dataKeys, datum }: MouseMove): mixed => {
-    const { data, updateTooltip, xKey, type } = this.props
-    const svgPoint = localPoint(this.chart, event)
+    if (position === 'left') {
+      if (biaxialChildren || typeof axes !== 'function') return () => null
 
-    if (datum) {
-      return updateTooltip({
-        calculatedData: datum,
-        x: get(svgPoint, 'x'),
-        mouseX: get(svgPoint, 'x'),
-        mouseY: get(svgPoint, 'y'),
-        showTooltip: true
+      return React.memo(function LeftAxis({ type, orientation, yPoints, height, margin }) {
+        const { label, numTicks, tickLabelProps, tickFormat, labelProps, ...rest } = y
+        return (
+          <StyledLeftAxis
+            scale={determineYScale({
+              type,
+              orientation,
+              yPoints,
+              height,
+              margin
+            })}
+            {...{
+              color,
+              numTicks,
+              tickLabelProps,
+              tickFormat,
+              label,
+              labelProps,
+              ...rest
+            }}
+          />
+        )
       })
     }
 
-    const xValue = xScale.invert(get(svgPoint, 'x'))
-    return flow(
-      xValue => bisect(xPoints, xValue),
-      index => {
-        const bounds = { dLeft: data[index - 1], dRight: data[index] }
-        return xValue - xPoints[index - 1] > xPoints[index] - xValue
-          ? bounds.dRight || bounds.dLeft
-          : bounds.dLeft || bounds.dRight
-      },
-      calculatedData => {
-        const calculatedX = head(extractX(calculatedData, xKey))
-        const x = findTooltipX({ type, calculatedX, xScale })
-        const yCoords = yScales
-          ? dataKeys.map(key => yScales[key](calculatedData[key]))
-          : extractY(calculatedData).map(item => yScale(item))
+    if (position === 'bottom') {
+      return React.memo(function BottomAxis({ height, margin }) {
+        const { label, numTicks, tickLabelProps, tickFormat, labelProps, ...rest } = x
+        return (
+          <StyledBottomAxis
+            {...{
+              color,
+              height,
+              margin,
+              numTicks,
+              tickLabelProps,
+              tickFormat,
+              label,
+              labelProps,
+              ...rest
+            }}
+          />
+        )
+      })
+    }
+  }
+
+  buildGrid = () => {
+    const { grid, noGrid } = this.props
+    if (noGrid) return () => null
+    return React.memo(function Grid({ yScale, width, margin }) {
+      return <StyledGridRows scale={yScale} stroke={grid.stroke} width={width - margin.left} />
+    })
+  }
+
+  // To prevent tooltips from not showing on bar chart due to minification changing names
+  declareBar = () => this.setState({ bar: true })
+
+  mouseMove = memoize(
+    ({ event, xPoints, xScale, yScale, yScales, dataKeys, datum }: MouseMove): mixed => {
+      const { data, updateTooltip, xKey, type, tooltip } = this.props
+      if (tooltip(this.tooltip) === null) return
+
+      const svgPoint = localPoint(this.chart, event)
+
+      if (datum) {
         return updateTooltip({
-          calculatedData,
-          x,
-          showTooltip: true,
+          calculatedData: datum,
+          x: get(svgPoint, 'x'),
           mouseX: get(svgPoint, 'x'),
           mouseY: get(svgPoint, 'y'),
-          yCoords
+          showTooltip: true
         })
       }
-    )(xValue)
-  }
+
+      const xValue = xScale.invert(get(svgPoint, 'x'))
+      return flow(
+        xValue => bisect(xPoints, xValue),
+        index => {
+          const bounds = { dLeft: data[index - 1], dRight: data[index] }
+          return xValue - xPoints[index - 1] > xPoints[index] - xValue
+            ? bounds.dRight || bounds.dLeft
+            : bounds.dLeft || bounds.dRight
+        },
+        calculatedData => {
+          const calculatedX = head(extractX(calculatedData, xKey))
+          const x = findTooltipX({ type, calculatedX, xScale })
+          const yCoords = yScales
+            ? dataKeys.map(key => yScales[key](calculatedData[key]))
+            : extractY(calculatedData).map(item => yScale(item))
+          return updateTooltip({
+            calculatedData,
+            x,
+            showTooltip: true,
+            mouseX: get(svgPoint, 'x'),
+            mouseY: get(svgPoint, 'y'),
+            yCoords
+          })
+        }
+      )(xValue)
+    }
+  )
 
   mouseLeave = () =>
     this.props.updateTooltip({ calculatedData: null, x: null, yCoords: null, showTooltip: false })
@@ -148,10 +213,11 @@ class ChartArea extends React.Component<Props, State> {
       xKey,
       yKey,
       type,
+      grid,
       orientation,
       axes,
+      stroke,
       tooltip,
-      grid,
       color,
       yCoords,
       calculatedData,
@@ -162,6 +228,16 @@ class ChartArea extends React.Component<Props, State> {
       x
     } = this.props
     const biaxialChildren = children && biaxial(children)
+    const LeftAxis = this.buildAxis(biaxialChildren, 'left')
+    const BottomAxis = this.buildAxis(biaxialChildren, 'bottom')
+    const Grid = this.buildGrid()
+    const {
+      Indicator,
+      renderer: tooltipRenderer,
+      styles: tooltipStyles,
+      content: tooltipContent
+    } = tooltip(this.tooltip)
+    console.log(grid)
     return (
       <DataContext {...{ data, xKey, yKey, type, margin, orientation, x }}>
         {({ xScale, size, dataKeys, data, width, height, yPoints, xPoints, yScale }) => (
@@ -178,45 +254,18 @@ class ChartArea extends React.Component<Props, State> {
               ref={svg => (this.chart = svg)}
             >
               <Group left={margin.left}>
-                {!nogrid && (
-                  <StyledGridRows
-                    scale={yScale}
-                    stroke={gridStroke || stroke}
-                    width={width - margin.left}
-                  />
-                )}
-                {biaxialChildren ||
-                  noYAxis || (
-                    <StyledLeftAxis
-                      scale={determineYScale({
-                        type,
-                        orientation,
-                        yPoints,
-                        height,
-                        margin
-                      })}
-                      {...{
-                        color,
-                        numTicks: numYTicks,
-                        tickLabelProps: yTickLabelProps,
-                        ...yAxisProps
-                      }}
-                      hideTicks
-                      tickFormat={formatY}
-                      label={labelY || ''}
-                      labelProps={labelYProps}
-                    />
-                  )}
+                <Grid />
+                <LeftAxis {...{ type, orientation, color, yPoints, height, margin }} />
               </Group>
               {recursiveCloneChildren(children, {
                 data,
                 xScale,
                 margin,
                 height,
+                axes,
                 yPoints,
                 xPoints,
                 width,
-                notool,
                 declareBar: this.declareBar,
                 type,
                 orientation,
@@ -224,10 +273,7 @@ class ChartArea extends React.Component<Props, State> {
                 mouseLeave: this.mouseLeave,
                 xKey,
                 yKey,
-                inheritedScale: yScale,
-                formatY,
-                numYTicks,
-                formatX
+                inheritedScale: yScale
               })}
               <Group left={margin.left}>
                 {bar || (
@@ -235,51 +281,35 @@ class ChartArea extends React.Component<Props, State> {
                     width={width}
                     height={height}
                     fill="transparent"
-                    onMouseMove={() => event => {
-                      notool ||
-                        this.mouseMove({
-                          event,
-                          xPoints,
-                          xScale,
-                          yScale,
-                          yScales:
-                            biaxialChildren && createScalarData(data, dataKeys, height, margin),
-                          dataKeys
-                        })
-                    }}
-                    onTouchMove={() => event => {
-                      notool ||
-                        this.mouseMove({
-                          event,
-                          xPoints,
-                          xScale,
-                          yScale,
-                          yScales:
-                            biaxialChildren && createScalarData(data, dataKeys, height, margin),
-                          dataKeys
-                        })
-                    }}
-                    onTouchEnd={() => this.mouseLeave}
-                    onMouseLeave={() => this.mouseLeave}
+                    onMouseMove={event =>
+                      this.mouseMove({
+                        event,
+                        xPoints,
+                        xScale,
+                        yScale,
+                        yScales:
+                          biaxialChildren && createScalarData(data, dataKeys, height, margin),
+                        dataKeys
+                      })
+                    }
+                    onTouchMove={event =>
+                      this.mouseMove({
+                        event,
+                        xPoints,
+                        xScale,
+                        yScale,
+                        yScales:
+                          biaxialChildren && createScalarData(data, dataKeys, height, margin),
+                        dataKeys
+                      })
+                    }
+                    onTouchEnd={this.mouseLeave}
+                    onMouseLeave={this.mouseLeave}
                   />
                 )}
               </Group>
               {glyphRenderer && glyphRenderer({ width, height, xScale, yScale, margin })}
-              <StyledBottomAxis
-                scale={xScale}
-                {...{
-                  color,
-                  height,
-                  margin,
-                  numTicks: numXTicks,
-                  tickLabelProps: xTickLabelProps,
-                  ...xAxisProps
-                }}
-                hideTicks
-                tickFormat={formatX}
-                label={labelX || ''}
-                labelProps={labelXProps}
-              />
+              <BottomAxis scale={xScale} height={height} margin={margin} />
               {x && !bar && <Indicator {...{ yCoords, x, stroke, color, height, mouseX }} />}
             </svg>
             {showTooltip &&
