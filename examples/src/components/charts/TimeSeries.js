@@ -24,10 +24,18 @@ const TimeSeries = () => {
       <GraphContainer>
         <ChartArea
           data={timeSeries.data}
-          numXTicks={isMobile ? 2 : 4}
+          axes={defaultProps => ({
+            ...defaultProps,
+            x: {
+              numTicks: isMobile ? 2 : 4
+            }
+          })}
           color="#2189C8"
           stroke="grey"
-          tooltipContent={tooltipContent}
+          tooltip={defaultProps => ({
+            ...defaultProps,
+            content: tooltipContent
+          })}
         >
           <LineChart dataKey="messages" color="#2189C8" />
         </ChartArea>

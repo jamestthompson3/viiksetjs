@@ -11,6 +11,7 @@ import {
   ThresholdExample,
   PieExample
 } from './charts'
+
 const ChartRenderer = ({ active }) => {
   switch (active) {
     case 'time':
