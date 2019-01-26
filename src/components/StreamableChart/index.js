@@ -21,39 +21,46 @@ class StreamableChart extends React.Component<Props, State> {
 
   chart = null
 
+  axes = {
+    x: {
+      tickLabelProps: () => ({
+        dy: '-0.25rem',
+        fontWeight: 400,
+        strokeWidth: '0.5px',
+        textAnchor: 'start',
+        fontSize: 12
+      }),
+      numTicks: 6,
+      label: '',
+      stroke: '#000',
+      labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black', dy: '-0.5rem' },
+      tickFormat: formatXTicks
+    },
+    y: {
+      tickLabelProps: () => ({
+        dy: '-0.25rem',
+        dx: '-0.75rem',
+        strokeWidth: '0.5px',
+        fontWeight: 400,
+        textAnchor: 'end',
+        fontSize: 12
+      }),
+      numTicks: 4,
+      label: '',
+      stroke: '#000',
+      tickFormat: formatTicks,
+      labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' }
+    }
+  }
+
   static defaultProps = {
     data: [],
     persist: 2500,
     color: '#000',
     stroke: '#000',
-    nogrid: false,
-    noYAxis: false,
-    formatY: formatTicks,
     loadingMessage: DefaultLoadingMessage,
     streamParser: message => message,
     mapStream: (data, message) => [...data, message],
-    labelY: '',
-    labelX: '',
-    numXTicks: 6,
-    numYTicks: 4,
-    labelYProps: () => ({ fontSize: 12, textAnchor: 'middle', fill: 'black' }),
-    labelXProps: () => ({ fontSize: 12, textAnchor: 'middle', fill: 'black', dy: '-0.5rem' }),
-    yTickLabelProps: () => ({
-      dy: '-0.25rem',
-      dx: '-1.75rem',
-      strokeWidth: '0.5px',
-      fontWeight: '400',
-      textAnchor: 'left',
-      fontSize: 12
-    }),
-    xTickLabelProps: () => ({
-      dy: '-0.25rem',
-      fontWeight: '400',
-      strokeWidth: '0.5px',
-      textAnchor: 'left',
-      fontSize: 12
-    }),
-    formatX: formatXTicks,
     margin: margin
   }
 
@@ -168,23 +175,22 @@ class StreamableChart extends React.Component<Props, State> {
                   numTicks={3}
                 />
               )}
-              {biaxialChildren ||
-                noYAxis || (
-                  <StyledLeftAxis
-                    scale={determineYScale({
-                      type,
-                      orientation,
-                      yPoints,
-                      height,
-                      margin
-                    })}
-                    {...{ color, numTicks: numYTicks, tickLabelProps: yTickLabelProps }}
-                    hideTicks
-                    tickFormat={formatY}
-                    label={labelY || ''}
-                    labelProps={labelYProps}
-                  />
-                )}
+              {biaxialChildren || noYAxis || (
+                <StyledLeftAxis
+                  scale={determineYScale({
+                    type,
+                    orientation,
+                    yPoints,
+                    height,
+                    margin
+                  })}
+                  {...{ color, numTicks: numYTicks, tickLabelProps: yTickLabelProps }}
+                  hideTicks
+                  tickFormat={formatY}
+                  label={labelY || ''}
+                  labelProps={labelYProps}
+                />
+              )}
             </Group>
             <StyledBottomAxis
               scale={xScale}
@@ -238,18 +244,6 @@ type Props = {
   type: 'ordinal' | 'linear',
   orientation?: 'horizontal',
   xKey?: string,
-  formatY: (d: any, i: number) => string,
-  noYAxis: boolean,
-  labelY: string,
-  labelYProps: Object,
-  yTickLabelProps: (d: any, i: number) => Function,
-  labelX: string,
-  labelXProps: Object,
-  xAxisProps: Object,
-  yAxisProps: Object,
-  xTickLabelProps: (d: any, i: number) => Function,
-  numXTicks: number,
-  numYTicks: number,
   glyphRenderer: ({
     width: number,
     height: number,
@@ -257,7 +251,6 @@ type Props = {
     yScale: ScaleFunction,
     margin: Margin
   }) => React.Node,
-  formatX: (d: any, i: number) => string,
   determineViewBox: ({ size: Size, margin: Margin }) => string,
   nogrid: boolean,
   notool: boolean,

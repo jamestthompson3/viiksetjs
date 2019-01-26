@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react'
 import styled, { withTheme } from 'styled-components'
 import get from 'lodash/get'
+import omit from 'lodash/omit'
 import { withBoundingRects } from '@vx/bounds'
 import { PatternLines } from '@vx/pattern'
 import { LinearGradient } from '@vx/gradient'
@@ -123,14 +124,12 @@ export const StyledBottomAxis = withTheme(props => (
     {...{
       ...props,
       stroke: findColor(props),
-      tickLabelProps: (value, index) =>
-      propsColorSetter(props.tickLabelProps, props, value, index),
+      tickLabelProps: (value, index) => propsColorSetter(props.tickLabelProps, props, value, index),
       top: props.height,
       labelProps: colorSetter(props.labelProps, props)
     }}
   />
-)
-)
+))
 
 StyledBottomAxis.defaultProps = {
   tickLabelProps: () => ({ fill: 'black', textAnchor: 'middle', fontSize: 12 })
@@ -164,7 +163,7 @@ StyledGradient.defaultProps = {
 }
 
 export const StyledLinePath = withTheme(props => (
-  <LinePath {...{ ...props, stroke: findColor(props) }} />
+  <LinePath {...{ ...omit(props, ['xScale', 'yScale']), stroke: findColor(props) }} />
 ))
 
 StyledLinePath.defaultProps = {
@@ -172,7 +171,9 @@ StyledLinePath.defaultProps = {
 }
 
 export const StyledAreaClosed = withTheme(props => (
-  <AreaClosed {...{ ...props, stroke: findColor(props), fill: findFill(props) }} />
+  <AreaClosed
+    {...{ ...omit(props, ['xScale']), stroke: findColor(props), fill: findFill(props) }}
+  />
 ))
 
 StyledAreaClosed.defaultProps = {
@@ -205,14 +206,12 @@ export const TooltipWrapper = styled.div`
   }
 `
 
-const TooltipContainer = styled.div.attrs({
-  style: ({ bounds }) => {
-    return {
-      left: `${bounds.left}px`,
-      top: `${bounds.top}px`
-    }
+const TooltipContainer = styled.div.attrs(p => ({
+  style: {
+    left: `${p.bounds.left}px`,
+    top: `${p.bounds.top}px`
   }
-})`
+}))`
   display: inline-flex;
   position: relative;
   pointer-events: none;

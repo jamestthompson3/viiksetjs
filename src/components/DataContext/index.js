@@ -57,7 +57,7 @@ class DataContext extends React.PureComponent<Props, State> {
     const dataKeys = extractLabels(data[0])
     const width = size.width - margin.left - margin.right
     const height = size.height === 0 ? 300 : size.height - margin.top - margin.bottom
-    const xPoints = uniq(getX(data, xKey))
+    const xPoints = getX(data, xKey)
     const yPoints = getY(data, yKey)
     const yScale = determineYScale({ type, yPoints, height, margin, orientation })
     const xScale = determineXScale({ type, width, xPoints, margin })

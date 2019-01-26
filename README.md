@@ -540,10 +540,10 @@ It recieves the
 First, construct component to be rendered as a tooltip
 
 ```js
-const TooltipContainer = styled.div.attrs({
-  style: ({ bounds }) => ({
-    left: `${bounds.left}px`,
-    top: `${bounds.top}px`
+const TooltipContainer = styled.div.attrs(p ({
+  style: {
+    left: `${p.bounds.left}px`,
+    top: `${p.bounds.top}px`
   })
 })`
   display: inline-flex;

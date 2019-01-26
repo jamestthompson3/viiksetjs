@@ -21,12 +21,12 @@ Label.defaultProps = {
   labelProps: { fill: 'black', textAnchor: 'middle', dy: '.33em', fontSize: 10 }
 }
 
-const TooltipContainer = styled.div.attrs({
-  style: ({ mouseY, mouseX, height, width }) => ({
-    top: mouseY - height,
-    left: mouseX + width / 2
-  })
-})`
+const TooltipContainer = styled.div.attrs(p => ({
+  style: {
+    top: p.mouseY - p.height,
+    left: p.mouseX + p.width / 2
+  }
+}))`
   display: flex;
   flex-direction: column;
   padding: 8px;

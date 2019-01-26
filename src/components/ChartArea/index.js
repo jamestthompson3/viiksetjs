@@ -11,13 +11,7 @@ import merge from 'lodash/merge'
 
 import { extractX, extractY, createScalarData } from '../../utils/dataUtils'
 import { formatTicks, formatXTicks } from '../../utils/formatUtils'
-import {
-  localPoint,
-  determineYScale,
-  findTooltipX,
-  recursiveCloneChildren,
-  biaxial
-} from '../../utils/chartUtils'
+import { localPoint, findTooltipX, recursiveCloneChildren, biaxial } from '../../utils/chartUtils'
 import DataContext from '../DataContext'
 import { type Size } from '../DataContext'
 import withTooltip from '../Tooltip/withTooltip'
@@ -25,60 +19,59 @@ import {
   Indicator,
   StyledGridRows,
   defaultTooltipRenderer,
-  defaultTooltipContent,
-  StyledLeftAxis,
-  StyledBottomAxis
+  defaultTooltipContent
 } from '../styledComponents'
 
 import { type Margin, type ScaleFunction } from '../../types/index'
+import { buildLeftAxis, buildBottomAxis } from '../common'
 
 const margin = { top: 18, right: 15, bottom: 15, left: 30 }
 
+const defaultAxes = {
+  x: {
+    tickLabelProps: () => ({
+      dy: '-0.25rem',
+      fontWeight: 400,
+      strokeWidth: '0.5px',
+      textAnchor: 'start',
+      fontSize: 12
+    }),
+    numTicks: 6,
+    label: '',
+    stroke: '#000',
+    labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black', dy: '-0.5rem' },
+    tickFormat: formatXTicks
+  },
+  y: {
+    tickLabelProps: () => ({
+      dy: '-0.25rem',
+      dx: '-0.75rem',
+      strokeWidth: '0.5px',
+      fontWeight: 400,
+      textAnchor: 'end',
+      fontSize: 12
+    }),
+    numTicks: 4,
+    label: '',
+    stroke: '#000',
+    tickFormat: formatTicks,
+    labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' }
+  }
+}
+
+const defaultTooltip = {
+  Indicator: Indicator,
+  renderer: defaultTooltipRenderer,
+  content: defaultTooltipContent,
+  styles: {}
+}
+
 class ChartArea extends React.PureComponent<Props, State> {
-  axes = {
-    x: {
-      tickLabelProps: () => ({
-        dy: '-0.25rem',
-        fontWeight: 400,
-        strokeWidth: '0.5px',
-        textAnchor: 'start',
-        fontSize: 12
-      }),
-      numTicks: 6,
-      label: '',
-      stroke: '#000',
-      labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black', dy: '-0.5rem' },
-      tickFormat: formatXTicks
-    },
-    y: {
-      tickLabelProps: () => ({
-        dy: '-0.25rem',
-        dx: '-0.75rem',
-        strokeWidth: '0.5px',
-        fontWeight: 400,
-        textAnchor: 'end',
-        fontSize: 12
-      }),
-      numTicks: 4,
-      label: '',
-      stroke: '#000',
-      tickFormat: formatTicks,
-      labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' }
-    }
-  }
-
-  tooltip = {
-    Indicator: Indicator,
-    renderer: defaultTooltipRenderer,
-    content: defaultTooltipContent,
-    styles: {}
-  }
-
   static defaultProps = {
     data: [],
-    margin: margin,
-    axes: args => this.axes,
-    tooltip: args => this.tooltip,
+    margin,
+    axes: defaultAxes,
+    tooltip: defaultTooltip,
     grid: {
       stroke: '#000',
       type: 'horizontal'
@@ -94,57 +87,17 @@ class ChartArea extends React.PureComponent<Props, State> {
 
   buildAxis = (biaxialChildren, position) => {
     const { axes, color } = this.props
-    const { y, x } = merge(this.axes, axes)
+    const { y, x } = merge(defaultAxes, axes)
 
-    if (position === 'left') {
-      if (biaxialChildren || typeof axes !== 'function') return () => null
-
-      return React.memo(function LeftAxis({ type, orientation, yPoints, height, margin }) {
-        const { label, numTicks, tickLabelProps, tickFormat, labelProps, ...rest } = y
-        return (
-          <StyledLeftAxis
-            scale={determineYScale({
-              type,
-              orientation,
-              yPoints,
-              height,
-              margin
-            })}
-            {...{
-              color,
-              numTicks,
-              tickLabelProps,
-              tickFormat,
-              label,
-              labelProps,
-              ...rest
-            }}
-          />
-        )
-      })
+    if (position === 'left' && !biaxialChildren && axes.y !== null) {
+      return buildLeftAxis({ y, color })
     }
 
-    if (position === 'bottom') {
-      return React.memo(function BottomAxis({ height, margin, scale }) {
-        const { label, numTicks, tickLabelProps, tickFormat, labelProps, ...rest } = x
-        return (
-          <StyledBottomAxis
-            {...{
-              color,
-              height,
-              scale,
-              margin,
-              numTicks,
-              tickLabelProps,
-              tickFormat,
-              label,
-              labelProps,
-              ...rest
-            }}
-          />
-        )
-      })
+    if (position === 'bottom' && axes.x !== null) {
+      return buildBottomAxis({ x, color })
     }
+
+    return () => null
   }
 
   buildGrid = () => {
@@ -161,7 +114,7 @@ class ChartArea extends React.PureComponent<Props, State> {
   mouseMove = memoize(
     ({ event, xPoints, xScale, yScale, yScales, dataKeys, datum }: MouseMove): mixed => {
       const { data, updateTooltip, xKey, type, tooltip } = this.props
-      if (tooltip(this.tooltip) === null) return
+      if (tooltip === null) return
 
       const svgPoint = localPoint(this.chart, event)
 
@@ -237,7 +190,7 @@ class ChartArea extends React.PureComponent<Props, State> {
       renderer: tooltipRenderer,
       styles: tooltipStyles,
       content: tooltipContent
-    } = tooltip(this.tooltip)
+    } = merge(defaultTooltip, tooltip)
     return (
       <DataContext {...{ data, xKey, yKey, type, margin, orientation, x }}>
         {({ xScale, size, dataKeys, data, width, height, yPoints, xPoints, yScale }) => (
@@ -399,10 +352,11 @@ type Props = {
   color: string,
   type: 'ordinal' | 'linear',
   orientation?: 'horizontal',
-  axes: ({ x: AxisProps, y: AxisProps }) => { x: $Shape<AxisProps>, y: $Shape<AxisProps> },
+  axes: { x: $Shape<AxisProps>, y: $Shape<AxisProps> },
   grid: GridProps,
-  tooltip: ($Shape<TooltipData>) => $Shape<TooltipProps>,
+  tooltip: $Shape<TooltipProps>,
   xKey?: string,
+  nogrid: boolean,
   updateTooltip: ($Shape<TooltipData>) => mixed,
   glyphRenderer: ({
     width: number,
