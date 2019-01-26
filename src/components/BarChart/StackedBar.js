@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import * as React from 'react'
 import PropTypes from 'prop-types'
 import { Group } from '@vx/group'
 import { stack } from 'd3-shape'
@@ -12,7 +12,7 @@ import set from 'lodash/set'
 import { extractLabels, extractX } from '../../utils/dataUtils'
 import { StyledBar } from '../styledComponents'
 
-class StackedBar extends Component {
+class StackedBar extends React.Component {
   componentDidMount() {
     this.props.declareBar()
   }

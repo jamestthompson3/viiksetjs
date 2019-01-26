@@ -1,16 +1,18 @@
 import rollupBabel from 'rollup-plugin-babel'
 import resolve from 'rollup-plugin-node-resolve'
 import commonjs from 'rollup-plugin-commonjs'
-import peerDepsExternal from 'rollup-plugin-peer-deps-external'
+import pkg from './package.json'
 
-module.exports = {
+const deps = Object.keys({
+  ...pkg.dependencies,
+  ...pkg.peerDependencies
+})
+
+export default {
   input: './src/index.js',
   output: { dir: 'lib', format: 'es' },
-  external: ['react', 'styled-components'],
+  external: deps,
   plugins: [
-    peerDepsExternal({
-      packageJsonPath: './package.json'
-    }),
     resolve(),
     rollupBabel({
       exclude: 'node_modules/**'

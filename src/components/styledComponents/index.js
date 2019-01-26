@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import * as React from 'react'
 import styled, { withTheme } from 'styled-components'
 import get from 'lodash/get'
 import omit from 'lodash/omit'
@@ -290,7 +290,7 @@ export const defaultTooltipContent = ({ tooltipData }) =>
 
 export const Indicator = ({ yCoords, x, stroke, color }) => {
   return (
-    <Fragment>
+    <>
       <Line
         from={{ x: x, y: 0 }}
         to={{ x: x, y: Math.max(...yCoords) }}
@@ -312,6 +312,6 @@ export const Indicator = ({ yCoords, x, stroke, color }) => {
           r={4}
         />
       ))}
-    </Fragment>
+    </>
   )
 }
