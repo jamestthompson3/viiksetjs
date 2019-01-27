@@ -81,12 +81,12 @@ export const Header = styled.div`
   box-shadow: 6px 6px 27px -12px rgba(0, 0, 0, 0.75);
   border-bottom: 3px solid #00adee;
 `
-export const Snippet = styled.pre`
+
+const Code = styled.pre`
   background: #1b1b1b;
   color: white;
   overflow-x: auto;
   border-radius: 3px;
-  width: 80%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -96,12 +96,23 @@ export const Snippet = styled.pre`
   padding-bottom: 2rem;
   box-shadow: 6px 6px 27px -12px rgba(0, 0, 0, 0.75);
   @media (max-width: 500px) {
-    width: 90%;
     height: 150px;
     padding: 1rem;
     overflow-y: auto;
   }
 `
+
+const CodeContainer = styled.div`
+  width: 90%;
+  padding: 10px;
+`
+
+export const Snippet = ({ children }) => (
+  <CodeContainer>
+    <Code>{children}</Code>
+  </CodeContainer>
+)
+
 const TooltipContainer = styled.span.attrs({
   style: p => ({
     left: `${p.rect ? p.left + p.rect.width : p.left}px`,
@@ -152,6 +163,7 @@ const Container = styled.div.attrs({
   border-radius: 3px;
 `
 const BoundedContainer = withBoundingRects(Container)
+
 export const Indicator = ({ x, color, yCoords, height }) => (
   <Line
     from={{ x: x, y: height }}
@@ -162,10 +174,11 @@ export const Indicator = ({ x, color, yCoords, height }) => (
     style={{ pointerEvents: 'none' }}
   />
 )
+
 const BoundedTooltip = withBoundingRects(TooltipContainer)
 
 export const LinearTooltip = ({ tooltipData, x, yCoords }) => (
-  <BoundedTooltip left={x - 15} yCoord={get(yCoords, '[1]', 0) - 15}>
+  <BoundedTooltip left={x} yCoord={get(yCoords, '[1]', 0) - 15}>
     {tooltipData.y < 300 ? <span role="img">❄️</span> : <span role="img">🔥</span>}
   </BoundedTooltip>
 )
