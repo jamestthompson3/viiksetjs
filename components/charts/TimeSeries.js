@@ -10,10 +10,11 @@ import { isMobile } from './constants'
 export const tooltipContent = ({ tooltipData }) => (
   <>
     <p>
-      number of messages: <span style={{ color: '#00adee' }}>{tooltipData.messages}</span>
+      messages: <span style={{ color: '#00adee' }}>{tooltipData.messages}</span>
     </p>
     <p>
-      time: <span style={{ color: '#00adee' }}>{format(parse(tooltipData.time))}</span>
+      time:{' '}
+      <span style={{ color: '#00adee' }}>{format(parse(tooltipData.time), 'MMM Do HH:mm')}</span>
     </p>
   </>
 )
@@ -42,12 +43,12 @@ export const TimeSeries = () => (
     const tooltipContent = ({ tooltipData }) => (
       <>
        <p>
-          number of messages:
+          messages:
           <span style={{ color: '#00adee' }}>{tooltipData.messages}</span>
        </p>
        <p>
         time:
-        <span style={{ color: '#00adee' }}>{format(parse(tooltipData.time))}</span>
+        <span style={{ color: '#00adee' }}>{format(parse(tooltipData.time), 'MMM Do HH:mm')}</span>
        </p>
      </>
       )

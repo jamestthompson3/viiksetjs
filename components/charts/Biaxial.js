@@ -21,6 +21,9 @@ export const Biaxial = () => (
             numTicks: isMobile ? 1 : 4
           }
         }}
+        determineViewBox={({ size, margin }) =>
+          `-10 0 ${size.width + margin.left + margin.right} ${size.height}`
+        }
       >
         <LineChart color="rgb(238, 66, 244)" dataKey="users" axisId="users" />
         <LineChart color="rgb(244, 196, 65)" dataKey="posts" axisId="posts" />
@@ -29,9 +32,16 @@ export const Biaxial = () => (
           axisId="posts"
           position="right"
           label="posts"
+          tickFormat={d => d / 1000 + 'k'}
+          tickLabelProps={() => ({
+            dx: 8,
+            fontSize: '12px',
+            textAnchor: 'middle'
+          })}
           labelProps={{
             y: -20,
-            textAnchor: 'end',
+            dx: 10,
+            textAnchor: 'start',
             fill: 'rgb(244, 196, 65)',
             fontSize: '12px'
           }}
@@ -41,8 +51,10 @@ export const Biaxial = () => (
           axisId="users"
           position="left"
           label="users"
+          tickFormat={d => d / 1000 + 'k'}
           labelProps={{
             y: -20,
+            dx: -12,
             textAnchor: 'end',
             fill: 'rgb(238, 66, 244)',
             fontSize: '12px'
