@@ -3,8 +3,7 @@ import { scaleLinear } from 'd3-scale'
 import get from 'lodash/get'
 import { StyledLeftAxis, StyledRightAxis } from '../styledComponents'
 
-// TODO Memoize props, make it standalone
-const YAxis = ({
+function YAxis({
   height,
   data,
   axisId,
@@ -18,7 +17,7 @@ const YAxis = ({
   numYTicks,
   tickLabels,
   ...rest
-}) => {
+}) {
   // Check if data exists
   if (data.map(item => get(item, axisId)).includes(undefined)) {
     // eslint-disable-next-line
@@ -80,4 +79,4 @@ YAxis.defaultProps = {
   data: []
 }
 
-export default YAxis
+export default React.memo(YAxis)

@@ -9,7 +9,7 @@ import { extractX, getY } from '../../utils/dataUtils'
 import { determineYScale, determineXScale } from '../../utils/chartUtils'
 import { type ScaleFunction, type Margin } from '../../types/index'
 
-class BarChart extends React.Component<Props> {
+class BarChart extends React.PureComponent<Props> {
   static defaultProps = {
     color: 'rgb(0, 157, 253)',
     nofill: false,
@@ -18,10 +18,6 @@ class BarChart extends React.Component<Props> {
 
   componentDidMount() {
     this.props.declareBar()
-  }
-
-  shouldComponentUpdate(prevProps: Props) {
-    return prevProps.yPoints !== this.props.yPoints || prevProps.dataKey !== this.props.dataKey
   }
 
   determineScales = ({ type, orientation }: { type: string, orientation: string }) => {

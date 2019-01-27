@@ -12,13 +12,9 @@ import set from 'lodash/set'
 import { extractLabels, extractX } from '../../utils/dataUtils'
 import { StyledBar } from '../styledComponents'
 
-class StackedBar extends React.Component {
+class StackedBar extends React.PureComponent {
   componentDidMount() {
     this.props.declareBar()
-  }
-
-  shouldComponentUpdate(prevProps) {
-    return !(prevProps.yPoints === this.props.yPoints) || !(prevProps.keys === this.props.keys)
   }
 
   determineScales = ({ orientation, type, data, keys }) => {

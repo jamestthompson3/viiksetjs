@@ -163,7 +163,7 @@ StyledGradient.defaultProps = {
 }
 
 export const StyledLinePath = withTheme(props => (
-  <LinePath {...{ ...omit(props, ['xScale', 'yScale']), stroke: findColor(props) }} />
+  <LinePath {...{ ...props, stroke: findColor(props) }} />
 ))
 
 StyledLinePath.defaultProps = {
@@ -209,7 +209,8 @@ export const TooltipWrapper = styled.div`
 const TooltipContainer = styled.div.attrs(p => ({
   style: {
     left: `${p.bounds.left}px`,
-    top: `${p.bounds.top}px`
+    top: `${p.bounds.top}px`,
+    ...p.style
   }
 }))`
   display: inline-flex;
@@ -234,7 +235,7 @@ const boundsSetter = ({ left, rect, parentRect }) => {
 /**
  * TooltipBounder sets bounds for the tooltip and passes them down
  */
-const TooltipBounder = ({ children, rect, parentRect, left, style }) => {
+const TooltipBounder = ({ children, rect, parentRect, left, style = {} }) => {
   const getBounds = () => {
     if (rect && parentRect) {
       return {
