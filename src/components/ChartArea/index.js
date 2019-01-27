@@ -100,8 +100,8 @@ class ChartArea extends React.PureComponent<Props, State> {
 
   mouseMove = memoize(
     ({ event, xPoints, xScale, yScale, yScales, dataKeys, datum }: MouseMove): mixed => {
-      const { data, updateTooltip, xKey, type, tooltip } = this.props
-      if (tooltip === null) return
+      const { data, updateTooltip, children, xKey, type, tooltip, noTool } = this.props
+      if (tooltip === null || noTool) return
 
       const svgPoint = localPoint(this.chart, event)
 
@@ -115,7 +115,9 @@ class ChartArea extends React.PureComponent<Props, State> {
         })
       }
 
-      const xValue = xScale.invert(get(svgPoint, 'x') - margin.right)
+      const xValueOffset = biaxial(children) ? 0 : margin.right
+
+      const xValue = xScale.invert(get(svgPoint, 'x') - xValueOffset)
       return flow(
         xValue => bisect(xPoints, xValue),
         index => {
@@ -159,6 +161,7 @@ class ChartArea extends React.PureComponent<Props, State> {
       axes,
       stroke,
       tooltip,
+      noTool,
       color,
       yCoords,
       calculatedData,
@@ -218,7 +221,7 @@ class ChartArea extends React.PureComponent<Props, State> {
                 })}
                 {bar || (
                   <Bar
-                    width={width}
+                    width={size.width}
                     x={0}
                     y={0}
                     height={height}
@@ -255,6 +258,7 @@ class ChartArea extends React.PureComponent<Props, State> {
               </Group>
             </svg>
             {showTooltip &&
+              !noTool &&
               tooltipRenderer({
                 ...{
                   tooltipData: calculatedData,
