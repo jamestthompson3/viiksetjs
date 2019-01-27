@@ -89,12 +89,10 @@ export const StyledGridRows = withTheme(props => (
 
 export const StyledLeftAxis = withTheme(props => (
   <AxisLeft
-    {...{
-      ...props,
-      stroke: findColor(props),
-      tickLabelProps: (value, index) => propsColorSetter(props.tickLabelProps, props, value, index),
-      labelProps: colorSetter(props.labelProps, props)
-    }}
+    {...props}
+    stroke={findColor(props)}
+    tickLabelProps={(value, index) => propsColorSetter(props.tickLabelProps, props, value, index)}
+    labelProps={colorSetter(props.labelProps, props)}
   />
 ))
 
@@ -105,12 +103,10 @@ StyledLeftAxis.defaultProps = {
 
 export const StyledRightAxis = withTheme(props => (
   <AxisRight
-    {...{
-      ...props,
-      stroke: findColor(props),
-      tickLabelProps: (value, index) => propsColorSetter(props.tickLabelProps, props, value, index),
-      labelProps: colorSetter(props.labelProps, props)
-    }}
+    {...props}
+    stroke={findColor(props)}
+    tickLabelProps={(value, index) => propsColorSetter(props.tickLabelProps, props, value, index)}
+    labelProps={colorSetter(props.labelProps, props)}
   />
 ))
 

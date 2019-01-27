@@ -102,13 +102,13 @@ class StackedBar extends React.PureComponent {
                     width={isHorizontal ? barWidth : bandwidth}
                     height={isHorizontal ? bandwidth : barWidth}
                     fill={zScale(s.key)}
-                    onMouseMove={() => event => {
+                    onMouseMove={event => {
                       const key = s.key
                       const datum = set({}, xKey || 'xValue', head(extractX(get(d, 'data'), xKey)))
                       set(datum, key, get(d, `data.${key}`))
                       return notool || mouseMove({ event, datum })
                     }}
-                    onMouseLeave={() => () => mouseLeave()}
+                    onMouseLeave={() => mouseLeave()}
                     {...barProps}
                   />
                 )

@@ -39,32 +39,34 @@ export const TimeSeries = () => (
     </GraphContainer>
     <Snippet>
       {`
-        const tooltipContent = ({ tooltipData }) => (
-            <Fragment>
-                <p>
-                number of messages: <span style={{ color: '#00adee' }}>{tooltipData.messages}</span>
-                </p>
-                <p>
-                time: <span style={{ color: '#00adee' }}>{format(parse(tooltipData.time))}</span>
-                </p>
-            </Fragment>
-            )
+    const tooltipContent = ({ tooltipData }) => (
+      <>
+       <p>
+          number of messages:
+          <span style={{ color: '#00adee' }}>{tooltipData.messages}</span>
+       </p>
+       <p>
+        time:
+        <span style={{ color: '#00adee' }}>{format(parse(tooltipData.time))}</span>
+       </p>
+     </>
+      )
 
-          <ChartArea
-            data={timeSeries.data}
-            axes={{
-              x: {
-                numTicks: isMobile ? 2 : 4
-              }
-            }}
-            color="#2189C8"
-            stroke="grey"
-            tooltip={{
-              content: tooltipContent
-            }}
-          >
-          <LineChart dataKey="messages" color="#2189C8" />
-        </ChartArea>`}
+      <ChartArea
+        data={timeSeries.data}
+        axes={{
+          x: {
+            numTicks: isMobile ? 2 : 4
+          }
+        }}
+        color="#2189C8"
+        stroke="grey"
+        tooltip={{
+          content: tooltipContent
+        }}
+      >
+      <LineChart dataKey="messages" color="#2189C8" />
+    </ChartArea>`}
     </Snippet>
   </>
 )

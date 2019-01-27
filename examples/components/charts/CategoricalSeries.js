@@ -29,25 +29,25 @@ export const CategoricalSeries = () => (
     </GraphContainer>
     <Snippet>
       {`
-        <ChartArea
-            data={categoricalSeries.data}
-            type="ordinal"
-            color="#dc7d5b"
-            axes={{
-              x: {
-                numTicks: isMobile ? 1 : 4
-              },
-              y: {
-                label: "Culinary Score"
-              }
-            }}
-            xKey="company"
-            stroke="grey"
-            nogrid
-          >
-          <BarChart dataKey="score" color="#dc7d5b" />
-        </ChartArea>
-        `}
+    <ChartArea
+      data={categoricalSeries.data}
+      type="ordinal"
+      color="#dc7d5b"
+      axes={{
+        x: {
+          numTicks: isMobile ? 1 : 4
+        },
+        y: {
+          label: 'Culinary Score'
+        }
+      }}
+      xKey="company"
+      stroke="grey"
+      nogrid
+    >
+      <BarChart dataKey="score" color="#dc7d5b" />
+    </ChartArea>
+      `}
     </Snippet>
   </>
 )

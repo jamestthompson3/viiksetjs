@@ -6,15 +6,16 @@ import { determineYScale } from '../../utils/chartUtils'
 export const buildLeftAxis = ({ y, color }) =>
   React.memo(function LeftAxis({ type, orientation, yPoints, height, margin }) {
     const { label, numTicks, tickLabelProps, tickFormat, labelProps, ...rest } = y
+    const scale = determineYScale({
+      type,
+      orientation,
+      yPoints,
+      height,
+      margin
+    })
     return (
       <StyledLeftAxis
-        scale={determineYScale({
-          type,
-          orientation,
-          yPoints,
-          height,
-          margin
-        })}
+        scale={scale}
         {...{
           color,
           numTicks,

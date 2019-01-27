@@ -94,8 +94,8 @@ class BarChart extends React.PureComponent<Props> {
               y={isHorizontal ? barHeight(d) : inverted ? 0 : height - barHeight(d)}
               data={d}
               fill={!nofill && `url(#gradient${xKey})`}
-              onMouseMove={() => event => notool || mouseMove({ event, datum: d })}
-              onMouseLeave={() => () => mouseLeave()}
+              onMouseMove={event => notool || mouseMove({ event, datum: d })}
+              onMouseLeave={() => mouseLeave()}
               {...barProps}
             />
           </Group>

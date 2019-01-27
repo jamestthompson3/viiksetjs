@@ -30,7 +30,6 @@ const margin = { top: 18, right: 15, bottom: 15, left: 30 }
 const defaultAxes = {
   x: {
     tickLabelProps: () => ({
-      dy: '-0.25rem',
       fontWeight: 400,
       strokeWidth: '0.5px',
       textAnchor: 'start',
@@ -39,13 +38,12 @@ const defaultAxes = {
     numTicks: 6,
     label: '',
     stroke: '#000',
-    labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black', dy: '-0.5rem' },
+    tickStroke: 'transparent',
+    labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black', dy: -10 },
     tickFormat: formatXTicks
   },
   y: {
     tickLabelProps: () => ({
-      dy: '-0.25rem',
-      dx: '-0.75rem',
       strokeWidth: '0.5px',
       fontWeight: 400,
       textAnchor: 'end',
@@ -54,31 +52,20 @@ const defaultAxes = {
     numTicks: 4,
     label: '',
     stroke: '#000',
+    tickStroke: 'transparent',
     tickFormat: formatTicks,
     labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' }
   }
 }
 
 const defaultTooltip = {
-  Indicator: Indicator,
+  indicator: Indicator,
   renderer: defaultTooltipRenderer,
   content: defaultTooltipContent,
   styles: {}
 }
 
 class ChartArea extends React.PureComponent<Props, State> {
-  static defaultProps = {
-    data: [],
-    margin,
-    axes: defaultAxes,
-    tooltip: defaultTooltip,
-    grid: {
-      stroke: '#000',
-      type: 'horizontal'
-    },
-    glyphRenderer: () => null
-  }
-
   chart = null
 
   state = {
@@ -87,7 +74,7 @@ class ChartArea extends React.PureComponent<Props, State> {
 
   buildAxis = (biaxialChildren, position) => {
     const { axes, color } = this.props
-    const { y, x } = merge(defaultAxes, axes)
+    const { y, x } = merge({}, defaultAxes, axes)
 
     if (position === 'left' && !biaxialChildren && axes.y !== null) {
       return buildLeftAxis({ y, color })
@@ -101,10 +88,10 @@ class ChartArea extends React.PureComponent<Props, State> {
   }
 
   buildGrid = () => {
-    const { grid, noGrid } = this.props
+    const { noGrid, gridStroke } = this.props
     if (noGrid) return () => null
     return React.memo(function Grid({ yScale, width, left }) {
-      return <StyledGridRows scale={yScale} stroke={grid.stroke} width={width - left} />
+      return <StyledGridRows scale={yScale} stroke={gridStroke} width={width - left} />
     })
   }
 
@@ -128,7 +115,7 @@ class ChartArea extends React.PureComponent<Props, State> {
         })
       }
 
-      const xValue = xScale.invert(get(svgPoint, 'x'))
+      const xValue = xScale.invert(get(svgPoint, 'x') - margin.right)
       return flow(
         xValue => bisect(xPoints, xValue),
         index => {
@@ -186,18 +173,18 @@ class ChartArea extends React.PureComponent<Props, State> {
     const BottomAxis = this.buildAxis(biaxialChildren, 'bottom')
     const Grid = this.buildGrid()
     const {
-      Indicator,
+      indicator: Indicator,
       renderer: tooltipRenderer,
       styles: tooltipStyles,
       content: tooltipContent
-    } = merge(defaultTooltip, tooltip)
+    } = merge({}, defaultTooltip, tooltip)
     return (
       <DataContext {...{ data, xKey, yKey, type, margin, orientation, x }}>
         {({ xScale, size, dataKeys, data, width, height, yPoints, xPoints, yScale }) => (
           <div style={{ width: size.width, height: size.height }}>
             <svg
-              width={width + margin.left + margin.right}
-              height={height + margin.top + margin.bottom}
+              width={size.width}
+              height={size.height}
               preserveAspectRatio="none"
               viewBox={
                 determineViewBox
@@ -206,32 +193,34 @@ class ChartArea extends React.PureComponent<Props, State> {
               }
               ref={svg => (this.chart = svg)}
             >
-              <Group left={margin.left}>
-                <Grid yScale={yScale} width={width} left={margin.left} />
-                <LeftAxis {...{ type, orientation, color, yPoints, height, margin }} />
-              </Group>
-              {recursiveCloneChildren(children, {
-                data,
-                xScale,
-                margin,
-                height,
-                axes,
-                yPoints,
-                xPoints,
-                width,
-                declareBar: this.declareBar,
-                type,
-                orientation,
-                mouseMove: this.mouseMove,
-                mouseLeave: this.mouseLeave,
-                xKey,
-                yKey,
-                inheritedScale: yScale
-              })}
-              <Group left={margin.left}>
+              <Group left={biaxialChildren ? 0 : margin.right}>
+                <Group left={margin.left}>
+                  <Grid yScale={yScale} width={width} left={margin.left} />
+                  <LeftAxis {...{ type, orientation, color, yPoints, height, margin }} />
+                </Group>
+                {recursiveCloneChildren(children, {
+                  data,
+                  xScale,
+                  margin,
+                  height,
+                  axes,
+                  yPoints,
+                  xPoints,
+                  width,
+                  declareBar: this.declareBar,
+                  type,
+                  orientation,
+                  mouseMove: this.mouseMove,
+                  mouseLeave: this.mouseLeave,
+                  xKey,
+                  yKey,
+                  inheritedScale: yScale
+                })}
                 {bar || (
                   <Bar
                     width={width}
+                    x={0}
+                    y={0}
                     height={height}
                     fill="transparent"
                     onMouseMove={event =>
@@ -260,10 +249,10 @@ class ChartArea extends React.PureComponent<Props, State> {
                     onMouseLeave={this.mouseLeave}
                   />
                 )}
+                {glyphRenderer && glyphRenderer({ width, height, xScale, yScale, margin })}
+                <BottomAxis scale={xScale} height={height} margin={margin} />
+                {x && !bar && <Indicator {...{ yCoords, x, stroke, color, height, mouseX }} />}
               </Group>
-              {glyphRenderer && glyphRenderer({ width, height, xScale, yScale, margin })}
-              <BottomAxis scale={xScale} height={height} margin={margin} />
-              {x && !bar && <Indicator {...{ yCoords, x, stroke, color, height, mouseX }} />}
             </svg>
             {showTooltip &&
               tooltipRenderer({
@@ -284,6 +273,18 @@ class ChartArea extends React.PureComponent<Props, State> {
       </DataContext>
     )
   }
+}
+
+ChartArea.defaultProps = {
+  data: [],
+  margin,
+  axes: defaultAxes,
+  tooltip: defaultTooltip,
+  grid: {
+    stroke: '#000',
+    type: 'horizontal'
+  },
+  glyphRenderer: () => null
 }
 
 type MouseMove = {

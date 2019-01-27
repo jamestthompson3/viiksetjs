@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react'
-import uniq from 'lodash/uniq'
 import isEmpty from 'lodash/isEmpty'
 
 import { getX, getY, extractLabels } from '../../utils/dataUtils'

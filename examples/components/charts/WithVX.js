@@ -12,6 +12,7 @@ const ThresholdLine = ({ inheritedScale, margin, width }) => (
       to={{ x: margin.left, y: inheritedScale(4500) }}
       from={{ x: width - margin.right, y: inheritedScale(4500) }}
       strokeWidth={2}
+      stroke="#000"
       strokeDasharray={(5, 10)}
     />
     <text style={{ transform: `translate( ${margin.left + 5}px,${inheritedScale(4600)}px)` }}>
@@ -35,26 +36,33 @@ export const WithVX = () => (
     </GraphContainer>
     <Snippet>
       {`
-         import { Line } from '@vx/shape'
+      import { Line } from '@vx/shape'
 
-         const ThresholdLine = ({ inheritedScale, margin, width }) => (
-          <g id="notes">
-            <Line
-              to={{ x: margin.left, y: inheritedScale(4500) }}
-              from={{ x: width - margin.right, y: inheritedScale(4500) }}
-              strokeWidth={2}
-              strokeDasharray={(5, 10)}
-            />
-          <text style={{ transform: translate( margin.left + 5px,inheritedScale(4600)px) }}>
-           all time max
-         </text>
-     </g>
-        )
-          <ChartArea data={timeSeries.data} numXTicks={isMobile ? 2 : 4} color="lime" stroke="grey">
-            <LineChart dataKey="messages" color="lime" />
-            <ThresholdLine />
-         </ChartArea>
-`}
+      const ThresholdLine = ({ inheritedScale, margin, width }) => (
+        <g id="notes">
+          <Line
+            to={{ x: margin.left, y: inheritedScale(4500) }}
+            from={{ x: width - margin.right, y: inheritedScale(4500) }}
+            strokeWidth={2}
+            stroke="#000"
+            strokeDasharray={(5, 10)}
+          />
+          <text style={{ transform: translate(margin.left + 5 + px, inheritedScale(4600) + px) }}>
+            all time max
+          </text>
+        </g>
+      )
+
+      <ChartArea
+        data={timeSeries.data}
+        axes={{ x: { numTicks: isMobile ? 2 : 4 } }}
+        color="lime"
+        stroke="grey"
+      >
+        <LineChart dataKey="messages" color="lime" />
+        <ThresholdLine />
+      </ChartArea>
+       `}
     </Snippet>
   </>
 )
