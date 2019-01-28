@@ -21,7 +21,7 @@ export const ThresholdExample = () => (
       >
         <Threshold y0="usd" y1="eur" />
         <LineChart dataKey="usd" color="black" nofill />
-        <LineChart dataKey="eur" color="black" nofill lineProps={{ strokeDasharray: [9, 9] }} />
+        <LineChart dataKey="eur" color="blue" nofill lineProps={{ strokeDasharray: [9, 9] }} />
       </ChartArea>
     </GraphContainer>
     <Snippet>
@@ -41,7 +41,7 @@ export const ThresholdExample = () => (
                 <LineChart dataKey="usd" color="black" nofill />
                 <LineChart
                   dataKey="eur"
-                  color="black"
+                  color="blue"
                   nofill
                   lineProps={{ strokeDasharray: [9, 9] }}
                 />

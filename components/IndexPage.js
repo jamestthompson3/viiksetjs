@@ -4,10 +4,11 @@ import { createGlobalStyle } from 'styled-components'
 import { PageWrapper, Wrapper, Header, FilterBox, ChartBox, Selector } from './styledComponents'
 import ChartRenderer from './ChartRenderer'
 
-createGlobalStyle`
+const GlobalStyle = createGlobalStyle`
   body {
     margin: 0;
     padding: 0;
+    overflow: hidden;
     font-family: 'Roboto', sans-serif;
   }
    ::-webkit-scrollbar {
@@ -63,6 +64,7 @@ export class IndexPage extends React.Component {
     const { active } = this.state
     return (
       <PageWrapper>
+        <GlobalStyle />
         <Header>
           <h1>ViiksetJS</h1>
         </Header>
