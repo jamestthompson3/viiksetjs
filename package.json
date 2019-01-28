@@ -10,7 +10,7 @@
   "private": false,
   "scripts": {
     "build": "rm -rf ./lib && rollup --config",
-    "buildExamples": "webpack --config webpack.config.js",
+    "buildExamples": "webpack --config=webpack.config.js --watch",
     "watch": "rollup --config -w",
     "lint": "eslint --fix --ext .js ./src/",
     "precommit": "lint-staged"

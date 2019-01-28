@@ -41,16 +41,14 @@ export class StackedBarExample extends React.Component {
               x: {
                 numTicks: isMobile ? 1 : 4
               },
-              y: isHorizontal
-                ? null
-                : {
-                    tickLabelProps: () => ({
-                      dx: isHorizontal ? '0rem' : '-3rem',
-                      fontSize: 10,
-                      strokeWidth: '0.5px',
-                      textAnchor: isHorizontal ? 'end' : 'middle'
-                    })
-                  }
+              y: {
+                tickLabelProps: () => ({
+                  dx: isHorizontal ? '0rem' : '-3rem',
+                  fontSize: 10,
+                  strokeWidth: '0.5px',
+                  textAnchor: isHorizontal ? 'end' : 'middle'
+                })
+              }
             }}
             color="grey"
             xKey="activity"

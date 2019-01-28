@@ -7,6 +7,8 @@ import { Line } from '@vx/shape'
 export const PageWrapper = styled.div`
   width: 100%;
   background: #333;
+  margin: 0;
+  padding: 0;
   height: 100vh;
   overflow-x: hidden;
   h2 {
