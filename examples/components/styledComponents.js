@@ -185,7 +185,7 @@ export const LinearTooltip = ({ tooltipData, x, yCoords }) => (
   </BoundedTooltip>
 )
 export const BiaxialTooltip = ({ tooltipData, x, yCoords }) => (
-  <BoundedContainer left={x - 10} yCoord={get(yCoords, '[1]', 0)}>
+  <BoundedContainer left={x - 30} yCoord={get(yCoords, '[1]', 0)}>
     <p>
       <span role="img">👩‍💻</span>: {tooltipData.users}
     </p>

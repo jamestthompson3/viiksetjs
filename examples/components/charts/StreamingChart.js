@@ -40,7 +40,7 @@ export const StreamingChart = () => (
         axes={{
           x: {
             numTicks: isMobile ? 1 : 4,
-            format: d => format(parse(d))
+            format: d => format(parse(d), 'DD HH:mm:ss')
           },
           y: {
             label: 'Type Count'

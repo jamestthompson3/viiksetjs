@@ -284,10 +284,6 @@ ChartArea.defaultProps = {
   margin,
   axes: defaultAxes,
   tooltip: defaultTooltip,
-  grid: {
-    stroke: '#000',
-    type: 'horizontal'
-  },
   glyphRenderer: () => null
 }
 
