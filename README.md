@@ -34,37 +34,34 @@ repo and familiarizing yourself with it, as any vx components can be used in tan
 
 `npm install viiksetjs`
 
-To run the examples folder, use [npm link](https://docs.npmjs.com/cli/link) for the local installation of viiksetjs.
+To build the examples folder, run `yarn buildExamples` and open then `examples/index.html` file in your browser
 
-### Interop with vx
-
-### New API ( experimental, not released )
+### BREAKING in `v0.0.3` new `ChartArea` API
 
 ```js
 <ChartArea
-  axes={(defaultProps) => ({
-    ...defaultProps,
-    xAxis: {
+  axes={{
+    x: {
       label: "Time",
       tickLabelProps: (v, i) => ({
-          ..stuff
+          ...stuff
         }),
       numTicks: 4
     }
-    })
-   grid="mesh"
-  }
-  tooltip={(defaultProps) => ({
+
+  }}
+  tooltip={{
     styles: {
       wrapper: { display: 'flex' },
     },
     content: TooltipContent
-    })
-  }
+    }}
   >
   <LineChart />
 </ChartArea>
 ```
+
+### Interop with vx
 
 Since Viikset is built on top of vx, you can use any vx components with any Viikset components.
 The `ChartArea` component will supply your custom vx components with the following props:
@@ -92,13 +89,13 @@ This will give your chart components access to the theming api and allow to pass
   ]
 ```
 
-Viikset will detect the x and y values for you, however, if you choose to work with data like x and y coordinates,
+Viikset will detect the x and y values for you however, if you choose to work with data like x and y coordinates,
 you must specify your x-values through the `xKey` prop. This is discussed more at length in the `ChartArea` component.
 
 ## ChartArea
 
 ```js
-<ChartArea data={chartData} color="#235789" stroke="#235789" >
+<ChartArea data={chartData} color="#235789" stroke="#235789">
 </ChartArea>
 ```
 
@@ -115,34 +112,75 @@ However, if you wish to plot data that is not categorical, you must pass the `xK
 | Prop            | Default                                                                                                                 | Type                                         | Desc                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | :----------     | :---------------------------------------------------------------------------------------------------------------------  | :---------------------------------           | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | color           | #000                                                                                                                    | String                                       | color applied to the axes                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| axes            | \*see section below                                                                                                     | Object                                       | An object with properties `x` and `y` whose own properties are applied to the `x` and `y` axes respectively                                                                                                                                                                                                                                                                                                                                                                        |
+| tooltip         | \*see section below                                                                                                     | Object                                       | An object with properties `renderer`, `content`, `indicator`, and `styles` whose own properties are applied to the tooltip                                                                                                                                                                                                                                                                                                                                                                      |
 | data            | [ ]                                                                                                                     | Array                                        | An array containing data objects.                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| determineViewBox|                                                                                                                         | Function                                     | A function for determining the SVG viewBox for the chart area, passed `size` and `margin` as arguments                                                                                                                                                                                                                                                                                                                                                                             |
-| formatX         | \*see example below                                                                                                     | Function                                     | A function for formatting the xAxis passed the argument `d` which represents the data point                                                                                                                                                                                                                                                                                                                                                                                        |
-| formatY         | \*see example below                                                                                                     | Function                                     | A function for formatting the yAxis passed the argument `d` which represents the data point                                                                                                                                                                                                                                                                                                                                                                                        |
+| determineViewBox| `-10 0 ${size.width} ${height}`                                                                                                                        | Function                                     | A function for determining the SVG viewBox for the chart area, passed `size` and `margin` as arguments                                                                                                                                                                                                                                                                                                                                                                             |
 | gridStroke      | #000                                                                                                                    | String                                       | color applied to the gridlines                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | glyphRenderer   |  -                                                                                                                      | Function                                     | A function that recieves `width`, `height`, `xScale`, `yScale`, and `margin` from the `ChartArea` and renders a glyph or series of glyphs with a `z-index` above all chart elements.                                                                                                                                                                                                                                                                                               |
-| indicator       | \*see tooltip section below for examples                                                                                | Function                                     | React component that gets passed the following props: `yCoords, x, stroke, color, height`. `yCoords` are the calculated yCoordinates for all datapoints in the chart at the given mouse position. is the x coordinate of the closest estimated data point to the current mouse position.`mouseX` is the current position of the mouse. `height` is the height of the `ChartArea`. `stroke` and `color` are inherited from `ChartArea`.                                             |
-| labelX          | ''                                                                                                                      | String                                       | Label for xAxis                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| labelY          | ''                                                                                                                      | String                                       | Label for yAxis                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| labelXProps     | `{ fontSize: 12, textAnchor: 'middle', fill: 'black' }`                                                                 | Object                                       | Lablel Props for labelX                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| labelYProps     | `{ fontSize: 12, textAnchor: 'middle', fill: 'black', dy: '-0.5rem' }`                                                  | Object                                       | Label Props for labelY                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | margin          | `{ top: 18, right: 15, bottom: 0, left: 30 }`                                                                           | Object                                       | Margin object for chart area                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | nogrid          | false                                                                                                                   | Boolean                                      | If `true`, then no gridlines will be shown on `ChartArea`                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | notool          | false                                                                                                                   | Boolean                                      | If `true` then no tooltip will be shown                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| noYAxis         | false                                                                                                                   | Boolean                                      | If `true` then no yAxis will be shown                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| numXTicks       | 6                                                                                                                       | Integer                                      | Number of ticks for the xAxis                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| numYTicks       | 4                                                                                                                       | Integer                                      | Number of ticks for the yAxis                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | orientation     | ''                                                                                                                      | String                                       | A string indicating the orientation the chart should have, defaults to timeseries                                                                                                                                                                                                                                                                                                                                                                                                  |
 | position        | ''                                                                                                                      | String                                       | String for specifying the position of the `ChartArea`. Defaults to 'static'                                                                                                                                                                                                                                                                                                                                                                                                        |
 | stroke          | #000                                                                                                                    | String                                       | color applied to the gridlines and to the default indicator line if `gridStroke` is not passed, this prop only applies to the indicator                                                                                                                                                                                                                                                                                                                                            |
-| tooltipContent  | \*see tooltip section below for examples                                                                                | Function                                     | A function that return a React Component which renders the content of the tooltip. Gets passed the following props: `tooltipData`, `color` where color is inherited from the `ChartArea` component                                                                                                                                                                                                                                                                                 |
-| tooltipRenderer | \*see tooltip section below for examples                                                                                | Function                                     | A function that returns a React Component that gets passed the following props: `tooltipData, color, x, mouseX, yCoords`. `tooltipData` contains the calculated data object for current mouse position. `color` is the color passed from `ChartArea`. `x` is the x coordinate of the closest estimated data point to the current mouse position. `mouseX` is the current position of the mouse. `yCoords` is the calculated yCoordinates for the data point at mouse position `x`. |
-| tooltipStyles   | {}                                                                                                                      | Object                                       | An object containing two React style objects, `wrapper` and `content`. `{wrapper: { position: 'absolute'}, content: { color: 'yellow'}}` for quick styling without having to write a complete custom tooltip                                                                                                                                                                                                                                                                       |
 | type            | ''                                                                                                                      | `oneOf(['ordinal', 'linear', 'horizontal'])` | A string indicating the type of scale the type should have, defaults to timeseries                                                                                                                                                                                                                                                                                                                                                                                                 |
-| xAxisProps      | {}                                                                                                                      | Object                                       | A Props Object passed to the  xAxis                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | xKey            | ''                                                                                                                      | String                                       | Optional key delimiting the xValues, supports nested keys such as `'data.users'`                                                                                                                                                                                                                                                                                                                                                                                                   |
-| xTickLabelProps | `() => ({ dy: '-0.25rem', fontWeight: '400', strokeWidth: '0.5px', textAnchor: 'left', fontSize: 12})`                  | Function                                     | Function that returns the labelProps for the xLabels                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| yAxisProps      | {}                                                                                                                      | Object                                       | A Props Object passed to the  yAxis                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+
+### Axis Props
+#### Default axes object passed to `ChartArea`:
+```js
+  {
+  x: {
+    tickLabelProps: () => ({
+      fontWeight: 400,
+      strokeWidth: '0.5px',
+      textAnchor: 'start',
+      fontSize: 12
+    }),
+    numTicks: 6,
+    label: '',
+    stroke: '#000',
+    tickStroke: 'transparent',
+    labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black', dy: -10 },
+    tickFormat: formatXTicks
+  },
+  y: {
+    tickLabelProps: () => ({
+      strokeWidth: '0.5px',
+      fontWeight: 400,
+      textAnchor: 'end',
+      fontSize: 12
+    }),
+    numTicks: 4,
+    label: '',
+    stroke: '#000',
+    tickStroke: 'transparent',
+    tickFormat: formatTicks,
+    labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' }
+  }
+}
+
+```
+The following are common props for both `x` and `y` axes
+
+| Prop            | Default                                                                                                                 | Type                                         | Desc                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| :-------------- | :---------------------------------------------------------------------------------------------------------------------  | :---------------------------------           | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| format          | \*see example below                                                                                                     | Function                                     | A function for formatting the axis passed the argument `d` which represents the data point                                                                                                                                                                                                                                                                                                                                                                                         |
+| label           | ''                                                                                                                      | String                                       | Label for the axis                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| labelProps      | `{ fontSize: 12, textAnchor: 'middle', fill: 'black' }`                                                                 | Object                                       | Props for label                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| numTicks        | 6                                                                                                                       | Integer                                      | Number of ticks for the axis                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| tickLabelProps  | `() => ({ dy: '-0.25rem', fontWeight: '400', strokeWidth: '0.5px', textAnchor: 'left', fontSize: 12})`                  | Function                                     | Function that returns the labelProps for the axis                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+
+### Toolip Props
+
+
+| Prop            | Default                                                                                                                 | Type                                         | Desc                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| :-------------- | :---------------------------------------------------------------------------------------------------------------------  | :---------------------------------           | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| indicator       | \*see tooltip section below for examples                                                                                | Function                                     | React component that gets passed the following props: `yCoords, x, stroke, color, height`. `yCoords` are the calculated yCoordinates for all datapoints in the chart at the given mouse position. is the x coordinate of the closest estimated data point to the current mouse position.`mouseX` is the current position of the mouse. `height` is the height of the `ChartArea`. `stroke` and `color` are inherited from `ChartArea`.                                             |
+| content         | \*see tooltip section below for examples                                                                                | Function                                     | A function that return a React Component which renders the content of the tooltip. Gets passed the following props: `tooltipData`, `color` where color is inherited from the `ChartArea` component                                                                                                                                                                                                                                                                                 |
+| renderer        | \*see tooltip section below for examples                                                                                | Function                                     | A function that returns a React Component that gets passed the following props: `tooltipData, color, x, mouseX, yCoords`. `tooltipData` contains the calculated data object for current mouse position. `color` is the color passed from `ChartArea`. `x` is the x coordinate of the closest estimated data point to the current mouse position. `mouseX` is the current position of the mouse. `yCoords` is the calculated yCoordinates for the data point at mouse position `x`. |
+| styles          | {}                                                                                                                      | Object                                       | An object containing two React style objects, `wrapper` and `content`. `{wrapper: { position: 'absolute'}, content: { color: 'yellow'}}` for quick styling without having to write a complete custom tooltip                                                                                                                                                                                                                                                                       |
 
 ## DataContext
 The `DataContext` component allows even greater flexibility for working with your data. It takes a set of props needed to create scales,
@@ -188,45 +226,39 @@ The chart will then begin streaming the data from the connection.
     connection="ws://wiki-update-sockets.herokuapp.com/"
     streamParser={streamParser}
     mapStream={streamMap}
-  ></StreamableChart>
+  >
+  </StreamableChart
 ```
 
 ### Props
-| Prop         | Default                                                                | Type                               | Desc                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| :----------  | :------------------------------------------------------                | :--------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| connection   | ''                                                                     | string                             | WebSocket url                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| color        | #000                                                                   | String                             | color applied to the axes                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| formatX      | \*see example below                                                    | Function                           | A function for formatting the xAxis passed the argument `d` which represents the data point                                                                                                                                                                                                                                                                                                                                                              |
-| formatY      | \*see example below                                                    | Function                           | A function for formatting the yAxis passed the argument `d` which represents the data point                                                                                                                                                                                                                                                                                                                                                              |
-| labelX       | ''                                                                     | String                             | Label for xAxis                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| labelY       | ''                                                                     | String                             | Label for yAxis                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| labelXProps  | `{ fontSize: 12, textAnchor: 'middle', fill: 'black' }`                | Object                             | Lablel Props for labelX                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| labelYProps  | `{ fontSize: 12, textAnchor: 'middle', fill: 'black', dy: '-0.5rem' }` | Object                             | Label Props for labelY                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| loadingMessage | `<h2>Loading data..</h2>`                                            | React Element                      | A component to be rendered while the WebSocket connection is being established and waiting for data                                                                                                                                                                                                                                                                                                                                                      |
-| mapStream    | `(data, message) => [...data, message]`                                | function                           | A function for manipulating the accumulating data array, recieves the data array and the next message being pushed to the array as arguments                                                                                                                                                                                                                                                                                                             |
-| margin       | `{ top: 18, right: 15, bottom: 0, left: 30 }`                          | Object                             | Margin object for chart area                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| nogrid       | false                                                                  | Boolean                            | If `true`, then no gridlines will be shown on the `StreamableChart`                                                                                                                                                                                                                                                                                                                                                                                      |
-| numXTicks    | 6                                                                      | Integer                            | Number of ticks for the xAxis                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| numYTicks    | 4                                                                      | Integer                            | Number of ticks for the yAxis                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| orientation  | ''                                                                     | String                             | A string indicating the orientation the chart should have, defaults to timeseries                                                                                                                                                                                                                                                                                                                                                                        |
-| persist      | 2500                                                                   | number                             | If the data array reaches this limit, values will be popped from the beginning  of the array                                                                                                                                                                                                                                                                                                                                                             |
-| position     | ''                                                                     | String                             | String for specifying the position of the `StreamableChart`. Defaults to 'static'                                                                                                                                                                                                                                                                                                                                                                        |
-| stopPersist  |                                                                        | number                             | If the data array reaches this limit, the connection will close                                                                                                                                                                                                                                                                                                                                                                                          |
-| streamParser | `message => message`                                                   | function                           | A function for parsing the `message` argument passed by the `onmessage` event from the socket connection                                                                                                                                                                                                                                                                                                                                                 |
-| stroke       | #000                                                                   | String                             | color applied to the gridlines                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| type         | ''                                                                     | `oneOf(['ordinal', 'linear', ''])` | A string indicating the type of scale the type should have, defaults to timeseries                                                                                                                                                                                                                                                                                                                                                                       |
-| xKey         | ''                                                                     | String                             | Optional key delimiting the xValues supports nested keys such as `'data.users'`                                                                                                                                                                                                                                                                                                                                                                          |
-| viewBox      | `-10 0 ${size.width} ${height}`                                        | String                             | SVG viewBox for the chart area                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| Prop           | Default                                                                | Type                               | Desc                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| :----------    | :------------------------------------------------------                | :--------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| connection     | ''                                                                     | string                             | WebSocket url                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| color          | #000                                                                   | String                             | color applied to the axes                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| axes           | \*see section above                                                    | Object                             | An object with properties `x` and `y` whose own properties are applied to the `x` and `y` axes respectively                                                                                                                                                                                                                                                                                                                                                                        |
+| loadingMessage | `<h2>Loading data..</h2>`                                              | React Element                      | A component to be rendered while the WebSocket connection is being established and waiting for data                                                                                                                                                                                                                                                                                                                                                      |
+| mapStream      | `(data, message) => [...data, message]`                                | function                           | A function for manipulating the accumulating data array, recieves the data array and the next message being pushed to the array as arguments                                                                                                                                                                                                                                                                                                             |
+| margin         | `{ top: 18, right: 15, bottom: 0, left: 30 }`                          | Object                             | Margin object for chart area                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| nogrid         | false                                                                  | Boolean                            | If `true`, then no gridlines will be shown on the `StreamableChart`                                                                                                                                                                                                                                                                                                                                                                                      |
+| orientation    | ''                                                                     | String                             | A string indicating the orientation the chart should have, defaults to timeseries                                                                                                                                                                                                                                                                                                                                                                        |
+| persist        | 2500                                                                   | number                             | If the data array reaches this limit, values will be popped from the beginning  of the array                                                                                                                                                                                                                                                                                                                                                             |
+| position       | ''                                                                     | String                             | String for specifying the position of the `StreamableChart`. Defaults to 'static'                                                                                                                                                                                                                                                                                                                                                                        |
+| stopPersist    |                                                                        | number                             | If the data array reaches this limit, the connection will close                                                                                                                                                                                                                                                                                                                                                                                          |
+| streamParser   | `message => message`                                                   | function                           | A function for parsing the `message` argument passed by the `onmessage` event from the socket connection                                                                                                                                                                                                                                                                                                                                                 |
+| stroke         | #000                                                                   | String                             | color applied to the gridlines                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| type           | ''                                                                     | `oneOf(['ordinal', 'linear', ''])` | A string indicating the type of scale the type should have, defaults to timeseries                                                                                                                                                                                                                                                                                                                                                                       |
+| xKey           | ''                                                                     | String                             | Optional key delimiting the xValues supports nested keys such as `'data.users'`                                                                                                                                                                                                                                                                                                                                                                          |
+| viewBox        | `-10 0 ${size.width} ${height}`                                        | String                             | SVG viewBox for the chart area                                                                                                                                                                                                                                                                                                                                                                                                                           |
 
 #### Default Format Functions
 
-formatY
+format y axis
 
 ```js
 d => (d >= 1000 ? `${d / 1000}k` : d)
 ```
 
-formatX
+format x axis
 
 ```js
 d => {
@@ -236,7 +268,6 @@ d => {
     return d
   }
 }
-
 ```
 
 ## LineChart
@@ -281,7 +312,7 @@ const data = [
       data={data}
       color="rgb(0, 172, 227)"
       stroke="rgba(109, 109, 109, 0.13)"
-      tooltip={TooltipComponent}
+      tooltip={{ content: TooltipComponent }}
     >
       <LineChart color="rgb(0, 172, 227)" dataKey="northAmerica" />
       <LineChart color="rgb(188,83,83)" dataKey="southAmerica" />
@@ -325,11 +356,15 @@ as is passing a `yKey` if there is more than one item in the data object that is
   data={categoricalSeries.data}
   type="ordinal"
   color="#dc7d5b"
+  axes={{
+    y: {
+      label: "Culinary Score"
+    }
+  }}
   xKey="company"
   yKey="score"
   stroke="grey"
   nogrid
-  labelY="Culinary Score"
 >
   <BarChart dataKey="score" color="#dc7d5b" />
 </ChartArea>
@@ -345,7 +380,7 @@ You may also pass a boolean prop called `horizontal` to flip the `StackedBar` on
 
 | Prop       | Default | Type    | Desc                                                                                                        |
 | :------    | :-----: | :------ | :---------------------------------------------------------------------                                      |
-| colors     | []      | Arra    | Array of colors that correspond to the given keys. Supports colors from styled-components' `themeProvider`. |
+| colors     | []      | Array   | Array of colors that correspond to the given keys. Supports colors from styled-components' `themeProvider`. |
 | horizontal | false   | Boolean | If `true`, the StackedBar will be horizontal                                                                |
 | keys       | []      | Array   | Keys for data to be graphed                                                                                 |
 
@@ -381,8 +416,6 @@ You may also pass a boolean prop called `horizontal` to flip the `StackedBar` on
            />
       </ChartArea>
 ```
-
-
 
 ## ScatterPlot
 The `ScatterPlot` component inherits the data from the `ChartArea` which wraps it. Using this data, it scales itself accordingly.
@@ -513,13 +546,12 @@ Styled componenets implementation of [vx area closed](https://github.com/hshoff/
 
 Included in Viikset are some tooltip utilties.
 By default, Viikset does provide a tooltip component. You need only to return a
-React component from the `tooltipContent` props and it will be rendered within the default
-component. However, if you wish to make your own tooltip component, see the
+React in `content` and it will be rendered within the default component.
+However, if you wish to make your own tooltip component, see the
 example below on how to use the tooltip API.
 
-When creating a custom tooltip, you must return a component from the
-`tooltipRenderer` prop in the `ChartArea` component. The `tooltipRenderer`
-recieves the following props:
+When creating a custom tooltip, you must return a component in the
+`tooltip.renderer` prop in the `ChartArea` component. This will recieve the following props:
 
 | Prop           | Type     | Desc                                                                                               |
 | :------        | :------  | :---------------------------------------------------------------------                             |
@@ -540,7 +572,7 @@ It recieves the
 First, construct component to be rendered as a tooltip
 
 ```js
-const TooltipContainer = styled.div.attrs(p ({
+const TooltipContainer = styled.div.attrs(p => ({
   style: {
     left: `${p.bounds.left}px`,
     top: `${p.bounds.top}px`
@@ -577,11 +609,10 @@ Next, pass it as the `tooltipRenderer` prop within the `ChartArea` component
 
 ```js
 <ChartArea
-  tooltipRender={TooltipWrapper}
+  tooltip={{ renderer: TooltipWrapper }}
   data={chartData}
   color="#235789"
   stroke="#235789"
   >
 </ChartArea>
-
 ```

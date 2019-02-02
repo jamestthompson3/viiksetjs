@@ -8,6 +8,7 @@
   "author": "Taylor Thompson <taylor@easyanticheat.net>",
   "license": "MIT",
   "private": false,
+  "files": ["lib"],
   "scripts": {
     "build": "rm -rf ./lib && rollup --config",
     "buildExamples": "webpack --config=webpack.config.js --watch",
