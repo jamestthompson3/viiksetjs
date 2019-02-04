@@ -1,6 +1,6 @@
 {
   "name": "viiksetjs",
-  "version": "0.0.30-alpha.3",
+  "version": "0.0.30-alpha.4",
   "description": "Javascript graphing utility based on SVG",
   "homepage": "https://jamestthompson3.github.io/viiksetjs",
   "main": "lib/index.js",
@@ -8,7 +8,9 @@
   "author": "Taylor Thompson <taylor@easyanticheat.net>",
   "license": "MIT",
   "private": false,
-  "files": ["lib"],
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "build": "rm -rf ./lib && rollup --config",
     "buildExamples": "webpack --config=webpack.config.js --watch",
