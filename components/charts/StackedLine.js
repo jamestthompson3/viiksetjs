@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { ChartArea, LineChart } from '../../../src/index'
+import { ChartArea, LineChart } from '../../../lib/index'
 import biaxialSeries from '../../data/biaxialSeries.json'
 import { GraphContainer, Snippet } from '../styledComponents'
 import { isMobile } from './constants'
