@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import timeSeries from '../../data/timeSeries.json'
 import { GraphContainer, Snippet } from '../styledComponents'
-import { ChartArea, LineChart } from '../../../src/index'
+import { ChartArea, LineChart } from '../../../lib/index'
 import { Line } from '@vx/shape'
 import { isMobile } from './constants'
 

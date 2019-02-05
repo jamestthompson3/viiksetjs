@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import categoricalSeries from '../../data/categoricalSeries.json'
 import { GraphContainer, Snippet } from '../styledComponents'
-import { ChartArea, BarChart } from '../../../src/index'
+import { ChartArea, BarChart } from '../../../lib/index'
 import { isMobile } from './constants'
 
 export const CategoricalSeries = () => (

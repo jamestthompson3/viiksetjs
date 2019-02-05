@@ -3,7 +3,7 @@
   "version": "0.0.30-alpha.6",
   "description": "Javascript graphing utility based on SVG",
   "homepage": "https://jamestthompson3.github.io/viiksetjs",
-  "main": "lib/viikset.js",
+  "main": "lib/index.js",
   "repository": "https://github.com/jamestthompson3/viiksetjs.git",
   "author": "Taylor Thompson <taylor@easyanticheat.net>",
   "license": "MIT",
@@ -12,9 +12,9 @@
     "lib"
   ],
   "scripts": {
-    "build": "rm -rf ./lib && webpack --config=webpack.config.js",
+    "build": "rm -rf ./lib && babel src --out-dir lib",
     "buildExamples": "webpack --config=examples.webpack.config.js --watch",
-    "watch": "rollup --config -w",
+    "watch": "babel --watch src --out-dir lib",
     "lint": "eslint --fix --ext .js ./src/",
     "precommit": "lint-staged"
   },
