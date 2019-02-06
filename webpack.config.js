@@ -1,28 +1,36 @@
 const path = require('path')
+const TerserPlugin = require('terser-webpack-plugin')
+
 module.exports = {
-  mode: 'development',
-  entry: './examples/index.js',
+  entry: './src/index.js',
   output: {
-    /* eslint-disable-next-line */
-    path: __dirname,
-    filename: './examples/bundle.js'
+    path: path.resolve(__dirname, 'lib'),
+    filename: 'viikset.js',
+    library: 'viiksetjs'
   },
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
-        exclude: /node_modules/,
-        loader: 'babel-loader'
-      },
-      {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader']
+        test: /js$/,
+        exclude: [/node_modules/, /\.worker/],
+        use: {
+          loader: 'babel-loader'
+        }
       }
     ]
   },
-  resolve: {
-    /* eslint-disable-next-line */
-    modules: [path.resolve(__dirname, 'src/front/src'), 'node_modules']
+  optimization: {
+    minimizer: [
+      new TerserPlugin({
+        parallel: true
+      })
+    ]
   },
-  target: 'web'
+  externals: {
+    'styled-components': {
+      commonjs: 'styled-components',
+      commonjs2: 'styled-components',
+      amd: 'styled-components'
+    }
+  }
 }

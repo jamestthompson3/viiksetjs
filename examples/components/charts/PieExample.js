@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { PieChart } from '../../../src/index'
+import { PieChart } from '../../../lib/index'
 
 import { GraphContainer, Snippet } from '../styledComponents'
 import categoricalSeries from '../../data/categoricalSeries.json'

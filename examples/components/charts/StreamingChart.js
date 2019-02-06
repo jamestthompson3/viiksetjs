@@ -5,7 +5,7 @@ import clone from 'lodash/clone'
 import parse from 'date-fns/parse'
 import format from 'date-fns/format'
 
-import { LineChart, StreamableChart } from '../../../src/index'
+import { LineChart, StreamableChart } from '../../../lib/index'
 import { GraphContainer, Snippet, LabelContainer, LabelBlock, Label } from '../styledComponents'
 import { isMobile } from './constants'
 

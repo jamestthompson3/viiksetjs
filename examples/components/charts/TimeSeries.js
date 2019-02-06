@@ -4,7 +4,7 @@ import format from 'date-fns/format'
 
 import timeSeries from '../../data/timeSeries.json'
 import { GraphContainer, Snippet } from '../styledComponents'
-import { ChartArea, LineChart } from '../../../src/index'
+import { ChartArea, LineChart } from '../../../lib/index'
 import { isMobile } from './constants'
 
 export const tooltipContent = ({ tooltipData }) => (
