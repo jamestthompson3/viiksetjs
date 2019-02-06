@@ -5,7 +5,7 @@ module.exports = {
   entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'lib'),
-    filename: 'viikset.js',
+    filename: 'index.js',
     library: 'viiksetjs'
   },
   module: {
@@ -25,12 +25,12 @@ module.exports = {
         parallel: true
       })
     ]
-  },
-  externals: {
-    'styled-components': {
-      commonjs: 'styled-components',
-      commonjs2: 'styled-components',
-      amd: 'styled-components'
-    }
   }
+  // externals: {
+  //   'styled-components': {
+  //     commonjs: 'styled-components',
+  //     commonjs2: 'styled-components',
+  //     amd: 'styled-components'
+  //   }
+  // }
 }
