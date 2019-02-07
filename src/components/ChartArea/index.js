@@ -193,7 +193,7 @@ class ChartArea extends React.PureComponent<Props, State> {
     return (
       <DataContext {...{ data, xKey, yKey, type, margin, orientation, x }}>
         {({ xScale, size, dataKeys, data, width, height, yPoints, xPoints, yScale }) => (
-          <div style={{ width: size.width, height: size.height }}>
+          <div style={{ width: size.width, height: size.height }} id="viiksetjsWrapperDiv">
             <svg
               width={size.width}
               height={size.height}
