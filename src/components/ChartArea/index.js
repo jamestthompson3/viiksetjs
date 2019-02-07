@@ -99,29 +99,38 @@ class ChartArea extends React.PureComponent<Props, State> {
   declareBar = () => this.setState({ bar: true })
 
   mouseMove = memoize(
-    ({ event, xPoints, xScale, yScale, yScales, dataKeys, datum }: MouseMove): mixed => {
+    ({ event, xPoints, xScale, yScale, yScales, dataKeys, datum }: MouseMove): void => {
       const { data, updateTooltip, children, xKey, type, tooltip, noTool } = this.props
       if (tooltip === null || noTool) return
 
       const svgPoint = localPoint(this.chart, event)
+      const mouseX = get(svgPoint, 'x')
+      const mouseY = get(svgPoint, 'y')
 
+      // Case for data contained in bar / pie charts:
+      // there won't be an associated value based on precise
+      // cursor position
       if (datum) {
         return updateTooltip({
           calculatedData: datum,
-          x: get(svgPoint, 'x'),
-          mouseX: get(svgPoint, 'x'),
-          mouseY: get(svgPoint, 'y'),
+          x: mouseX,
+          mouseX,
+          mouseY,
           showTooltip: true
         })
       }
 
       const xValueOffset = biaxial(children) ? 0 : margin.right
-
       const xValue = xScale.invert(get(svgPoint, 'x') - xValueOffset)
+
       return flow(
         xValue => bisect(xPoints, xValue),
         index => {
+          // Find the closest data point based on the actual mouse position
           const bounds = { dLeft: data[index - 1], dRight: data[index] }
+          // If the calculated xValue minus the value to the left is greater than
+          // The indexed value minuse the calcuated value, take the right hand
+          // value if available. If not, take the left hand value if available.
           return xValue - xPoints[index - 1] > xPoints[index] - xValue
             ? bounds.dRight || bounds.dLeft
             : bounds.dLeft || bounds.dRight
@@ -136,8 +145,8 @@ class ChartArea extends React.PureComponent<Props, State> {
             calculatedData,
             x,
             showTooltip: true,
-            mouseX: get(svgPoint, 'x'),
-            mouseY: get(svgPoint, 'y'),
+            mouseX,
+            mouseY,
             yCoords
           })
         }
