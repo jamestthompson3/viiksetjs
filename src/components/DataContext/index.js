@@ -1,16 +1,15 @@
 // @flow
 import * as React from 'react'
-import uniq from 'lodash/uniq'
 import isEmpty from 'lodash/isEmpty'
 
-import { getX, getY, extractLabels, createScalarData } from '../../utils/dataUtils'
-import { determineXScale, biaxial, determineYScale } from '../../utils/chartUtils'
+import { getX, getY, extractLabels } from '../../utils/dataUtils'
+import { determineXScale, determineYScale } from '../../utils/chartUtils'
 import withParentSize from '../Responsive/withParentSize'
 import { type Margin, type ScaleFunction } from '../../types/index'
 
 const margin = { top: 18, right: 15, bottom: 15, left: 30 }
 
-class DataContext extends React.Component<Props, State> {
+class DataContext extends React.PureComponent<Props, State> {
   static defaultProps = {
     data: [],
     margin: margin
@@ -57,7 +56,7 @@ class DataContext extends React.Component<Props, State> {
     const dataKeys = extractLabels(data[0])
     const width = size.width - margin.left - margin.right
     const height = size.height === 0 ? 300 : size.height - margin.top - margin.bottom
-    const xPoints = uniq(getX(data, xKey))
+    const xPoints = getX(data, xKey)
     const yPoints = getY(data, yKey)
     const yScale = determineYScale({ type, yPoints, height, margin, orientation })
     const xScale = determineXScale({ type, width, xPoints, margin })

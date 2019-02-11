@@ -5,6 +5,7 @@ import { scaleLinear, scaleTime, scaleBand } from 'd3-scale'
 import { type Margin, type ScaleFunction } from '../types/index'
 import head from 'lodash/head'
 import last from 'lodash/last'
+import sortedUniq from 'lodash/sortedUniq'
 
 /**
  * Recursively clones children, passing props down nested DOM structures
@@ -43,7 +44,7 @@ export const determineXScale = ({
   margin
 }: $Shape<ScaleProps>): ScaleFunction => {
   const range = [margin.left, width]
-  const sortedX = xPoints.sort((a, b) => a - b)
+  const sortedX = sortedUniq(xPoints)
 
   switch (type) {
     case 'ordinal':

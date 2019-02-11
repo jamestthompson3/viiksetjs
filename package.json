@@ -1,6 +1,6 @@
 {
   "name": "viiksetjs",
-  "version": "0.0.29",
+  "version": "0.0.30-alpha.9",
   "description": "Javascript graphing utility based on SVG",
   "homepage": "https://jamestthompson3.github.io/viiksetjs",
   "main": "lib/index.js",
@@ -8,8 +8,12 @@
   "author": "Taylor Thompson <taylor@easyanticheat.net>",
   "license": "MIT",
   "private": false,
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "build": "rm -rf ./lib && babel src --out-dir lib",
+    "buildExamples": "webpack --config=examples.webpack.config.js --watch",
     "watch": "babel --watch src --out-dir lib",
     "lint": "eslint --fix --ext .js ./src/",
     "precommit": "lint-staged"
@@ -24,50 +28,64 @@
   "jest": {
     "watchPathIgnorePatterns": [
       "<rootDir>/lib/"
-    ]
+    ],
+    "transform": {
+      "^.+\\.jsx?$": "babel-jest"
+    }
   },
   "dependencies": {
-    "@babel/cli": "^7.0.0",
-    "@vx/axis": "^0.0.173",
-    "@vx/bounds": "^0.0.165",
-    "@vx/curve": "^0.0.165",
-    "@vx/gradient": "^0.0.165",
-    "@vx/grid": "^0.0.171",
-    "@vx/group": "^0.0.170",
-    "@vx/pattern": "^0.0.165",
-    "@vx/point": "^0.0.165",
-    "@vx/shape": "^0.0.171",
-    "@vx/threshold": "^0.0.174",
-    "d3-array": "^1.2.1",
+    "@vx/axis": "^0.0.183",
+    "@vx/bounds": "^0.0.182",
+    "@vx/curve": "^0.0.182",
+    "@vx/gradient": "^0.0.183",
+    "@vx/grid": "^0.0.183",
+    "@vx/group": "^0.0.183",
+    "@vx/pattern": "^0.0.183",
+    "@vx/point": "^0.0.182",
+    "@vx/shape": "^0.0.183",
+    "@vx/threshold": "^0.0.183",
+    "d3-array": "^2.0.3",
     "d3-scale": "^2.0.0",
     "d3-shape": "^1.2.0",
     "date-fns": "^1.29.0",
     "lodash": "^4.17.11",
     "polished": "^2.0.3",
     "prop-types": "^15.6.2",
+    "react": "^16.7.0",
     "react-sizeme": "^2.3.6"
   },
   "devDependencies": {
-    "@babel/core": "^7.0.1",
-    "@babel/plugin-proposal-class-properties": "^7.0.0",
-    "@babel/plugin-syntax-dynamic-import": "^7.0.0",
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/plugin-proposal-class-properties": "^7.2.3",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/preset-env": "^7.0.0",
     "@babel/preset-flow": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
-    "babel-eslint": "^9.0.0",
-    "babel-preset-minify": "^0.5.0-alpha.3cc09dcf",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-eslint": "^10.0.1",
+    "babel-jest": "^24.0.0",
+    "babel-loader": "^8.0.5",
+    "babel-preset-minify": "^0.5.0",
     "eslint": "^5.6.0",
-    "eslint-plugin-flowtype": "^2.50.0",
+    "eslint-plugin-flowtype": "^3.2.1",
     "eslint-plugin-react": "^7.9.1",
-    "flow-bin": "^0.81.0",
-    "husky": "^0.14.3",
+    "flow-bin": "^0.91.0",
+    "husky": "^1.3.1",
     "jest": "^23.6.0",
-    "lint-staged": "^7.1.3",
+    "lint-staged": "^8.1.0",
     "prettier": "^1.13.4",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0"
+    "react-dom": "^16.2.0",
+    "regenerator-runtime": "^0.13.1",
+    "styled-components": "^4.1.3",
+    "terser-webpack-plugin": "^1.2.2",
+    "webpack": "^4.29.0",
+    "webpack-cli": "^3.2.1"
   },
   "peerDependencies": {
-    "styled-components": "^3.4"
+    "styled-components": "^4.1.3"
+  },
+  "resolutions": {
+    "babel-core": "7.0.0-bridge.0"
   }
 }

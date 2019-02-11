@@ -1,7 +1,7 @@
-import React, { Component } from 'react'
+import * as React from 'react'
 import { voronoi, VoronoiPolygon } from '@vx/voronoi'
 
-class Voronoi extends Component {
+class Voronoi extends React.Component {
   render() {
     return null
   }

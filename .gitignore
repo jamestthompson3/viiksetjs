@@ -46,6 +46,7 @@ typings/
 # Parcel stuff
 .cache
 dist/
+bundle.js
 
 # Editor stuff
 .vscode

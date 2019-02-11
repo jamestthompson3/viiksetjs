@@ -2,19 +2,49 @@
 import * as React from 'react'
 import { Group } from '@vx/group'
 import isEmpty from 'lodash/isEmpty'
+import merge from 'lodash/merge'
 
 import { formatTicks, formatXTicks } from '../../utils/formatUtils'
-import { determineYScale } from '../../utils/chartUtils'
+import { biaxial } from '../../utils/chartUtils'
 import { type Margin, type ScaleFunction } from '../../types/index'
 import DataContext from '../DataContext'
 import withStream from '../Streaming/withStream'
 import { type Size } from '../DataContext'
-import withParentSize from '../Responsive/withParentSize'
-import { StyledGridRows, StyledLeftAxis, StyledBottomAxis } from '../styledComponents/index'
+import { StyledGridRows } from '../styledComponents/index'
+import { buildLeftAxis, buildBottomAxis } from '../common'
 
 const margin = { top: 18, right: 15, bottom: 15, left: 30 }
 
 const DefaultLoadingMessage = () => <h2>Loading data...</h2>
+
+const defaultAxes = {
+  x: {
+    tickLabelProps: () => ({
+      fontWeight: 400,
+      strokeWidth: '0.5px',
+      textAnchor: 'start',
+      fontSize: 12
+    }),
+    numTicks: 6,
+    label: '',
+    stroke: '#000',
+    labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black', dy: '-0.5rem' },
+    tickFormat: formatXTicks
+  },
+  y: {
+    tickLabelProps: () => ({
+      strokeWidth: '0.5px',
+      fontWeight: 400,
+      textAnchor: 'end',
+      fontSize: 12
+    }),
+    numTicks: 4,
+    label: '',
+    stroke: '#000',
+    tickFormat: formatTicks,
+    labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' }
+  }
+}
 
 class StreamableChart extends React.Component<Props, State> {
   socket = null
@@ -25,35 +55,11 @@ class StreamableChart extends React.Component<Props, State> {
     data: [],
     persist: 2500,
     color: '#000',
+    axes: defaultAxes,
     stroke: '#000',
-    nogrid: false,
-    noYAxis: false,
-    formatY: formatTicks,
     loadingMessage: DefaultLoadingMessage,
     streamParser: message => message,
     mapStream: (data, message) => [...data, message],
-    labelY: '',
-    labelX: '',
-    numXTicks: 6,
-    numYTicks: 4,
-    labelYProps: () => ({ fontSize: 12, textAnchor: 'middle', fill: 'black' }),
-    labelXProps: () => ({ fontSize: 12, textAnchor: 'middle', fill: 'black', dy: '-0.5rem' }),
-    yTickLabelProps: () => ({
-      dy: '-0.25rem',
-      dx: '-1.75rem',
-      strokeWidth: '0.5px',
-      fontWeight: '400',
-      textAnchor: 'left',
-      fontSize: 12
-    }),
-    xTickLabelProps: () => ({
-      dy: '-0.25rem',
-      fontWeight: '400',
-      strokeWidth: '0.5px',
-      textAnchor: 'left',
-      fontSize: 12
-    }),
-    formatX: formatXTicks,
     margin: margin
   }
 
@@ -102,6 +108,29 @@ class StreamableChart extends React.Component<Props, State> {
     }
   }
 
+  buildAxis = (biaxialChildren, position) => {
+    const { axes, color } = this.props
+    const { y, x } = merge({}, defaultAxes, axes)
+
+    if (position === 'left' && !biaxialChildren && axes.y !== null) {
+      return buildLeftAxis({ y, color })
+    }
+
+    if (position === 'bottom' && axes.x !== null) {
+      return buildBottomAxis({ x, color })
+    }
+
+    return () => null
+  }
+
+  buildGrid = () => {
+    const { noGrid, gridStroke } = this.props
+    if (noGrid) return () => null
+    return React.memo(function Grid({ yScale, width, left }) {
+      return <StyledGridRows scale={yScale} stroke={gridStroke} width={width - left} />
+    })
+  }
+
   render() {
     const {
       children,
@@ -110,16 +139,8 @@ class StreamableChart extends React.Component<Props, State> {
       yKey,
       formatY,
       formatX,
-      labelY,
       type,
-      labelYProps,
-      labelX,
-      labelXProps,
-      xTickLabelProps,
-      yTickLabelProps,
-      numXTicks,
       numYTicks,
-      stroke,
       nogrid,
       noYAxis,
       loadingMessage: Loading,
@@ -127,7 +148,11 @@ class StreamableChart extends React.Component<Props, State> {
       data,
       color
     } = this.props
-    return !isEmpty(data) ? (
+    const biaxialChildren = children && biaxial(children)
+    const LeftAxis = this.buildAxis(biaxialChildren, 'left')
+    const BottomAxis = this.buildAxis(biaxialChildren, 'bottom')
+    const Grid = this.buildGrid()
+    return isEmpty(data) ? (
       <Loading />
     ) : (
       <DataContext {...{ data, xKey, yKey, type, margin, orientation }}>
@@ -160,40 +185,13 @@ class StreamableChart extends React.Component<Props, State> {
               })
             )}
             <Group left={margin.left}>
-              {!nogrid && (
-                <StyledGridRows
-                  scale={yScale}
-                  {...{ stroke }}
-                  width={width - margin.left}
-                  numTicks={3}
-                />
+              {!nogrid && <Grid yScale={yScale} width={width} left={margin.left} />}
+              {biaxialChildren || noYAxis || (
+                <LeftAxis {...{ type, orientation, color, yPoints, height, margin }} />
               )}
-              {biaxialChildren ||
-                noYAxis || (
-                  <StyledLeftAxis
-                    scale={determineYScale({
-                      type,
-                      orientation,
-                      yPoints,
-                      height,
-                      margin
-                    })}
-                    {...{ color, numTicks: numYTicks, tickLabelProps: yTickLabelProps }}
-                    hideTicks
-                    tickFormat={formatY}
-                    label={labelY || ''}
-                    labelProps={labelYProps}
-                  />
-                )}
             </Group>
-            <StyledBottomAxis
-              scale={xScale}
-              {...{ color, height, margin, numTicks: numXTicks, tickLabelProps: xTickLabelProps }}
-              hideTicks
-              tickFormat={formatX}
-              label={labelX || ''}
-              labelProps={labelXProps}
-            />
+
+            <BottomAxis scale={xScale} height={height} margin={margin} />
           </svg>
         )}
       </DataContext>
@@ -238,18 +236,6 @@ type Props = {
   type: 'ordinal' | 'linear',
   orientation?: 'horizontal',
   xKey?: string,
-  formatY: (d: any, i: number) => string,
-  noYAxis: boolean,
-  labelY: string,
-  labelYProps: Object,
-  yTickLabelProps: (d: any, i: number) => Function,
-  labelX: string,
-  labelXProps: Object,
-  xAxisProps: Object,
-  yAxisProps: Object,
-  xTickLabelProps: (d: any, i: number) => Function,
-  numXTicks: number,
-  numYTicks: number,
   glyphRenderer: ({
     width: number,
     height: number,
@@ -257,11 +243,10 @@ type Props = {
     yScale: ScaleFunction,
     margin: Margin
   }) => React.Node,
-  formatX: (d: any, i: number) => string,
   determineViewBox: ({ size: Size, margin: Margin }) => string,
   nogrid: boolean,
   notool: boolean,
   margin: Margin
 }
 
-export default withStream(withParentSize(StreamableChart))
+export default withStream(StreamableChart)

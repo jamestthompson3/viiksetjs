@@ -1,0 +1,8 @@
+{
+  "data": [
+    {"activity": "skiing", "often": 20, "sometimes": 30, "never": 50},
+    {"activity": "golfing", "often": 50, "sometimes": 30, "never": 20},
+    {"activity": "hiking", "often": 60, "sometimes": 30, "never": 10},
+    {"activity": "bicycling", "often": 40, "sometimes": 40, "never": 20}
+  ]
+}

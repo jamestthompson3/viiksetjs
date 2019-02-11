@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import * as React from 'react'
 import PropTypes from 'prop-types'
 import { Group } from '@vx/group'
 import { stack } from 'd3-shape'
@@ -12,13 +12,9 @@ import set from 'lodash/set'
 import { extractLabels, extractX } from '../../utils/dataUtils'
 import { StyledBar } from '../styledComponents'
 
-class StackedBar extends Component {
+class StackedBar extends React.PureComponent {
   componentDidMount() {
     this.props.declareBar()
-  }
-
-  shouldComponentUpdate(prevProps) {
-    return !(prevProps.yPoints === this.props.yPoints) || !(prevProps.keys === this.props.keys)
   }
 
   determineScales = ({ orientation, type, data, keys }) => {
@@ -95,7 +91,7 @@ class StackedBar extends Component {
       <Group>
         {series &&
           series.map((s, i) => (
-            <Group key={i}>
+            <Group key={`BarGroup-Outer-${i}`}>
               {s.map((d, ii) => {
                 const barWidth = this.determineBarWidth({ d, isHorizontal, xScale, yScale })
                 return (
@@ -106,13 +102,13 @@ class StackedBar extends Component {
                     width={isHorizontal ? barWidth : bandwidth}
                     height={isHorizontal ? bandwidth : barWidth}
                     fill={zScale(s.key)}
-                    onMouseMove={() => event => {
+                    onMouseMove={event => {
                       const key = s.key
                       const datum = set({}, xKey || 'xValue', head(extractX(get(d, 'data'), xKey)))
                       set(datum, key, get(d, `data.${key}`))
                       return notool || mouseMove({ event, datum })
                     }}
-                    onMouseLeave={() => () => mouseLeave()}
+                    onMouseLeave={() => mouseLeave()}
                     {...barProps}
                   />
                 )

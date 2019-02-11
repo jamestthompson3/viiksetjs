@@ -1,6 +1,7 @@
-import React, { Fragment } from 'react'
+import * as React from 'react'
 import styled, { withTheme } from 'styled-components'
 import get from 'lodash/get'
+import omit from 'lodash/omit'
 import { withBoundingRects } from '@vx/bounds'
 import { PatternLines } from '@vx/pattern'
 import { LinearGradient } from '@vx/gradient'
@@ -88,12 +89,10 @@ export const StyledGridRows = withTheme(props => (
 
 export const StyledLeftAxis = withTheme(props => (
   <AxisLeft
-    {...{
-      ...props,
-      stroke: findColor(props),
-      tickLabelProps: (value, index) => propsColorSetter(props.tickLabelProps, props, value, index),
-      labelProps: colorSetter(props.labelProps, props)
-    }}
+    {...props}
+    stroke={findColor(props)}
+    tickLabelProps={(value, index) => propsColorSetter(props.tickLabelProps, props, value, index)}
+    labelProps={colorSetter(props.labelProps, props)}
   />
 ))
 
@@ -104,12 +103,10 @@ StyledLeftAxis.defaultProps = {
 
 export const StyledRightAxis = withTheme(props => (
   <AxisRight
-    {...{
-      ...props,
-      stroke: findColor(props),
-      tickLabelProps: (value, index) => propsColorSetter(props.tickLabelProps, props, value, index),
-      labelProps: colorSetter(props.labelProps, props)
-    }}
+    {...props}
+    stroke={findColor(props)}
+    tickLabelProps={(value, index) => propsColorSetter(props.tickLabelProps, props, value, index)}
+    labelProps={colorSetter(props.labelProps, props)}
   />
 ))
 
@@ -170,7 +167,9 @@ StyledLinePath.defaultProps = {
 }
 
 export const StyledAreaClosed = withTheme(props => (
-  <AreaClosed {...{ ...props, stroke: findColor(props), fill: findFill(props) }} />
+  <AreaClosed
+    {...{ ...omit(props, ['xScale']), stroke: findColor(props), fill: findFill(props) }}
+  />
 ))
 
 StyledAreaClosed.defaultProps = {
@@ -203,14 +202,13 @@ export const TooltipWrapper = styled.div`
   }
 `
 
-const TooltipContainer = styled.div.attrs({
-  style: ({ bounds }) => {
-    return {
-      left: `${bounds.left}px`,
-      top: `${bounds.top}px`
-    }
+const TooltipContainer = styled.div.attrs(p => ({
+  style: {
+    left: `${p.bounds.left}px`,
+    top: `${p.bounds.top}px`,
+    ...p.style
   }
-})`
+}))`
   display: inline-flex;
   position: relative;
   pointer-events: none;
@@ -233,7 +231,7 @@ const boundsSetter = ({ left, rect, parentRect }) => {
 /**
  * TooltipBounder sets bounds for the tooltip and passes them down
  */
-const TooltipBounder = ({ children, rect, parentRect, left, style }) => {
+const TooltipBounder = ({ children, rect, parentRect, left, style = {} }) => {
   const getBounds = () => {
     if (rect && parentRect) {
       return {
@@ -285,11 +283,13 @@ export const defaultTooltipRenderer = ({
  * Default tooltip content function
  */
 export const defaultTooltipContent = ({ tooltipData }) =>
-  Object.entries(tooltipData).map((entry, i) => <p key={i}>{`${entry[0]}: ${entry[1]}`}</p>)
+  Object.entries(tooltipData).map((entry, i) => (
+    <p key={`tooltip-content-${entry[0]}-${i}`}>{`${entry[0]}: ${entry[1]}`}</p>
+  ))
 
 export const Indicator = ({ yCoords, x, stroke, color }) => {
   return (
-    <Fragment>
+    <>
       <Line
         from={{ x: x, y: 0 }}
         to={{ x: x, y: Math.max(...yCoords) }}
@@ -300,7 +300,7 @@ export const Indicator = ({ yCoords, x, stroke, color }) => {
       />
       {yCoords.map((coord, i) => (
         <circle
-          key={i}
+          key={`${coord}-${i}`}
           cx={x}
           cy={coord}
           fill="rgb(28, 42, 44)"
@@ -311,6 +311,6 @@ export const Indicator = ({ yCoords, x, stroke, color }) => {
           r={4}
         />
       ))}
-    </Fragment>
+    </>
   )
 }

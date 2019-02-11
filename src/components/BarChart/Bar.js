@@ -9,7 +9,7 @@ import { extractX, getY } from '../../utils/dataUtils'
 import { determineYScale, determineXScale } from '../../utils/chartUtils'
 import { type ScaleFunction, type Margin } from '../../types/index'
 
-class BarChart extends React.Component<Props> {
+class BarChart extends React.PureComponent<Props> {
   static defaultProps = {
     color: 'rgb(0, 157, 253)',
     nofill: false,
@@ -18,10 +18,6 @@ class BarChart extends React.Component<Props> {
 
   componentDidMount() {
     this.props.declareBar()
-  }
-
-  shouldComponentUpdate(prevProps: Props) {
-    return prevProps.yPoints !== this.props.yPoints || prevProps.dataKey !== this.props.dataKey
   }
 
   determineScales = ({ type, orientation }: { type: string, orientation: string }) => {
@@ -98,8 +94,8 @@ class BarChart extends React.Component<Props> {
               y={isHorizontal ? barHeight(d) : inverted ? 0 : height - barHeight(d)}
               data={d}
               fill={!nofill && `url(#gradient${xKey})`}
-              onMouseMove={() => event => notool || mouseMove({ event, datum: d })}
-              onMouseLeave={() => () => mouseLeave()}
+              onMouseMove={event => notool || mouseMove({ event, datum: d })}
+              onMouseLeave={() => mouseLeave()}
               {...barProps}
             />
           </Group>
