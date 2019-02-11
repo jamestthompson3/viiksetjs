@@ -10,11 +10,10 @@ function YAxis({
   color,
   position,
   width,
-  formatY,
   margin,
   label,
   labelProps,
-  numYTicks,
+  axes: { y },
   tickLabels,
   ...rest
 }) {
@@ -33,9 +32,9 @@ function YAxis({
     <StyledLeftAxis
       {...{ scale: yScale, label, labelProps, color }}
       left={margin.left}
-      numTicks={numYTicks}
+      numTicks={y.numTicks}
       hideTicks
-      tickFormat={formatY}
+      tickFormat={y.tickFormat}
       tickLabelProps={
         tickLabels
           ? tickLabels
@@ -54,9 +53,9 @@ function YAxis({
     <StyledRightAxis
       {...{ scale: yScale, label, labelProps, color }}
       left={width}
-      numTicks={numYTicks}
+      numTicks={y.numTicks}
       hideTicks
-      tickFormat={formatY}
+      tickFormat={y.tickFormat}
       tickLabelProps={
         tickLabels
           ? tickLabels

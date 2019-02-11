@@ -56,7 +56,7 @@ function ScatterPlot({
   })
   return data.map((d, i) => (
     <StyledPoint
-      key={i}
+      key={`scatter-plot-${dataKey}-${i}`}
       x={xPoints(d)}
       y={yPoints(d)}
       radius={getRadius(d)}

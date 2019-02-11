@@ -405,10 +405,11 @@ You may also pass a boolean prop called `horizontal` to flip the `StackedBar` on
           color="grey"
           xKey="activity"
           stroke="grey"
+          axes={{
+            y: null
+          }}
           nogrid
           yKey='activity'
-          yTickLabelProps={() => ({ dx: '-3rem', fontSize: 10, strokeWidth: '0.5px' })}
-          noYAxis
          >
            <StackedBar
              colors={['#51344D', '#6F5060', '#A78682']}
@@ -437,12 +438,20 @@ A `dataKey` prop must be provided in order for the component to know which data 
           data={numericSeries.data}
           color="#42f4c2"
           stroke="grey"
+          axes={{
+            x: {
+              label: "Observation No."
+            },
+            y: {
+              label: "Heat (K)"
+            }
+          }}
+          tooltip: {{
+            indicator: Indicator
+          }}
           xKey="x"
           yKey="y"
           type="linear"
-          labelY="Heat (K)"
-          labelX="Observation No."
-          indicator={Indicator}
         >
           <ScatterPlot dataKey="y" color="#42f4c2" />
         </ChartArea>
@@ -527,9 +536,9 @@ A YAxis component
 ### Props
 | Prop       | Default                                                                                                                 | Type                       | Desc                                                                        |
 | :----      | :------:                                                                                                                | :----                      | :-----                                                                      |
-| formatY    | -                                                                                                                       | Function                   | Function for formatting YAxis                                               |
+| format     | -                                                                                                                       | Function                   | Function for formatting YAxis                                               |
 | labelProps | `{ fontSize: 12, textAnchor: 'middle', fill: 'black' }`                                                                 | Object                     | Props applied to the YAxis label                                            |
-| numYTicks  | -                                                                                                                       | Number                     | Number of ticks on the axis                                                 |
+| numTicks   | -                                                                                                                       | Number                     | Number of ticks on the axis                                                 |
 | position   | right                                                                                                                   | `oneOf(['left', 'right'])` | Positions the YAxis on either the left or the right side of the `ChartArea` |
 | tickLabels | ` () => ({ dy: '-0.25rem', dx: '-0.75rem', strokeWidth: '0.5px', fontWeight: '400', textAnchor: 'end', fontSize: 12 })` | Function                   | Function returning the YAxis tick label props                               |
 

@@ -91,7 +91,7 @@ class StackedBar extends React.PureComponent {
       <Group>
         {series &&
           series.map((s, i) => (
-            <Group key={i}>
+            <Group key={`BarGroup-Outer-${i}`}>
               {s.map((d, ii) => {
                 const barWidth = this.determineBarWidth({ d, isHorizontal, xScale, yScale })
                 return (

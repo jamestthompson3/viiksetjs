@@ -283,7 +283,9 @@ export const defaultTooltipRenderer = ({
  * Default tooltip content function
  */
 export const defaultTooltipContent = ({ tooltipData }) =>
-  Object.entries(tooltipData).map((entry, i) => <p key={i}>{`${entry[0]}: ${entry[1]}`}</p>)
+  Object.entries(tooltipData).map((entry, i) => (
+    <p key={`tooltip-content-${entry[0]}-${i}`}>{`${entry[0]}: ${entry[1]}`}</p>
+  ))
 
 export const Indicator = ({ yCoords, x, stroke, color }) => {
   return (
@@ -298,7 +300,7 @@ export const Indicator = ({ yCoords, x, stroke, color }) => {
       />
       {yCoords.map((coord, i) => (
         <circle
-          key={i}
+          key={`${coord}-${i}`}
           cx={x}
           cy={coord}
           fill="rgb(28, 42, 44)"
