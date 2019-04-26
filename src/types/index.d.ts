@@ -1,3 +1,5 @@
+import { ScaleContinuousNumeric, ScaleLinear, ScaleTime, ScaleOrdinal } from 'd3-scale'
+
 export interface Margin {
   left: number;
   right: number;
@@ -15,7 +17,7 @@ export interface AxisProps {
   stroke: string;
 }
 
-export type ScaleFunction = (num: number) => number
+export type ScaleFunction = ScaleContinuousNumeric | ScaleLinear | ScaleTime | ScaleOrdinal
 
 export interface RenderedChildProps {
   dataKey: string;
@@ -30,4 +32,9 @@ export interface RenderedChildProps {
   xScale: ScaleFunction;
   inheritedScale: ScaleFunction;
   xKey: string;
+}
+
+export interface Size {
+  width: number;
+  height: number;
 }

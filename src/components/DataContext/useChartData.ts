@@ -3,7 +3,7 @@ import isEmpty from 'lodash/isEmpty'
 
 import { getX, getY, extractLabels } from '../../utils/dataUtils'
 import { determineXScale, determineYScale } from '../../utils/chartUtils'
-import { Margin, ScaleFunction } from '../../types/index'
+import { Margin, ScaleFunction, Size } from '../../types/index'
 
 const DEFAULT_MARGIN = { top: 18, right: 15, bottom: 15, left: 30 }
 
@@ -52,11 +52,6 @@ export function useChartData({
   return chartData
 }
 
-interface Size {
-  width: number;
-  height: number;
-}
-
 interface State {
   width?: number;
   height?: number;
@@ -73,7 +68,7 @@ interface Props {
   data: any[];
   type: 'ordinal' | 'linear';
   orientation: 'horizontal';
-  children(props: object): React.ReactNode[];
+  children?(props: object): (React.ReactNode[]);
   xKey: string;
   yKey: string;
   size: Size;

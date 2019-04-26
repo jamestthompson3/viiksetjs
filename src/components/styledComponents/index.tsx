@@ -30,8 +30,6 @@ const propsColorSetter = (func, p, value, index) => {
 
 /**
  * Takes props from VX components and uses styled-component's theme to return the proper color
- * @param {Object} formatProps - props inherited from visualization component
- * @param {Object} p - props object
  */
 const colorSetter = (formatProps, p) => {
   /* eslint-disable */
@@ -298,7 +296,7 @@ export const Indicator = ({ yCoords, x, stroke, color }) => {
         strokeOpacity={0.5}
         style={{ pointerEvents: 'none' }}
       />
-      {yCoords.map((coord, i) => (
+      {yCoords.map((coord: number, i: number) => (
         <circle
           key={`${coord}-${i}`}
           cx={x}

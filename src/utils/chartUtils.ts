@@ -43,13 +43,13 @@ export const determineXScale = ({
   margin
 }: Partial<ScaleProps>): ScaleFunction => {
   const range = [margin.left, width]
-  const sortedX = sortedUniq(xPoints)
+  const sortedX = sortedUniq(xPoints as number[])
 
   switch (type) {
     case 'ordinal':
       return scaleBand()
-        .domain(xPoints)
-        .range(range)
+        .domain(xPoints as string[])
+        .range(range as [number, number])
         .padding(0.1)
     case 'linear':
       return scaleLinear()
@@ -79,20 +79,20 @@ export const determineYScale = ({
   switch (type) {
     case 'ordinal':
       return scaleLinear()
-        .domain([0, Math.max(...yPoints)])
+        .domain([0, Math.max(...yPoints as number[])])
         .range(range)
     case 'linear':
       return orientation === 'horizontal'
         ? scaleBand()
-            .domain(yPoints)
+            .domain(yPoints as string[])
             .range([height, margin.top])
             .padding(0.1)
         : scaleLinear()
-            .domain([0, Math.max(...yPoints)])
+            .domain([0, Math.max(...yPoints as number[])])
             .range(invertedRange ? reverseRange : range)
     default:
       return scaleLinear()
-        .domain([0, Math.max(...yPoints)])
+        .domain([0, Math.max(...yPoints as number[])])
         .range(range)
   }
 }

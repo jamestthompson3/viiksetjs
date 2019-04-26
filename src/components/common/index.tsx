@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { StyledLeftAxis, StyledBottomAxis } from '../styledComponents'
+import { StyledLeftAxis, StyledBottomAxis } from '../styledComponents/index'
 import { determineYScale } from '../../utils/chartUtils'
 import { AxisProps, Margin, ScaleFunction } from '../.././types/index'
 
@@ -12,7 +12,7 @@ interface LeftAxisReturnProps {
   margin: Margin;
 }
 
-type LeftAxisReturn = (args: LeftAxisReturnProps) => React.ReactNode
+export type LeftAxisReturn = (args: LeftAxisReturnProps) => React.ReactNode
 
 interface BottomAxisReturnProps {
   margin: Margin;
@@ -20,9 +20,15 @@ interface BottomAxisReturnProps {
   scale: ScaleFunction;
 }
 
-type BottomAxisReturn = (args: BottomAxisReturnProps) => React.ReactNode
+export type BottomAxisReturn = (args: BottomAxisReturnProps) => React.ReactNode
 
-export const buildLeftAxis = ({ y, color }: { y: AxisProps, color: string }): LeftAxisReturn =>
+export const buildLeftAxis = ({
+  y,
+  color
+}: {
+  y: Partial<AxisProps>,
+  color: string
+}): LeftAxisReturn =>
   React.memo(function LeftAxis({ type, orientation, yPoints, height, margin }) {
     const { label, numTicks, tickLabelProps, tickFormat, labelProps, ...rest } = y
     const scale = determineYScale({
@@ -48,7 +54,13 @@ export const buildLeftAxis = ({ y, color }: { y: AxisProps, color: string }): Le
     )
   })
 
-export const buildBottomAxis = ({ x, color }: { x: AxisProps, color: string }): BottomAxisReturn =>
+export const buildBottomAxis = ({
+  x,
+  color
+}: {
+  x: Partial<AxisProps>,
+  color: string
+}): BottomAxisReturn =>
   React.memo(function BottomAxis({ height, margin, scale }) {
     const { label, numTicks, tickLabelProps, tickFormat, labelProps, ...rest } = x
     return (

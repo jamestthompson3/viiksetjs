@@ -18,10 +18,10 @@ import {
   StyledGridRows,
   defaultTooltipRenderer,
   defaultTooltipContent
-} from '../styledComponents'
+} from '../styledComponents/index'
 
 import { Margin, ScaleFunction } from '../../types/index'
-import { buildLeftAxis, buildBottomAxis, BottomAxisReturn, LeftAxisReturn } from '../common'
+import { buildLeftAxis, buildBottomAxis, BottomAxisReturn, LeftAxisReturn } from '../common/index'
 import { useChartData } from '../DataContext/useChartData'
 
 interface GridReturnProps {
@@ -72,7 +72,7 @@ const defaultTooltip = {
   styles: {}
 }
 
-function ChartArea({
+function ChartArea<T>({
   children,
   determineViewBox,
   data,
@@ -97,7 +97,7 @@ function ChartArea({
   showTooltip,
   mouseY,
   x
-}: Props) {
+}: Props<T>) {
   const chart = React.useRef(null)
   const [bar, setBar] = React.useState(false)
   const buildAxis = (
@@ -117,7 +117,7 @@ function ChartArea({
     return () => null
   }
 
-  const buildGrid = (): Grid => {
+  const Grid = (): Grid => {
     if (noGrid) return () => null
     return React.memo(function Grid({ yScale, width, left }) {
       return <StyledGridRows scale={yScale} stroke={gridStroke} width={width - left} />
@@ -125,12 +125,10 @@ function ChartArea({
   }
 
   // To prevent tooltips from not showing on bar chart due to minification changing names
-  // FIXME
-  const declareBar = () => setBar(true)
+  const declareBar = React.useCallback(() => setBar(true), [])
 
   const mouseMove = React.useCallback(
     ({ event, xPoints, xScale, yScale, yScales, dataKeys, datum }: MouseMove) => {
-      const { data, updateTooltip, children, xKey, type, tooltip, noTool } = this.props
       if (tooltip === null || noTool) return
 
       const svgPoint = localPoint(chart, event)
@@ -142,7 +140,7 @@ function ChartArea({
       // cursor position
       if (datum) {
         return updateTooltip({
-          calculatedData: datum,
+          calculatedData: datum as T,
           x: mouseX,
           mouseX,
           mouseY,
@@ -154,7 +152,7 @@ function ChartArea({
       const xValue = xScale.invert(get(svgPoint, 'x') - xValueOffset)
 
       return flow(
-        xValue => bisect(xPoints, xValue),
+        (xValue: number) => bisect(xPoints, xValue),
         index => {
           // Find the closest data point based on the actual mouse position
           const bounds = { dLeft: data[index - 1], dRight: data[index] }
@@ -185,15 +183,13 @@ function ChartArea({
     []
   )
 
-  const mouseLeave = () =>
-    React.useCallback(() => {
+  const mouseLeave = React.useCallback(() => {
       updateTooltip({ calculatedData: null, x: null, yCoords: null, showTooltip: false })
     }, [])
 
   const biaxialChildren = children && biaxial(children)
-  const LeftAxis = buildAxis(biaxialChildren, 'left')
-  const BottomAxis = buildAxis(biaxialChildren, 'bottom')
-  const Grid = buildGrid()
+  const LeftAxis = buildAxis(biaxialChildren, 'left') as LeftAxisReturn
+  const BottomAxis = buildAxis(biaxialChildren, 'bottom') as BottomAxisReturn
   const {
     indicator: Indicator,
     renderer: tooltipRenderer,
@@ -203,6 +199,9 @@ function ChartArea({
   const { xScale, dataKeys, width, height, yPoints, xPoints, yScale } = useChartData({
     data,
     size,
+    xKey,
+    yKey,
+    margin,
     type,
     orientation
   })
@@ -222,7 +221,7 @@ function ChartArea({
         <Group left={biaxialChildren ? 0 : margin.right}>
           <Group left={margin.left}>
             <Grid yScale={yScale} width={width} left={margin.left} />
-            <LeftAxis {...{ type, orientation, color, yPoints, height, margin }} />
+            <LeftAxis {...{ type, orientation, yPoints, height, margin }} />
           </Group>
           {recursiveCloneChildren(children, {
             data,
@@ -299,15 +298,15 @@ function ChartArea({
 
 ChartArea.defaultProps = {
   data: [],
-  margin,
+  margin: DEFAULT_MARGIN,
   axes: defaultAxes,
   tooltip: defaultTooltip,
   glyphRenderer: () => null
 }
 
 interface MouseMove {
-  event: React.SyntheticEvent<SVGMatrix>;
-  xPoints: number[];
+  event: React.SyntheticEvent;
+  xPoints: number[] | string[];
   xScale: ScaleFunction;
   yScale: ScaleFunction;
   yScales: false | { [key: string]: ScaleFunction };
@@ -315,9 +314,9 @@ interface MouseMove {
   datum?: Object;
 }
 
-interface TooltipData {
-  calculatedData?: Object;
-  tooltipData?: Object;
+interface TooltipData<T> {
+  calculatedData?: T;
+  tooltipData?: T;
   tooltipContent(content: Object): React.ReactNode;
   x?: number;
   mouseX: number;
@@ -329,10 +328,10 @@ interface TooltipData {
   height: number;
 }
 
-interface TooltipProps {
-  indicator(indicatorProps: Partial<TooltipData>): React.ReactNode;
-  renderer(renderProps: Partial<TooltipData>): React.ReactNode;
-  content(tooltipData: Object): React.ReactNode;
+interface TooltipProps<T> {
+  indicator(indicatorProps: Partial<TooltipData<T>>): React.ReactNode;
+  renderer(renderProps: Partial<TooltipData<T>>): React.ReactNode;
+  content(tooltipData: T): React.ReactNode;
   styles: {
     wrapper: Object,
     content: Object
@@ -344,12 +343,14 @@ type GridProps = {
   stroke: string
 }
 
-interface Props {
-  data: Object[];
+// TODO Break this guy up
+// Make more composable?
+interface Props<T> {
+  data: T[];
   noTool: boolean;
   noGrid: boolean;
   stroke: string | number;
-  calculatedData?: Object;
+  calculatedData?: T;
   gridStroke: string;
   yCoords?: number[];
   yKey?: string;
@@ -357,7 +358,7 @@ interface Props {
   mouseX?: number;
   mouseY?: number;
   x: number;
-  tooltipData?: Object;
+  tooltipData?: T;
   showTooltip: boolean;
   children: React.ReactNode;
   color: string;
@@ -365,10 +366,10 @@ interface Props {
   orientation?: 'horizontal';
   axes: { x: Partial<AxisProps>, y: Partial<AxisProps> };
   grid: GridProps;
-  tooltip: Partial<TooltipProps>;
+  tooltip: Partial<TooltipProps<T>>;
   xKey?: string;
   nogrid: boolean;
-  updateTooltip(tooltipData: Partial<TooltipData>): void;
+  updateTooltip(tooltipData: Partial<TooltipData<T>>): void;
   glyphRenderer(glyphProps: {
     width: number,
     height: number,
@@ -376,7 +377,7 @@ interface Props {
     yScale: ScaleFunction,
     margin: Margin
   }): React.ReactNode;
-  determineViewBox: ({ size: Size, margin: Margin }) => string;
+  determineViewBox({ size: Size, margin: Margin }): string;
   margin: Margin;
 }
 
