@@ -1,8 +1,7 @@
-// @flow
 import * as React from 'react'
 import { Point } from '@vx/point'
 import { scaleLinear, scaleTime, scaleBand } from 'd3-scale'
-import { type Margin, type ScaleFunction } from '../types/index'
+import { Margin, ScaleFunction } from '../types/index'
 import head from 'lodash/head'
 import last from 'lodash/last'
 import sortedUniq from 'lodash/sortedUniq'
@@ -10,7 +9,7 @@ import sortedUniq from 'lodash/sortedUniq'
 /**
  * Recursively clones children, passing props down nested DOM structures
  */
-export const recursiveCloneChildren = (children: React.Node, props: Object): React.Node =>
+export const recursiveCloneChildren = (children: React.ReactNode, props: Object): React.ReactNode =>
   React.Children.map(children, child => {
     if (!React.isValidElement(child)) return child
 
@@ -25,8 +24,8 @@ export const recursiveCloneChildren = (children: React.Node, props: Object): Rea
 
 type ScaleProps = {
   type: string,
-  xPoints: number[],
-  yPoints: number[],
+  xPoints: number[] | string[],
+  yPoints: number[] | string[],
   width: number,
   invertedRange: boolean,
   height: number,
@@ -42,7 +41,7 @@ export const determineXScale = ({
   xPoints,
   width,
   margin
-}: $Shape<ScaleProps>): ScaleFunction => {
+}: Partial<ScaleProps>): ScaleFunction => {
   const range = [margin.left, width]
   const sortedX = sortedUniq(xPoints)
 
@@ -73,7 +72,7 @@ export const determineYScale = ({
   height,
   invertedRange,
   margin
-}: $Shape<ScaleProps>): ScaleFunction => {
+}: Partial<ScaleProps>): ScaleFunction => {
   const range = [height, margin.top]
   const reverseRange = [margin.top, height]
 
@@ -109,7 +108,7 @@ export const findTooltipX = ({
 }: {
   type: string,
   calculatedX: number,
-  xScale: number => number
+  xScale(num: number): number
 }): number => {
   switch (type) {
     case 'ordinal':
@@ -123,7 +122,7 @@ export const findTooltipX = ({
 /**
  * Takes React Chilren and returns true or false if unique axis Id is found
  */
-export const biaxial = (children: React.Node): boolean =>
+export const biaxial = (children: React.ReactNode): boolean =>
   React.Children.map(
     children,
     child => React.isValidElement(child) && child.props.hasOwnProperty('axisId')
@@ -132,7 +131,7 @@ export const biaxial = (children: React.Node): boolean =>
 /**
  * Own implementation of localPoint from VX. Makes it work on Firefox
  */
-export function localPoint(node: any, event: any): mixed {
+export function localPoint(node: any, event: any): Point {
   // called with no args
   if (!node) return
 
