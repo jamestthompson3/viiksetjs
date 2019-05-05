@@ -14,7 +14,7 @@ export const recursiveCloneChildren = (children: React.ReactNode, props: Object)
     if (!React.isValidElement(child)) return child
 
     if (child.props) {
-      props.children = recursiveCloneChildren(child.props.children, props)
+      props["children"] = recursiveCloneChildren(child.props["children"], props)
 
       return React.cloneElement(child, props)
     }

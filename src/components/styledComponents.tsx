@@ -200,7 +200,7 @@ export const TooltipWrapper = styled.div`
   }
 `
 
-const TooltipContainer = styled.div.attrs(p => ({
+const TooltipContainer = styled.div.attrs<{ bounds: { left: number, top: number } }>(p => ({
   style: {
     left: `${p.bounds.left}px`,
     top: `${p.bounds.top}px`,
@@ -229,7 +229,15 @@ const boundsSetter = ({ left, rect, parentRect }) => {
 /**
  * TooltipBounder sets bounds for the tooltip and passes them down
  */
-const TooltipBounder = ({ children, rect, parentRect, left, style = {} }) => {
+interface BounderProps {
+  children: React.ReactNode[];
+  rect?: ClientRect;
+  parentRect?: ClientRect;
+  left: number;
+  style?: React.CSSProperties;
+}
+
+const TooltipBounder = ({ children, rect, parentRect, left, style }: BounderProps) => {
   const getBounds = () => {
     if (rect && parentRect) {
       return {

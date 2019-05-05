@@ -18,12 +18,13 @@ export const tooltipTime = timeFormat('%a %b %d %H:%M')
 /**
  * Takes a data point and divides by 1000 and adds 'k' if greater than 1000
  */
-export const formatTicks = d => (typeof d === 'number' ? (d >= 1000 ? `${d / 1000}k` : d) : d)
+export const formatTicks = (d: string | number) =>
+  typeof d === 'number' ? (d >= 1000 ? `${d / 1000}k` : d) : d
 
 /**
  * Takes a data point and determines how it should be formatted
  */
-export const formatXTicks = d => {
+export const formatXTicks = (d: string | Date | number) => {
   const checked = new Date(checkDate(d))
 
   if (isValid(checked)) {

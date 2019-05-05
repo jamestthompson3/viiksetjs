@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react'
 import get from 'lodash/get'
 import { curveMonotoneX } from '@vx/curve'
@@ -8,10 +7,10 @@ import {
   StyledPatternLines,
   StyledLinePath,
   StyledAreaClosed
-} from '../styledComponents'
-import { extractX } from '../../utils/dataUtils'
-import { determineYScale } from '../../utils/chartUtils'
-import { type RenderedChildProps } from '../../types/index'
+} from './styledComponents'
+import { extractX } from '../utils/dataUtils'
+import { determineYScale } from '../utils/chartUtils'
+import { RenderedChildProps } from '../types/index'
 
 function LineChart({
   data,
@@ -56,7 +55,7 @@ function LineChart({
   const xPoints = d => xScale(xKey ? get(d, xKey) : extractX(d)[0])
   const yPoints = d => getAxis()(get(d, dataKey))
   const gradientKey = typeof dataKey === 'string' ? dataKey.split(' ').join('') : dataKey
-  const findFill = gradient =>
+  const findFill = (gradient: boolean) =>
     gradient ? `url(#gradient${gradientKey})` : `url(#dlines${gradientKey})`
   return (
     <>
@@ -106,13 +105,12 @@ LineChart.defaultProps = {
   nopattern: false
 }
 
-type Props = {
-  areaProps: Object,
-  lineProps: Object,
-  gradientOpacity: number[],
-  nofill: boolean,
-  nopattern: boolean,
-  ...RenderedChildProps
+interface Props extends RenderedChildProps {
+  areaProps: Object;
+  lineProps: Object;
+  gradientOpacity: number[];
+  nofill: boolean;
+  nopattern: boolean;
 }
 
 export default React.memo(LineChart)

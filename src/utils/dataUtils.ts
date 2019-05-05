@@ -10,7 +10,7 @@ import { Margin } from '../types/index'
 /**
  * Checks for dates
  */
-export const checkDate = (data: Object): ?string => {
+export const checkDate = (data: Object): string => {
   if (typeof data === 'string' || data instanceof Date) {
     return format(parse(data))
   }
@@ -25,9 +25,9 @@ type Applicator<T> = (arg: Object) => T
 export function parseObject<T>(
   obj: Object,
   arg: string,
-  applicator: Applicator<T> = value => value
+  applicator: Applicator<T> = value => value['value']
 ): T[] {
-  Object.values(obj)
+  return Object.values(obj)
     .map(applicator)
     .filter(value => typeof value === arg)
 }

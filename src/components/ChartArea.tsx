@@ -152,14 +152,14 @@ function ChartArea<T>({
       const xValue = xScale.invert(get(svgPoint, 'x') - xValueOffset)
 
       return flow(
-        (xValue: number) => bisect(xPoints, xValue),
+        (xValue: number) => bisect(xPoints as number[], xValue),
         index => {
           // Find the closest data point based on the actual mouse position
           const bounds = { dLeft: data[index - 1], dRight: data[index] }
           // If the calculated xValue minus the value to the left is greater than
           // The indexed value minuse the calcuated value, take the right hand
           // value if available. If not, take the left hand value if available.
-          return xValue - xPoints[index - 1] > xPoints[index] - xValue
+          return xValue - (xPoints[index - 1] as number) > (xPoints[index] as number) - xValue
             ? bounds.dRight || bounds.dLeft
             : bounds.dLeft || bounds.dRight
         },

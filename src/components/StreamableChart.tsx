@@ -4,14 +4,13 @@ import { Group } from '@vx/group'
 import isEmpty from 'lodash/isEmpty'
 import merge from 'lodash/merge'
 
-import { formatTicks, formatXTicks } from '../../utils/formatUtils'
-import { biaxial } from '../../utils/chartUtils'
-import { type Margin, type ScaleFunction } from '../../types/index'
-import DataContext from '../DataContext'
-import withStream from '../Streaming/withStream'
-import { type Size } from '../DataContext'
-import { StyledGridRows } from '../styledComponents/index'
-import { buildLeftAxis, buildBottomAxis } from '../common'
+import { formatTicks, formatXTicks } from '../utils/formatUtils'
+import { biaxial } from '../utils/chartUtils'
+import { Margin, ScaleFunction, Size } from '../types/index'
+import DataContext from './DataContext'
+import withStream from './Streaming/withStream'
+import { StyledGridRows } from './styledComponents'
+import { buildLeftAxis, buildBottomAxis } from './common'
 
 const margin = { top: 18, right: 15, bottom: 15, left: 30 }
 
