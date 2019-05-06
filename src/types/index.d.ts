@@ -38,3 +38,17 @@ export interface Size {
   width: number;
   height: number;
 }
+
+export interface TooltipData<T> {
+  calculatedData?: T;
+  tooltipData?: T;
+  tooltipContent(content: Object): React.ReactNode;
+  x?: number;
+  mouseX: number;
+  mouseY: number;
+  showTooltip: boolean;
+  yCoords?: number[];
+  stroke: string;
+  color: string | ((arg: any) => string);
+  height: number;
+}

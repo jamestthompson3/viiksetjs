@@ -7,22 +7,21 @@ import head from 'lodash/head'
 import get from 'lodash/get'
 import merge from 'lodash/merge'
 
-import { extractX, extractY, createScalarData } from '../../utils/dataUtils'
-import { formatTicks, formatXTicks } from '../../utils/formatUtils'
-import { localPoint, findTooltipX, recursiveCloneChildren, biaxial } from '../../utils/chartUtils'
-import { Size, AxisProps } from '../../types/index'
-import withTooltip from '../Tooltip/withTooltip'
-import withParentSize from '../Responsive/withParentSize'
+import { extractX, extractY, createScalarData } from '../utils/dataUtils'
+import { formatTicks, formatXTicks } from '../utils/formatUtils'
+import { localPoint, findTooltipX, recursiveCloneChildren, biaxial } from '../utils/chartUtils'
+import { Size, AxisProps, TooltipData, Margin, ScaleFunction } from '../types/index'
+import withTooltip from './Tooltip/withTooltip'
+import withParentSize from './Responsive/withParentSize'
 import {
   Indicator,
   StyledGridRows,
   defaultTooltipRenderer,
   defaultTooltipContent
-} from '../styledComponents/index'
+} from './styledComponents/index'
 
-import { Margin, ScaleFunction } from '../../types/index'
-import { buildLeftAxis, buildBottomAxis, BottomAxisReturn, LeftAxisReturn } from '../common/index'
-import { useChartData } from '../DataContext/useChartData'
+import { buildLeftAxis, buildBottomAxis, BottomAxisReturn, LeftAxisReturn } from './common/index'
+import { useChartData } from './DataContext/useChartData'
 
 interface GridReturnProps {
   yScale: ScaleFunction;
@@ -312,20 +311,6 @@ interface MouseMove {
   yScales: false | { [key: string]: ScaleFunction };
   dataKeys: string[];
   datum?: Object;
-}
-
-interface TooltipData<T> {
-  calculatedData?: T;
-  tooltipData?: T;
-  tooltipContent(content: Object): React.ReactNode;
-  x?: number;
-  mouseX: number;
-  mouseY: number;
-  showTooltip: boolean;
-  yCoords?: number[];
-  stroke: string;
-  color: string;
-  height: number;
 }
 
 interface TooltipProps<T> {

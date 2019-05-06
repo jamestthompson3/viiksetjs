@@ -12,7 +12,7 @@ import { extractX } from '../utils/dataUtils'
 import { determineYScale } from '../utils/chartUtils'
 import { RenderedChildProps } from '../types/index'
 
-function LineChart({
+function LineChart<T>({
   data,
   color,
   dataKey,
@@ -28,23 +28,23 @@ function LineChart({
   areaProps,
   lineProps,
   gradientOpacity
-}): Props {
+}: Props) {
   // Check if data exists
-  if (data.map(item => get(item, dataKey)).includes(undefined)) {
+  if (data.map((item: T) => get(item, dataKey)).includes(undefined)) {
     // eslint-disable-next-line
     process.env.NODE_ENV !== 'production' &&
       console.warn(`LineChart: No data found with dataKey ${dataKey}`)
     return null
   }
 
-  if (axisId && data.map(item => get(item, axisId)).includes(undefined)) {
+  if (axisId && data.map((item: T) => get(item, axisId)).includes(undefined)) {
     // eslint-disable-next-line
     process.env.NODE_ENV !== 'production' &&
       console.warn(`LineChart: No data found with axisId ${axisId}`)
     return null
   }
 
-  const dataPoints = data.map(item => get(item, dataKey))
+  const dataPoints = data.map((item: T) => get(item, dataKey))
   const getAxis = () => (!axisId ? inheritedScale : yScale)
   const yScale = determineYScale({
     type: type || 'linear',
@@ -52,8 +52,8 @@ function LineChart({
     height,
     margin
   })
-  const xPoints = d => xScale(xKey ? get(d, xKey) : extractX(d)[0])
-  const yPoints = d => getAxis()(get(d, dataKey))
+  const xPoints = (d: T) => xScale(xKey ? get(d, xKey) : extractX(d)[0])
+  const yPoints = (d: T) => getAxis()(get(d, dataKey))
   const gradientKey = typeof dataKey === 'string' ? dataKey.split(' ').join('') : dataKey
   const findFill = (gradient: boolean) =>
     gradient ? `url(#gradient${gradientKey})` : `url(#dlines${gradientKey})`
@@ -77,7 +77,7 @@ function LineChart({
           {...{ data, color }}
           y={yPoints}
           x={xPoints}
-          fill={findFill('gradient')}
+          fill={findFill(true)}
           yScale={getAxis()}
           curve={curveMonotoneX}
           {...areaProps}
@@ -89,7 +89,7 @@ function LineChart({
             {...{ data, color }}
             y={yPoints}
             yScale={getAxis()}
-            fill={findFill()}
+            fill={findFill(false)}
             x={xPoints}
             curve={curveMonotoneX}
             {...areaProps}
