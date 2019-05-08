@@ -6,28 +6,24 @@ import { extractX } from '../utils/dataUtils'
 import { determineYScale } from '../utils/chartUtils'
 import { RenderedChildProps } from '../types/index'
 
+const genericGetter = d => d
+
 function ScatterPlot<T>({
   data,
   dataKey,
   xScale,
-  color,
-  opacity,
+  color = genericGetter,
+  opacity = genericGetter,
   xKey,
   height,
-  radius,
+  radius = genericGetter,
   margin,
   inheritedScale,
   axisId,
   type,
   stroke,
   pointProps
-}): Props<T> {
-  const getColor = (d: T) => (typeof color === 'string' ? color : color(d))
-
-  const getOpacity = (d: T) => (typeof opacity === 'number' ? opacity : opacity(d))
-
-  const getRadius = (d: T) => (typeof radius === 'number' ? radius : radius(d))
-
+}: Props<T>) {
   // Check if data exists
   if (data.map((item: T) => get(item, dataKey)).includes(undefined)) {
     // eslint-disable-next-line
@@ -58,10 +54,10 @@ function ScatterPlot<T>({
       key={`scatter-plot-${dataKey}-${i}`}
       x={xPoints(d)}
       y={yPoints(d)}
-      radius={getRadius(d)}
+      radius={radius(d)}
       stroke={stroke}
-      opacity={getOpacity(d)}
-      color={getColor(d)}
+      opacity={opacity(d)}
+      color={color(d)}
       {...pointProps}
     />
   ))
@@ -75,16 +71,17 @@ ScatterPlot.defaultProps = {
   data: []
 }
 
+type GenericGetter<T> = (arg: T) => T
 type NumGetter<T> = (arg: T) => number
 type StringGetter<T> = (arg: T) => string
 
 interface Props<T> extends RenderedChildProps {
-  radius: NumGetter<T> | number;
-  color: StringGetter<T> | string;
+  radius: NumGetter<T> | GenericGetter<T>;
+  color: StringGetter<T> | GenericGetter<T>;
   stroke: string;
   pointProps: number;
   data: T[];
-  opacity: NumGetter<T> | number;
+  opacity: NumGetter<T> | GenericGetter<T>;
 }
 
 export default React.memo(ScatterPlot)

@@ -29,22 +29,18 @@ function LineChart<T>({
   lineProps,
   gradientOpacity
 }: Props) {
-  // Check if data exists
-  if (data.map((item: T) => get(item, dataKey)).includes(undefined)) {
-    // eslint-disable-next-line
-    process.env.NODE_ENV !== 'production' &&
-      console.warn(`LineChart: No data found with dataKey ${dataKey}`)
-    return null
-  }
-
-  if (axisId && data.map((item: T) => get(item, axisId)).includes(undefined)) {
-    // eslint-disable-next-line
-    process.env.NODE_ENV !== 'production' &&
-      console.warn(`LineChart: No data found with axisId ${axisId}`)
-    return null
-  }
-
+  // TODO think of a better data structure to store these in from useChartData?
+  // Seems inefficient to map through the dataset more than once
   const dataPoints = data.map((item: T) => get(item, dataKey))
+  React.useEffect(() => {
+    // eslint-disable-next-line
+    if (process.env.NODE_ENV !== 'production') {
+      if (dataPoints.includes(undefined)) {
+        console.warn(`LineChart: No data found with dataKey ${dataKey}`)
+      }
+    }
+  }, [])
+
   const getAxis = () => (!axisId ? inheritedScale : yScale)
   const yScale = determineYScale({
     type: type || 'linear',

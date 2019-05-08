@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import { ScaleContinuousNumeric, ScaleLinear, ScaleTime, ScaleOrdinal } from 'd3-scale'
 
 export interface Margin {
@@ -9,15 +10,63 @@ export interface Margin {
 
 export interface AxisProps {
   format(d: any, i: number): string;
-  tickLabelProps(d: any, i: number): Function;
+  tickLabelProps(
+    d: any,
+    i: number
+  ): {
+    fontWeight: number,
+    strokeWidth: number | string,
+    textAnchor: string,
+    fontSize: number | string
+  };
+  tickFormat(d: any, i: number): string;
+  tickStroke: number | string;
   labelProps: Object;
-  tickFormat(d: any, i: number): Function;
+  tickFormat(d: string | number, i?: number): string | number;
   label: string;
   numTicks: number;
   stroke: string;
 }
 
+export interface Axis {
+  x: Partial<AxisProps>;
+  y: Partial<AxisProps>;
+}
+
+interface GlyphRendererProps {
+  width: number;
+  height: number;
+  xScale: ScaleFunction;
+  yScale: ScaleFunction;
+  margin: Margin;
+}
 export type ScaleFunction = ScaleContinuousNumeric | ScaleLinear | ScaleTime | ScaleOrdinal
+export type GlyphRenderer = (props: GlyphRendererProps) => ReactNode
+
+type GridProps = {
+  type: 'mesh' | 'horizontal' | 'vertical',
+  stroke: string
+}
+
+// TODO Break this guy up, more composable?
+export interface RenderContainerProps {
+  x: number;
+  children: ReactNode;
+  yKey?: string;
+  size: Size;
+  color: string;
+  orientation?: 'horizontal';
+  xKey?: string;
+  glyphRenderer?: GlyphRenderer;
+  determineViewBox({ size: Size, margin: Margin }): string;
+  type: 'ordinal' | 'linear';
+  noGrid: boolean;
+  margin: Margin;
+  axes: Axis;
+  grid: GridProps;
+  gridStroke: string;
+  stroke: string | number;
+}
 
 export interface RenderedChildProps {
   dataKey: string;
@@ -42,7 +91,7 @@ export interface Size {
 export interface TooltipData<T> {
   calculatedData?: T;
   tooltipData?: T;
-  tooltipContent(content: Object): React.ReactNode;
+  tooltipContent(content: Object): ReactNode;
   x?: number;
   mouseX: number;
   mouseY: number;

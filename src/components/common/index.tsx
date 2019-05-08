@@ -1,8 +1,18 @@
 import * as React from 'react'
+import merge from 'lodash/merge'
 
-import { StyledLeftAxis, StyledBottomAxis } from '../styledComponents/index'
+import { StyledLeftAxis, StyledBottomAxis, StyledGridRows } from '../styledComponents/index'
+
 import { determineYScale } from '../../utils/chartUtils'
-import { AxisProps, Margin, ScaleFunction } from '../.././types/index'
+import { AxisProps, Margin, ScaleFunction, Axis } from '../.././types/index'
+
+interface GridReturnProps {
+  yScale: ScaleFunction;
+  width: number;
+  left: number;
+}
+
+type Grid = (args: GridReturnProps) => React.ReactNode
 
 interface LeftAxisReturnProps {
   type: string;
@@ -80,3 +90,29 @@ export const buildBottomAxis = ({
       />
     )
   })
+
+export const buildAxis = (
+  biaxialChildren: boolean,
+  position: string,
+  defaultAxes: Axis,
+  axes: Axis,
+  color: string
+): BottomAxisReturn | LeftAxisReturn | null => {
+  const { y, x } = merge({}, defaultAxes, axes)
+
+  if (position === 'left' && !biaxialChildren && axes.y !== null) {
+    return buildLeftAxis({ y, color })
+  }
+
+  if (position === 'bottom' && axes.x !== null) {
+    return buildBottomAxis({ x, color })
+  }
+
+  return () => null
+}
+export const buildGrid = (gridStroke: string, noGrid: boolean): Grid => {
+  if (noGrid) return () => null
+  return React.memo(function Grid({ yScale, width, left }) {
+    return <StyledGridRows scale={yScale} stroke={gridStroke} width={width - left} />
+  })
+}

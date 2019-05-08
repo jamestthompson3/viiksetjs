@@ -4,11 +4,9 @@ import get from 'lodash/get'
 import styled from 'styled-components'
 
 import { StyledText, StyledPie, findColor, defaultTooltipContent } from './styledComponents'
-import DataContext from '../DataContext'
 import withParentSize from './Responsive/withParentSize'
-import { RenderedChildProps, TooltipData } from '../types/index'
+import { RenderedChildProps, TooltipData, Size } from '../types/index'
 import withTooltip from './Tooltip/withTooltip'
-import { useChartData } from './DataContext/useChartData';
 
 const Label = ({ x, y, labelProps, labelText }) => (
   <StyledText x={x} y={y} {...labelProps}>
@@ -124,6 +122,7 @@ function PieChart<T>({
   tooltipRenderer,
   tooltipContent,
   outerRadius,
+  size,
   updateTooltip,
   pieProps
 }: Props<T>) {
@@ -142,14 +141,15 @@ function PieChart<T>({
     updateTooltip({ calculatedData: null, showTooltip: false, x: null, yCoords: null })
 
   const calcRadius = (width: number, height: number): number => Math.min(width, height) / 2
-  const { width, height, data: processedData, size } = useChartData({ data, margin, dataKey})
+  const width = size.width - margin.left - margin.right
+  const height = size.height === 0 ? 300 : size.height - margin.top - margin.bottom
   return (
         <div style={{ width: size.width, height: size.height }}>
           <svg width={width} height={height}>
             <Group top={height / 2} left={width / 2}>
               <PieBody
                 {...{
-                  data: processedData,
+                  data,
                   dataKey,
                   width,
                   height,
@@ -205,6 +205,7 @@ interface Props<T> extends RenderedChildProps {
   innerRadius: number;
   outerRadius: number;
   pieProps: Object;
+  size: Size;
   updateTooltip(arg: Partial<TooltipData<T>>): void;
 }
 

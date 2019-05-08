@@ -10,30 +10,21 @@ import merge from 'lodash/merge'
 import { extractX, extractY, createScalarData } from '../utils/dataUtils'
 import { formatTicks, formatXTicks } from '../utils/formatUtils'
 import { localPoint, findTooltipX, recursiveCloneChildren, biaxial } from '../utils/chartUtils'
-import { Size, AxisProps, TooltipData, Margin, ScaleFunction } from '../types/index'
+import { TooltipData, ScaleFunction, RenderContainerProps, Axis } from '../types/index'
 import withTooltip from './Tooltip/withTooltip'
 import withParentSize from './Responsive/withParentSize'
 import {
   Indicator,
-  StyledGridRows,
   defaultTooltipRenderer,
   defaultTooltipContent
 } from './styledComponents/index'
 
-import { buildLeftAxis, buildBottomAxis, BottomAxisReturn, LeftAxisReturn } from './common/index'
+import { buildAxis, BottomAxisReturn, LeftAxisReturn, buildGrid } from './common/index'
 import { useChartData } from './DataContext/useChartData'
-
-interface GridReturnProps {
-  yScale: ScaleFunction;
-  width: number;
-  left: number;
-}
-
-type Grid = (args: GridReturnProps) => React.ReactNode
 
 const DEFAULT_MARGIN = { top: 18, right: 15, bottom: 15, left: 30 }
 
-const defaultAxes = {
+const defaultAxes: Axis = {
   x: {
     tickLabelProps: () => ({
       fontWeight: 400,
@@ -99,30 +90,7 @@ function ChartArea<T>({
 }: Props<T>) {
   const chart = React.useRef(null)
   const [bar, setBar] = React.useState(false)
-  const buildAxis = (
-    biaxialChildren: boolean,
-    position: string
-  ): BottomAxisReturn | LeftAxisReturn | null => {
-    const { y, x } = merge({}, defaultAxes, axes)
-
-    if (position === 'left' && !biaxialChildren && axes.y !== null) {
-      return buildLeftAxis({ y, color })
-    }
-
-    if (position === 'bottom' && axes.x !== null) {
-      return buildBottomAxis({ x, color })
-    }
-
-    return () => null
-  }
-
-  const Grid = (): Grid => {
-    if (noGrid) return () => null
-    return React.memo(function Grid({ yScale, width, left }) {
-      return <StyledGridRows scale={yScale} stroke={gridStroke} width={width - left} />
-    })
-  }
-
+  const Grid = buildGrid(gridStroke, noGrid)
   // To prevent tooltips from not showing on bar chart due to minification changing names
   const declareBar = React.useCallback(() => setBar(true), [])
 
@@ -152,7 +120,7 @@ function ChartArea<T>({
 
       return flow(
         (xValue: number) => bisect(xPoints as number[], xValue),
-        index => {
+        (index: number) => {
           // Find the closest data point based on the actual mouse position
           const bounds = { dLeft: data[index - 1], dRight: data[index] }
           // If the calculated xValue minus the value to the left is greater than
@@ -162,7 +130,7 @@ function ChartArea<T>({
             ? bounds.dRight || bounds.dLeft
             : bounds.dLeft || bounds.dRight
         },
-        calculatedData => {
+        (calculatedData: T) => {
           const calculatedX = head(extractX(calculatedData, xKey))
           const x = findTooltipX({ type, calculatedX, xScale })
           const yCoords = yScales
@@ -187,8 +155,8 @@ function ChartArea<T>({
     }, [])
 
   const biaxialChildren = children && biaxial(children)
-  const LeftAxis = buildAxis(biaxialChildren, 'left') as LeftAxisReturn
-  const BottomAxis = buildAxis(biaxialChildren, 'bottom') as BottomAxisReturn
+  const LeftAxis = buildAxis(biaxialChildren, 'left', defaultAxes, axes, color) as LeftAxisReturn
+  const BottomAxis = buildAxis(biaxialChildren, 'bottom', defaultAxes, axes, color) as BottomAxisReturn
   const {
     indicator: Indicator,
     renderer: tooltipRenderer,
@@ -227,6 +195,7 @@ function ChartArea<T>({
             xScale,
             margin,
             height,
+            noTool,
             axes,
             yPoints,
             xPoints,
@@ -323,47 +292,18 @@ interface TooltipProps<T> {
   };
 }
 
-type GridProps = {
-  type: 'mesh' | 'horizontal' | 'vertical',
-  stroke: string
-}
-
-// TODO Break this guy up
-// Make more composable?
-interface Props<T> {
+interface Props<T> extends RenderContainerProps {
   data: T[];
   noTool: boolean;
   noGrid: boolean;
-  stroke: string | number;
   calculatedData?: T;
-  gridStroke: string;
   yCoords?: number[];
-  yKey?: string;
-  size: Size;
   mouseX?: number;
   mouseY?: number;
-  x: number;
   tooltipData?: T;
   showTooltip: boolean;
-  children: React.ReactNode;
-  color: string;
-  type: 'ordinal' | 'linear';
-  orientation?: 'horizontal';
-  axes: { x: Partial<AxisProps>, y: Partial<AxisProps> };
-  grid: GridProps;
   tooltip: Partial<TooltipProps<T>>;
-  xKey?: string;
-  nogrid: boolean;
   updateTooltip(tooltipData: Partial<TooltipData<T>>): void;
-  glyphRenderer(glyphProps: {
-    width: number,
-    height: number,
-    xScale: ScaleFunction,
-    yScale: ScaleFunction,
-    margin: Margin
-  }): React.ReactNode;
-  determineViewBox({ size: Size, margin: Margin }): string;
-  margin: Margin;
 }
 
 export default withTooltip(withParentSize(ChartArea))

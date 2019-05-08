@@ -66,11 +66,11 @@ interface State {
 
 interface Props {
   data: any[];
-  type: 'ordinal' | 'linear';
-  orientation: 'horizontal';
+  type?: 'ordinal' | 'linear';
+  orientation?: 'horizontal';
   children?(props: object): (React.ReactNode[]);
-  xKey: string;
-  yKey: string;
+  xKey?: string;
+  yKey?: string;
   size: Size;
   margin: Margin;
 }

@@ -20,7 +20,6 @@ type Applicator<T> = (arg: Object) => T
 /**
  * Takes an object and argument and returns the values of the object according to the argument type and optional
  * applicator function
- * FIXME
  */
 export function parseObject<T>(
   obj: Object,
@@ -63,7 +62,9 @@ export const extractY = (datum: Object, yKey: string | null = null): any[] =>
  * Takes a data object and extracts all X values and parse them to date time objects if applicable
  */
 export const extractX = (datum: Object, xKey: string | null = null): any[] =>
-  xKey ? [get(datum, xKey)] : flatten(parseObject(datum, 'string', checkDate)).map(i => new Date(i))
+  xKey
+    ? [get(datum, xKey)]
+    : flatten(parseObject(datum, 'string', checkDate)).map((i: string) => new Date(i))
 
 /**
  * Takes a data object and extracts all Y labels by parsing which values contain numbers
@@ -76,7 +77,7 @@ export const extractLabels = (datum: Object): string[] =>
       }
     })
     // eslint-disable-next-line
-  ).filter(i => i != null)
+  ).filter((i: string) => i != null)
 
 /**
  * Takes four parameters and produces and object with a scale for each column
