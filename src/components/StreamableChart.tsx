@@ -4,14 +4,14 @@ import isEmpty from 'lodash/isEmpty'
 
 import { formatTicks, formatXTicks } from '../utils/formatUtils'
 import { biaxial } from '../utils/chartUtils'
-import { ScaleFunction, RenderContainerProps, Axis } from '../types/index'
+import { ScaleFunction, RenderContainerProps, Axis, FromStreamArgs } from '../types/index'
 import withStream from './Streaming/withStream'
 import { LeftAxisReturn, BottomAxisReturn, buildAxis, buildGrid } from './common'
 import { useChartData } from './DataContext/useChartData'
 
 const margin = { top: 18, right: 15, bottom: 15, left: 30 }
 
-const DefaultLoadingMessage = () => <h2>Loading data...</h2>
+const DefaultLoadingMessage: React.SFC = () => <h2>Loading data...</h2>
 
 const defaultAxes: Axis = {
   x: {
@@ -148,14 +148,6 @@ StreamableChart.defaultProps = {
   streamParser: message => message,
   mapStream: (data: any[], message: any) => [...data, message],
   margin: margin
-}
-
-type StreamParser = (data: any[], message: any) => any[]
-
-interface FromStreamArgs {
-  message: any;
-  persist: number;
-  mapStream: StreamParser;
 }
 
 interface Props<T> extends RenderContainerProps {

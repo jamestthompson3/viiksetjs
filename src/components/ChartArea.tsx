@@ -17,7 +17,7 @@ import {
   Indicator,
   defaultTooltipRenderer,
   defaultTooltipContent
-} from './styledComponents/index'
+} from './styledComponents'
 
 import { buildAxis, BottomAxisReturn, LeftAxisReturn, buildGrid } from './common/index'
 import { useChartData } from './DataContext/useChartData'

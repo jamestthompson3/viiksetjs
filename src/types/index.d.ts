@@ -101,3 +101,29 @@ export interface TooltipData<T> {
   color: string | ((arg: any) => string);
   height: number;
 }
+
+export interface BarChartProps {
+  type: string;
+  orientation: string;
+  yPoints: any[];
+  margin: Margin;
+  xKey: string;
+  declareBar(): void;
+  mouseMove(args: any): void;
+  noTool: boolean;
+  height: number;
+  nofill: boolean;
+  mouseLeave(): void;
+  yKey: string;
+  width: number;
+  barProps: Object;
+  xPoints: any[];
+}
+
+type StreamParser = (data: any[], message: any) => any[]
+
+export interface FromStreamArgs {
+  message: any;
+  persist: number;
+  mapStream: StreamParser;
+}

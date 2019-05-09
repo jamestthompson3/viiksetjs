@@ -1,7 +1,7 @@
 import * as React from 'react'
 import merge from 'lodash/merge'
 
-import { StyledLeftAxis, StyledBottomAxis, StyledGridRows } from '../styledComponents/index'
+import { StyledLeftAxis, StyledBottomAxis, StyledGridRows } from '../styledComponents'
 
 import { determineYScale } from '../../utils/chartUtils'
 import { AxisProps, Margin, ScaleFunction, Axis } from '../.././types/index'

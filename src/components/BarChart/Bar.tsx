@@ -3,10 +3,10 @@ import get from 'lodash/get'
 import { Group } from '@vx/group'
 import { scaleBand, scaleLinear, scaleTime } from 'd3-scale'
 
-import { StyledGradient, StyledBar } from '../styledComponents/index'
+import { StyledGradient, StyledBar } from '../styledComponents'
 import { extractX, getY } from '../../utils/dataUtils'
 import { determineYScale, determineXScale } from '../../utils/chartUtils'
-import { ScaleFunction, Margin } from '../../types/index'
+import { ScaleFunction, BarChartProps } from '../../types/index'
 
 function BarChart<T>({
   declareBar,
@@ -55,7 +55,7 @@ function BarChart<T>({
         .range([height, margin.top])
         .padding(0.1)
 
-      return { xScale, yScale }
+      setScales({ xScale, yScale })
     } else {
       const xScale = determineXScale({ type: 'ordinal', xPoints, width, margin })
       const yScale = axisId
@@ -107,29 +107,13 @@ BarChart.defaultProps = {
   inverted: false
 }
 
-interface Props<T> {
+interface Props<T> extends BarChartProps {
   data: T[];
   dataKey: string;
-  mouseMove(args: any): void;
-  mouseLeave(): void;
-  height: number;
-  notool: boolean;
-  nofill: boolean;
   inheritedScale: ScaleFunction;
-  type: string;
-  barProps: Object;
-  margin: Margin;
-  width: number;
   axisId: string;
-  orientation: string;
-  xKey: string;
-  declareBar(): void;
-  noTool: boolean;
-  yKey: string;
-  yPoints: any[];
-  xPoints: any[];
   inverted: boolean;
   color: string;
 }
 
-export default BarChart
+export default React.Memo(BarChart)

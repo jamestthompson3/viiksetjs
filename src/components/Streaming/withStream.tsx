@@ -1,12 +1,13 @@
-import React from 'react'
+import * as React from 'react'
+import { FromStreamArgs } from '../../types'
 
-export default function withStream(BaseComponent) {
-  class WrappedComponent extends React.PureComponent {
+export default function withStream<T>(BaseComponent: React.ReactNode) {
+  class WrappedComponent extends React.PureComponent<any, T[]> {
     state = {
       data: []
     }
 
-    fromStream = ({ message, mapStream, persist }) => {
+    fromStream = ({ message, mapStream, persist }: FromStreamArgs) => {
       const { data } = this.state
       const appendedData =
         mapStream(data, message).length <= persist

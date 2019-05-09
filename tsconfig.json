@@ -1,6 +1,14 @@
-{
-  "compilerOptions": {
-    "jsx": "react",
-    "lib": ["es2018", "dom"]
-  }
+ {
+    "compilerOptions": {
+        "outDir": "./lib/",
+        "sourceMap": true,
+        "noImplicitAny": false,
+        "module": "commonjs",
+        "target": "es6",
+        "lib": ["es2018", "dom"],
+        "jsx": "react"
+    },
+    "include": [
+        "./src/**/*"
+    ]
 }
