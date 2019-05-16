@@ -11,7 +11,7 @@ import { useChartData } from './DataContext/useChartData'
 
 const margin = { top: 18, right: 15, bottom: 15, left: 30 }
 
-const DefaultLoadingMessage: React.SFC = () => <h2>Loading data...</h2>
+const DefaultLoadingMessage: React.FunctionComponent = () => <h2>Loading data...</h2>
 
 const defaultAxes: Axis = {
   x: {
