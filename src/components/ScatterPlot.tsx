@@ -9,7 +9,6 @@ import { RenderedChildProps } from '../types/index'
 const genericGetter = d => d
 
 const getStaticOrAccessor = (prop, data) => {
-  console.log(prop, data)
   if (typeof prop === 'function') {
     return prop(data)
   }

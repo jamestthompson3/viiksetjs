@@ -13,6 +13,37 @@ import { extractLabels, extractX } from '../../utils/dataUtils'
 import { StyledBar } from '../styledComponents'
 import { BarChartProps } from '../../types'
 
+function calcData({ data, keys, type, xPoints, yPoints, margin, height, width }) {
+  const dataDomain = Math.max(
+    ...flatten(
+      data.map((d: T) => keys.map((key: string) => get(d, key))).map((arr: number[]) => sum(arr))
+    )
+  )
+
+  const scalar = type === 'linear' ? scaleLinear : scaleTime
+
+  console.log('CALLING INSIDE OF SCALAR FUNCTION')
+  if (orientation === 'horizontal') {
+    const xScale = scalar()
+      .domain([0, dataDomain])
+      .range([margin.left, width])
+    const yScale = scaleBand()
+      .domain(yPoints)
+      .range([height, margin.top])
+      .padding(0.1)
+    return { xScale, yScale }
+  } else {
+    const xScale = scaleBand()
+      .domain(xPoints)
+      .range([margin.left, width])
+      .padding(0.1)
+    const yScale = scalar()
+      .domain([dataDomain, 0])
+      .range([height, margin.top])
+    return { xScale, yScale }
+  }
+}
+
 function StackedBar<T>({
   data,
   type,
@@ -35,36 +66,9 @@ function StackedBar<T>({
   React.useEffect(() => {
     declareBar()
   }, [])
-  const [scales, setScales] = React.useState({ xScale: null, yScale: null })
-  React.useEffect(() => {
-    const dataDomain = Math.max(
-      ...flatten(
-        data.map((d: T) => keys.map((key: string) => get(d, key))).map((arr: number[]) => sum(arr))
-      )
-    )
-
-    const scalar = type === 'linear' ? scaleLinear : scaleTime
-
-    if (orientation === 'horizontal') {
-      const xScale = scalar()
-        .domain([0, dataDomain])
-        .range([margin.left, width])
-      const yScale = scaleBand()
-        .domain(yPoints)
-        .range([height, margin.top])
-        .padding(0.1)
-      setScales({ xScale, yScale })
-    } else {
-      const xScale = scaleBand()
-        .domain(xPoints)
-        .range([margin.left, width])
-        .padding(0.1)
-      const yScale = scalar()
-        .domain([dataDomain, 0])
-        .range([height, margin.top])
-      setScales({ xScale, yScale })
-    }
-  }, [data, orientation, type])
+  console.log('ORIENTATION: ', orientation)
+  // const [scales, setScales] = React.useState({ xScale: null, yScale: null })
+  const scales = calcData({ data, keys, type, xPoints, yPoints, margin, height, width })
 
   const determineBarWidth = ({ d, isHorizontal, xScale, yScale }) => {
     if (isHorizontal) {
@@ -85,6 +89,7 @@ function StackedBar<T>({
     .domain(keys || extractLabels(data[0]))
     .range(colors)
   const { xScale, yScale } = scales
+  console.log('xScale: ', xScale, 'yScale: ', yScale)
   const isHorizontal = orientation === 'horizontal'
   const series = stack().keys(keys || extractLabels(data[0]))(data)
   const bandwidth = isHorizontal ? yScale.bandwidth() : xScale.bandwidth()
@@ -123,14 +128,14 @@ function StackedBar<T>({
 }
 
 interface SeriesObj<T> {
-  key: string;
-  data: T[];
+  key: string
+  data: T[]
 }
 
 interface Props<T> extends BarChartProps {
-  data: T[];
-  colors: string[];
-  keys: string[];
+  data: T[]
+  colors: string[]
+  keys: string[]
 }
 
 export default React.memo(StackedBar)
