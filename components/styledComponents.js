@@ -115,12 +115,12 @@ export const Snippet = ({ children }) => (
   </CodeContainer>
 )
 
-const TooltipContainer = styled.span.attrs({
-  style: p => ({
+const TooltipContainer = styled.span.attrs(p => ({
+  style: {
     left: `${p.rect ? p.left + p.rect.width : p.left}px`,
     top: `${p.parentRect ? -(p.parentRect.height - p.yCoord + p.rect.height) : p.yCoord}px`
-  })
-})`
+  }
+}))`
   position: relative;
   pointer-events: none;
 `
@@ -146,12 +146,12 @@ export const Label = styled.p`
   color: ${p => p.color};
 `
 
-const Container = styled.div.attrs({
-  style: p => ({
+const Container = styled.div.attrs(p => ({
+  style: {
     left: `${p.rect ? p.left - p.rect.width / 3 : p.left}px`,
     top: `${p.parentRect ? -(p.parentRect.height + p.rect.height) : p.yCoord}px`
-  })
-})`
+  }
+}))`
   display: flex;
   flex-direction: column;
   position: relative;
