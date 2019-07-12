@@ -78,6 +78,9 @@ function BarChart<T>({
   const xPoint = (d: T) => extractX(d, xKey)
   const barHeight = (d: T) => yScale(get(d, dataKey))
   const isHorizontal = orientation === 'horizontal'
+  if (!xScale) {
+    return null
+  }
   return (
     <>
       <StyledGradient color={color} id={`gradient${xKey}`} />
@@ -108,12 +111,12 @@ BarChart.defaultProps = {
 }
 
 interface Props<T> extends BarChartProps {
-  data: T[];
-  dataKey: string;
-  inheritedScale: ScaleFunction;
-  axisId: string;
-  inverted: boolean;
-  color: string;
+  data: T[]
+  dataKey: string
+  inheritedScale: ScaleFunction
+  axisId: string
+  inverted: boolean
+  color: string
 }
 
-export default React.Memo(BarChart)
+export default React.memo(BarChart)

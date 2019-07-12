@@ -16,7 +16,7 @@ export const checkDate = (data: Object): string => {
   }
 }
 
-type Applicator<T> = (arg: Object) => T
+type Applicator<T> = (arg: any) => T
 /**
  * Takes an object and argument and returns the values of the object according to the argument type and optional
  * applicator function
@@ -24,7 +24,7 @@ type Applicator<T> = (arg: Object) => T
 export function parseObject<T>(
   obj: Object,
   arg: string,
-  applicator: Applicator<T> = value => value['value']
+  applicator: Applicator<T> = value => value
 ): T[] {
   return Object.values(obj)
     .map(applicator)

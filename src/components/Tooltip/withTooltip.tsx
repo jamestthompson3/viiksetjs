@@ -1,17 +1,17 @@
 import * as React from 'react'
 
 interface Props {
-  tooltipData: object;
-  updateTooltip(arg: UpdaterProps): void;
+  tooltipData: object
+  updateTooltip(arg: UpdaterProps): void
 }
 
 interface UpdaterProps {
-  calculatedData?: Object;
-  x?: number;
-  mouseX?: number;
-  mouseY?: number;
-  yCoords?: number[];
-  showTooltip: boolean;
+  calculatedData?: Object
+  x?: number
+  mouseX?: number
+  mouseY?: number
+  yCoords?: number[]
+  showTooltip: boolean
 }
 
 export default function withTooltip(BaseComponent: React.ReactNode) {

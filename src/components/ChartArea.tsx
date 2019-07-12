@@ -3,25 +3,22 @@ import { Group } from '@vx/group'
 import { Bar } from '@vx/shape'
 import { bisect } from 'd3-array'
 import flow from 'lodash/flow'
+import isEmpty from 'lodash/isEmpty'
 import head from 'lodash/head'
 import get from 'lodash/get'
 import merge from 'lodash/merge'
+import { localPoint } from '@vx/event'
 
 import { extractX, extractY, createScalarData } from '../utils/dataUtils'
 import { formatTicks, formatXTicks } from '../utils/formatUtils'
-import { localPoint, findTooltipX, recursiveCloneChildren, biaxial } from '../utils/chartUtils'
+import { findTooltipX, recursiveCloneChildren, biaxial } from '../utils/chartUtils'
+import { prepChartData, State } from '../utils/prepareChartData'
 import { TooltipData, ScaleFunction, RenderContainerProps, Axis } from '../types/index'
 import withTooltip from './Tooltip/withTooltip'
 import withParentSize from './Responsive/withParentSize'
-import {
-  Indicator,
-  defaultTooltipRenderer,
-  defaultTooltipContent
-} from './styledComponents'
+import { Indicator, defaultTooltipRenderer, defaultTooltipContent } from './styledComponents'
 
 import { buildAxis, BottomAxisReturn, LeftAxisReturn, buildGrid } from './common/index'
-import { useChartData } from './DataContext/useChartData'
-
 const DEFAULT_MARGIN = { top: 18, right: 15, bottom: 15, left: 30 }
 
 const defaultAxes: Axis = {
@@ -89,8 +86,21 @@ function ChartArea<T>({
   x
 }: Props<T>) {
   const chart = React.useRef(null)
+  const [chartData, setChartData] = React.useState<State>(() => {})
   const [bar, setBar] = React.useState(false)
   const Grid = buildGrid(gridStroke, noGrid)
+  React.useEffect(() => {
+    const chartData = prepChartData({
+      data,
+      size,
+      xKey,
+      yKey,
+      margin,
+      type,
+      orientation
+    })
+    setChartData(chartData)
+  }, [data, size, type, margin, orientation, xKey, yKey])
   // To prevent tooltips from not showing on bar chart due to minification changing names
   const declareBar = React.useCallback(() => setBar(true), [])
 
@@ -98,7 +108,7 @@ function ChartArea<T>({
     ({ event, xPoints, xScale, yScale, yScales, dataKeys, datum }: MouseMove) => {
       if (tooltip === null || noTool) return
 
-      const svgPoint = localPoint(chart, event)
+      const svgPoint = localPoint(chart.current, event)
       const mouseX = get(svgPoint, 'x')
       const mouseY = get(svgPoint, 'y')
 
@@ -151,27 +161,28 @@ function ChartArea<T>({
   )
 
   const mouseLeave = React.useCallback(() => {
-      updateTooltip({ calculatedData: null, x: null, yCoords: null, showTooltip: false })
-    }, [])
+    updateTooltip({ calculatedData: null, x: null, yCoords: null, showTooltip: false })
+  }, [])
 
   const biaxialChildren = children && biaxial(children)
   const LeftAxis = buildAxis(biaxialChildren, 'left', defaultAxes, axes, color) as LeftAxisReturn
-  const BottomAxis = buildAxis(biaxialChildren, 'bottom', defaultAxes, axes, color) as BottomAxisReturn
+  const BottomAxis = buildAxis(
+    biaxialChildren,
+    'bottom',
+    defaultAxes,
+    axes,
+    color
+  ) as BottomAxisReturn
   const {
     indicator: Indicator,
     renderer: tooltipRenderer,
     styles: tooltipStyles,
     content: tooltipContent
   } = merge({}, defaultTooltip, tooltip)
-  const { xScale, dataKeys, width, height, yPoints, xPoints, yScale } = useChartData({
-    data,
-    size,
-    xKey,
-    yKey,
-    margin,
-    type,
-    orientation
-  })
+  if (isEmpty(chartData)) {
+    return null
+  }
+  const { xScale, dataKeys, width, height, yPoints, xPoints, yScale } = chartData
   return (
     <div style={{ width: size.width, height: size.height }} id="viiksetjsWrapperDiv">
       <svg
@@ -273,37 +284,37 @@ ChartArea.defaultProps = {
 }
 
 interface MouseMove {
-  event: React.SyntheticEvent;
-  xPoints: number[] | string[];
-  xScale: ScaleFunction;
-  yScale: ScaleFunction;
-  yScales: false | { [key: string]: ScaleFunction };
-  dataKeys: string[];
-  datum?: Object;
+  event: React.SyntheticEvent
+  xPoints: number[] | string[]
+  xScale: ScaleFunction
+  yScale: ScaleFunction
+  yScales: false | { [key: string]: ScaleFunction }
+  dataKeys: string[]
+  datum?: Object
 }
 
 interface TooltipProps<T> {
-  indicator(indicatorProps: Partial<TooltipData<T>>): React.ReactNode;
-  renderer(renderProps: Partial<TooltipData<T>>): React.ReactNode;
-  content(tooltipData: T): React.ReactNode;
+  indicator(indicatorProps: Partial<TooltipData<T>>): React.ReactNode
+  renderer(renderProps: Partial<TooltipData<T>>): React.ReactNode
+  content(tooltipData: T): React.ReactNode
   styles: {
-    wrapper: Object,
+    wrapper: Object
     content: Object
-  };
+  }
 }
 
 interface Props<T> extends RenderContainerProps {
-  data: T[];
-  noTool: boolean;
-  noGrid: boolean;
-  calculatedData?: T;
-  yCoords?: number[];
-  mouseX?: number;
-  mouseY?: number;
-  tooltipData?: T;
-  showTooltip: boolean;
-  tooltip: Partial<TooltipProps<T>>;
-  updateTooltip(tooltipData: Partial<TooltipData<T>>): void;
+  data: T[]
+  noTool: boolean
+  noGrid: boolean
+  calculatedData?: T
+  yCoords?: number[]
+  mouseX?: number
+  mouseY?: number
+  tooltipData?: T
+  showTooltip: boolean
+  tooltip: Partial<TooltipProps<T>>
+  updateTooltip(tooltipData: Partial<TooltipData<T>>): void
 }
 
 export default withTooltip(withParentSize(ChartArea))

@@ -8,6 +8,14 @@ import { RenderedChildProps } from '../types/index'
 
 const genericGetter = d => d
 
+const getStaticOrAccessor = (prop, data) => {
+  console.log(prop, data)
+  if (typeof prop === 'function') {
+    return prop(data)
+  }
+  return prop
+}
+
 function ScatterPlot<T>({
   data,
   dataKey,
@@ -54,10 +62,10 @@ function ScatterPlot<T>({
       key={`scatter-plot-${dataKey}-${i}`}
       x={xPoints(d)}
       y={yPoints(d)}
-      radius={radius(d)}
+      radius={getStaticOrAccessor(radius, d)}
       stroke={stroke}
-      opacity={opacity(d)}
-      color={color(d)}
+      opacity={getStaticOrAccessor(opacity, d)}
+      color={getStaticOrAccessor(color, d)}
       {...pointProps}
     />
   ))
@@ -76,12 +84,12 @@ type NumGetter<T> = (arg: T) => number
 type StringGetter<T> = (arg: T) => string
 
 interface Props<T> extends RenderedChildProps {
-  radius: NumGetter<T> | GenericGetter<T>;
-  color: StringGetter<T> | GenericGetter<T>;
-  stroke: string;
-  pointProps: number;
-  data: T[];
-  opacity: NumGetter<T> | GenericGetter<T>;
+  radius: NumGetter<T> | GenericGetter<T>
+  color: StringGetter<T> | GenericGetter<T>
+  stroke: string
+  pointProps: number
+  data: T[]
+  opacity: NumGetter<T> | GenericGetter<T>
 }
 
 export default React.memo(ScatterPlot)

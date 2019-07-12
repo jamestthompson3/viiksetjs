@@ -1,7 +1,7 @@
 import React from 'react'
 import { scaleLinear } from 'd3-scale'
 import get from 'lodash/get'
-import { StyledLeftAxis, StyledRightAxis } from '../styledComponents'
+import { StyledLeftAxis, StyledRightAxis } from './styledComponents'
 
 function YAxis({
   height,

@@ -29,8 +29,6 @@ function LineChart<T>({
   lineProps,
   gradientOpacity
 }: Props) {
-  // TODO think of a better data structure to store these in from useChartData?
-  // Seems inefficient to map through the dataset more than once
   const dataPoints = data.map((item: T) => get(item, dataKey))
   React.useEffect(() => {
     // eslint-disable-next-line
@@ -50,6 +48,7 @@ function LineChart<T>({
   })
   const xPoints = (d: T) => xScale(xKey ? get(d, xKey) : extractX(d)[0])
   const yPoints = (d: T) => getAxis()(get(d, dataKey))
+
   const gradientKey = typeof dataKey === 'string' ? dataKey.split(' ').join('') : dataKey
   const findFill = (gradient: boolean) =>
     gradient ? `url(#gradient${gradientKey})` : `url(#dlines${gradientKey})`
@@ -102,11 +101,11 @@ LineChart.defaultProps = {
 }
 
 interface Props extends RenderedChildProps {
-  areaProps: Object;
-  lineProps: Object;
-  gradientOpacity: number[];
-  nofill: boolean;
-  nopattern: boolean;
+  areaProps: Object
+  lineProps: Object
+  gradientOpacity: number[]
+  nofill: boolean
+  nopattern: boolean
 }
 
 export default React.memo(LineChart)

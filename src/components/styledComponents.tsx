@@ -200,13 +200,9 @@ export const TooltipWrapper = styled.div`
   }
 `
 
-const TooltipContainer = styled.div.attrs<{ bounds: { left: number, top: number } }>(p => ({
-  style: {
-    left: `${p.bounds.left}px`,
-    top: `${p.bounds.top}px`,
-    ...p.style
-  }
-}))`
+const TooltipContainer = styled.div<{ bounds: { left: number; top: number } }>`
+  left: ${p => `${p.bounds.left}px`};
+  top: ${p => `${p.bounds.top}px`};
   display: inline-flex;
   position: relative;
   pointer-events: none;
@@ -230,11 +226,11 @@ const boundsSetter = ({ left, rect, parentRect }) => {
  * TooltipBounder sets bounds for the tooltip and passes them down
  */
 interface BounderProps {
-  children: React.ReactNode[];
-  rect?: ClientRect;
-  parentRect?: ClientRect;
-  left: number;
-  style?: React.CSSProperties;
+  children: React.ReactNode[]
+  rect?: ClientRect
+  parentRect?: ClientRect
+  left: number
+  style?: React.CSSProperties
 }
 
 const TooltipBounder = ({ children, rect, parentRect, left, style }: BounderProps) => {
@@ -253,7 +249,7 @@ const TooltipBounder = ({ children, rect, parentRect, left, style }: BounderProp
   }
 
   return (
-    <TooltipContainer style={style} bounds={getBounds()}>
+    <TooltipContainer style={style} bounds={getBounds()} id="__viiksetjs_tooltipcontainer">
       {children}
     </TooltipContainer>
   )

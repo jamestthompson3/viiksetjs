@@ -14,7 +14,7 @@ export const recursiveCloneChildren = (children: React.ReactNode, props: Object)
     if (!React.isValidElement(child)) return child
 
     if (child.props) {
-      props["children"] = recursiveCloneChildren(child.props["children"], props)
+      props['children'] = recursiveCloneChildren(child.props['children'], props)
 
       return React.cloneElement(child, props)
     }
@@ -23,19 +23,16 @@ export const recursiveCloneChildren = (children: React.ReactNode, props: Object)
   })
 
 type ScaleProps = {
-  type: string,
-  xPoints: number[] | string[],
-  yPoints: number[] | string[],
-  width: number,
-  invertedRange: boolean,
-  height: number,
-  orientation: string,
+  type: string
+  xPoints: number[] | string[]
+  yPoints: number[] | string[]
+  width: number
+  invertedRange: boolean
+  height: number
+  orientation: string
   margin: Margin
 }
 
-/**
- * Determines the xScale of the chart based on chart type
- */
 export const determineXScale = ({
   type,
   xPoints,
@@ -62,9 +59,6 @@ export const determineXScale = ({
   }
 }
 
-/**
- * Determines the yScale of the chart based on chart type
- */
 export const determineYScale = ({
   type,
   orientation,
@@ -75,11 +69,10 @@ export const determineYScale = ({
 }: Partial<ScaleProps>): ScaleFunction => {
   const range = [height, margin.top]
   const reverseRange = [margin.top, height]
-
   switch (type) {
     case 'ordinal':
       return scaleLinear()
-        .domain([0, Math.max(...yPoints as number[])])
+        .domain([0, Math.max(...(yPoints as number[]))])
         .range(range)
     case 'linear':
       return orientation === 'horizontal'
@@ -88,11 +81,11 @@ export const determineYScale = ({
             .range([height, margin.top])
             .padding(0.1)
         : scaleLinear()
-            .domain([0, Math.max(...yPoints as number[])])
+            .domain([0, Math.max(...(yPoints as number[]))])
             .range(invertedRange ? reverseRange : range)
     default:
       return scaleLinear()
-        .domain([0, Math.max(...yPoints as number[])])
+        .domain([0, Math.max(...(yPoints as number[]))])
         .range(range)
   }
 }
@@ -106,8 +99,8 @@ export const findTooltipX = ({
   calculatedX,
   xScale
 }: {
-  type: string,
-  calculatedX: number,
+  type: string
+  calculatedX: number
   xScale(num: number): number
 }): number => {
   switch (type) {
@@ -132,6 +125,7 @@ export const biaxial = (children: React.ReactNode): boolean =>
  * Own implementation of localPoint from VX. Makes it work on Firefox
  */
 export function localPoint(node: any, event: any): Point {
+  console.log('NODE IN TT: ', node)
   // called with no args
   if (!node) return
 
@@ -156,15 +150,7 @@ export function localPoint(node: any, event: any): Point {
     clientX = event.changedTouches[0].clientX
     clientY = event.changedTouches[0].clientY
   }
-
-  // FF workaround
-  if (navigator.userAgent.includes('Firefox')) {
-    const rect = node.getBoundingClientRect()
-    return new Point({
-      x: clientX - rect.left - node.clientLeft,
-      y: clientY - rect.top - node.clientTop
-    })
-  }
+  console.log(clientY)
 
   // calculate coordinates from svg
   let point = node.createSVGPoint()

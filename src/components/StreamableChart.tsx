@@ -7,7 +7,7 @@ import { biaxial } from '../utils/chartUtils'
 import { ScaleFunction, RenderContainerProps, Axis, FromStreamArgs } from '../types/index'
 import withStream from './Streaming/withStream'
 import { LeftAxisReturn, BottomAxisReturn, buildAxis, buildGrid } from './common'
-import { useChartData } from './DataContext/useChartData'
+// import { useChartData } from './DataContext/useChartData'
 
 const margin = { top: 18, right: 15, bottom: 15, left: 30 }
 
@@ -65,15 +65,16 @@ function StreamableChart<T>({
 }: Props<T>) {
   const chart = React.useRef(null)
   const socket = React.useRef()
-  const { xScale, width, height, yPoints, yScale } = useChartData({
-    size,
-    margin,
-    data,
-    xKey,
-    yKey,
-    type,
-    orientation
-  })
+  //FIXME
+  // const { xScale, width, height, yPoints, yScale } = useChartData({
+  //   size,
+  //   margin,
+  //   data,
+  //   xKey,
+  //   yKey,
+  //   type,
+  //   orientation
+  // })
   React.useEffect(() => {
     if (!connection) {
       // eslint-disable-next-line

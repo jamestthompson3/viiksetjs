@@ -90,7 +90,6 @@ function StackedBar<T>({
   const bandwidth = isHorizontal ? yScale.bandwidth() : xScale.bandwidth()
   const yPoint = (d: T) => yScale(get(d, yKey))
   const xPoint = (d: T) => xScale(extractX(d, xKey))
-  console.log(series)
   return (
     <Group>
       {series &&
@@ -134,4 +133,4 @@ interface Props<T> extends BarChartProps {
   keys: string[];
 }
 
-export default React.Memo(StackedBar)
+export default React.memo(StackedBar)
