@@ -1,15 +1,12 @@
-// @flow
 import * as React from 'react'
 import { Group } from '@vx/group'
 import get from 'lodash/get'
 import styled from 'styled-components'
 
-import { StyledText, StyledPie, findColor, defaultTooltipContent } from '../styledComponents'
-import DataContext from '../DataContext'
-import withParentSize from '../Responsive/withParentSize'
-import { type TooltipData } from '../ChartArea/index'
-import { type RenderedChildProps } from '../../types/index'
-import withTooltip from '../Tooltip/withTooltip'
+import { StyledText, StyledPie, findColor, defaultTooltipContent } from './styledComponents'
+import withParentSize from './Responsive/withParentSize'
+import { RenderedChildProps, TooltipData, Size } from '../types/index'
+import withTooltip from './Tooltip/withTooltip'
 
 const Label = ({ x, y, labelProps, labelText }) => (
   <StyledText x={x} y={y} {...labelProps}>
@@ -21,7 +18,12 @@ Label.defaultProps = {
   labelProps: { fill: 'black', textAnchor: 'middle', dy: '.33em', fontSize: 10 }
 }
 
-const TooltipContainer = styled.div.attrs(p => ({
+const TooltipContainer = styled.div.attrs<{
+  mouseY: number,
+  mouseX: number,
+  height: number,
+  width: number
+}>(p => ({
   style: {
     top: p.mouseY - p.height,
     left: p.mouseX + p.width / 2
@@ -71,11 +73,11 @@ const PieBody = React.memo(function Pie({
   color,
   labelKey,
   labelProps
-}) {
+}: BodyProps) {
   return (
     <StyledPie
       data={data}
-      pieValue={d => get(d, dataKey)}
+      pieValue={(d: { dataKey?: string }) => get(d, dataKey)}
       innerRadius={calcRadius(width, height) - innerRadius}
       outerRadius={calcRadius(width, height) - outerRadius}
       {...pieProps}
@@ -92,7 +94,7 @@ const PieBody = React.memo(function Pie({
               onMouseEnter={() => mouseMove({ arc, pie })}
               onMouseLeave={() => mouseLeave()}
             >
-              <path d={pie.path(arc)} fill={color} fillOpacity={opacity} />
+              <path d={pie.path(arc)} fill={color as string} fillOpacity={opacity} />
               {hasSpaceForLabel && (
                 <Label x={x} y={y} labelText={get(arc.data, labelKey)} {...labelProps} />
               )}
@@ -104,7 +106,7 @@ const PieBody = React.memo(function Pie({
   )
 })
 
-function PieChart({
+function PieChart<T>({
   color,
   data,
   dataKey,
@@ -120,9 +122,10 @@ function PieChart({
   tooltipRenderer,
   tooltipContent,
   outerRadius,
+  size,
   updateTooltip,
   pieProps
-}): Props {
+}: Props<T>) {
   const mouseMove = ({ arc, pie }) => {
     const { data } = arc
     const [x, y] = pie.path.centroid(arc)
@@ -138,10 +141,9 @@ function PieChart({
     updateTooltip({ calculatedData: null, showTooltip: false, x: null, yCoords: null })
 
   const calcRadius = (width: number, height: number): number => Math.min(width, height) / 2
-
+  const width = size.width - margin.left - margin.right
+  const height = size.height === 0 ? 300 : size.height - margin.top - margin.bottom
   return (
-    <DataContext {...{ data, margin, dataKey }}>
-      {({ width, height, data, size }) => (
         <div style={{ width: size.width, height: size.height }}>
           <svg width={width} height={height}>
             <Group top={height / 2} left={width / 2}>
@@ -178,8 +180,6 @@ function PieChart({
               }
             })}
         </div>
-      )}
-    </DataContext>
   )
 }
 
@@ -192,20 +192,38 @@ PieChart.defaultProps = {
   margin: { top: 10, bottom: 10, left: 10, right: 10 }
 }
 
-type Props = {
-  labelKey: string,
-  determineOpacity: any => number,
-  mouseX: number,
-  mouseY: number,
-  tooltipRenderer: ($Shape<TooltipData>) => React.Node,
-  tooltipContent: (tooltipData: Object) => React.Node,
-  calculatedData: Object[],
-  showTooltip: boolean,
-  innerRadius: number,
-  outerRadius: number,
-  pieProps: Object,
-  updateTooltip: ($Shape<TooltipData>) => mixed,
-  ...RenderedChildProps
+interface Props<T> extends RenderedChildProps {
+  labelKey: string;
+  determineOpacity(arg: any): number;
+  mouseX: number;
+  mouseY: number;
+  labelProps: { [key: string]: any };
+  tooltipRenderer(arg: Partial<TooltipData<T>>): React.ReactNode;
+  tooltipContent(tooltipData: Object): React.ReactNode;
+  calculatedData: T;
+  showTooltip: boolean;
+  innerRadius: number;
+  outerRadius: number;
+  pieProps: Object;
+  size: Size;
+  updateTooltip(arg: Partial<TooltipData<T>>): void;
+}
+
+interface BodyProps {
+  data: Object[];
+  dataKey: string;
+  width: number;
+  height: number;
+  innerRadius: number;
+  outerRadius: number;
+  pieProps: Object;
+  calcRadius(width: number, height: number): number;
+  determineOpacity(arg: any): number;
+  mouseMove(arg: any): void;
+  mouseLeave(): void;
+  color: string | ((arg: any) => string);
+  labelKey: string;
+  labelProps: Object;
 }
 
 export default withTooltip(withParentSize(PieChart))

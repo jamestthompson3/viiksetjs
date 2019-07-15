@@ -1,4 +1,3 @@
-// @flow
 import { scaleLinear } from 'd3-scale'
 import flatten from 'lodash/flatten'
 import head from 'lodash/head'
@@ -6,28 +5,31 @@ import last from 'lodash/last'
 import get from 'lodash/get'
 import parse from 'date-fns/parse'
 import format from 'date-fns/format'
-import { type Margin } from '../types/index'
+import { Margin } from '../types/index'
 
 /**
  * Checks for dates
  */
-export const checkDate = (data: Object): ?string => {
+export const checkDate = (data: Object): string => {
   if (typeof data === 'string' || data instanceof Date) {
     return format(parse(data))
   }
 }
+
+type Applicator<T> = (arg: any) => T
 /**
  * Takes an object and argument and returns the values of the object according to the argument type and optional
  * applicator function
  */
-export const parseObject = (
-  object: Object,
+export function parseObject<T>(
+  obj: Object,
   arg: string,
-  applicator: any => mixed = value => value
-): any[] =>
-  Object.values(object)
+  applicator: Applicator<T> = value => value
+): T[] {
+  return Object.values(obj)
     .map(applicator)
     .filter(value => typeof value === arg)
+}
 
 /**
  * Takes an array of objects and a datakey and returns an array of x-value points
@@ -60,7 +62,9 @@ export const extractY = (datum: Object, yKey: string | null = null): any[] =>
  * Takes a data object and extracts all X values and parse them to date time objects if applicable
  */
 export const extractX = (datum: Object, xKey: string | null = null): any[] =>
-  xKey ? [get(datum, xKey)] : flatten(parseObject(datum, 'string', checkDate)).map(i => new Date(i))
+  xKey
+    ? [get(datum, xKey)]
+    : flatten(parseObject(datum, 'string', checkDate)).map((i: string) => new Date(i))
 
 /**
  * Takes a data object and extracts all Y labels by parsing which values contain numbers
@@ -73,7 +77,7 @@ export const extractLabels = (datum: Object): string[] =>
       }
     })
     // eslint-disable-next-line
-  ).filter(i => i != null)
+  ).filter((i: string) => i != null)
 
 /**
  * Takes four parameters and produces and object with a scale for each column

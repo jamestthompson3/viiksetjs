@@ -1,6 +1,6 @@
 {
   "printWidth": 100,
-  "parser": "flow",
+  "parser": "typescript",
   "semi": false,
   "singleQuote": true
 }

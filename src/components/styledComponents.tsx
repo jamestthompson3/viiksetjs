@@ -30,8 +30,6 @@ const propsColorSetter = (func, p, value, index) => {
 
 /**
  * Takes props from VX components and uses styled-component's theme to return the proper color
- * @param {Object} formatProps - props inherited from visualization component
- * @param {Object} p - props object
  */
 const colorSetter = (formatProps, p) => {
   /* eslint-disable */
@@ -202,13 +200,9 @@ export const TooltipWrapper = styled.div`
   }
 `
 
-const TooltipContainer = styled.div.attrs(p => ({
-  style: {
-    left: `${p.bounds.left}px`,
-    top: `${p.bounds.top}px`,
-    ...p.style
-  }
-}))`
+const TooltipContainer = styled.div<{ bounds: { left: number; top: number } }>`
+  left: ${p => `${p.bounds.left}px`};
+  top: ${p => `${p.bounds.top}px`};
   display: inline-flex;
   position: relative;
   pointer-events: none;
@@ -231,7 +225,15 @@ const boundsSetter = ({ left, rect, parentRect }) => {
 /**
  * TooltipBounder sets bounds for the tooltip and passes them down
  */
-const TooltipBounder = ({ children, rect, parentRect, left, style = {} }) => {
+interface BounderProps {
+  children: React.ReactNode[]
+  rect?: ClientRect
+  parentRect?: ClientRect
+  left: number
+  style?: React.CSSProperties
+}
+
+const TooltipBounder = ({ children, rect, parentRect, left, style }: BounderProps) => {
   const getBounds = () => {
     if (rect && parentRect) {
       return {
@@ -247,7 +249,7 @@ const TooltipBounder = ({ children, rect, parentRect, left, style = {} }) => {
   }
 
   return (
-    <TooltipContainer style={style} bounds={getBounds()}>
+    <TooltipContainer style={style} bounds={getBounds()} id="__viiksetjs_tooltipcontainer">
       {children}
     </TooltipContainer>
   )
@@ -298,7 +300,7 @@ export const Indicator = ({ yCoords, x, stroke, color }) => {
         strokeOpacity={0.5}
         style={{ pointerEvents: 'none' }}
       />
-      {yCoords.map((coord, i) => (
+      {yCoords.map((coord: number, i: number) => (
         <circle
           key={`${coord}-${i}`}
           cx={x}

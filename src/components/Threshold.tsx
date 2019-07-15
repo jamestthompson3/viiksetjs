@@ -1,14 +1,13 @@
-// @flow
 import * as React from 'react'
 import { scaleLinear } from 'd3-scale'
 import get from 'lodash/get'
 import { curveBasis } from '@vx/curve'
 
-import { StyledThreshold } from '../styledComponents'
-import { extractX } from '../../utils/dataUtils'
-import { type RenderedChildProps } from '../../types/index'
+import { StyledThreshold } from './styledComponents'
+import { extractX } from '../utils/dataUtils'
+import { RenderedChildProps } from '../types'
 
-function Threshold({
+function Threshold<T>({
   data,
   y0,
   y1,
@@ -23,7 +22,7 @@ function Threshold({
   aboveAreaProps,
   belowAreaProps,
   lineProps
-}): Props {
+}: Props) {
   // Check if data exists
   if (data.map(item => get(item, y0)).includes(undefined)) {
     // eslint-disable-next-line
@@ -39,7 +38,7 @@ function Threshold({
     return null
   }
 
-  const xPoints = d => (xKey ? get(d, xKey) : extractX(d)[0])
+  const xPoints = (d: T) => (xKey ? get(d, xKey) : extractX(d)[0])
   const dataPoints = [...data.map(item => get(item, y0)), ...data.map(item => get(item, y1))]
   const yScale = scaleLinear()
     .domain([0, Math.max(...dataPoints)])
@@ -49,9 +48,9 @@ function Threshold({
   return (
     <StyledThreshold
       x={xPoints}
-      y0={d => get(d, y0)}
-      y1={d => get(d, y1)}
-      yScale={d => getAxis()(d)}
+      y0={(d: T) => get(d, y0)}
+      y1={(d: T) => get(d, y1)}
+      yScale={(d: T) => getAxis()(d)}
       {...{ xScale, data, aboveAreaProps, belowAreaProps }}
       clipAboveTo={clipAboveTo || 0}
       clipBelowTo={clipBelowTo || height}
@@ -72,15 +71,14 @@ Threshold.defaultProps = {
   }
 }
 
-type Props = {
-  y0: string,
-  y1: string,
-  aboveAreaProps: Object,
-  belowAreaProps: Object,
-  clipBelowTo: number,
-  clipAboveTo: number,
-  lineProps: Object,
-  ...RenderedChildProps
+interface Props extends RenderedChildProps {
+  y0: string;
+  y1: string;
+  aboveAreaProps: Object;
+  belowAreaProps: Object;
+  clipBelowTo: number;
+  clipAboveTo: number;
+  lineProps: Object;
 }
 
 export default React.memo(Threshold)

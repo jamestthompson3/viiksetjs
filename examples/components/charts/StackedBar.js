@@ -43,7 +43,7 @@ export class StackedBarExample extends React.Component {
               },
               y: {
                 tickLabelProps: () => ({
-                  dx: isHorizontal ? '0rem' : '-3rem',
+                  dx: isHorizontal ? '0em' : '-3em',
                   fontSize: 10,
                   strokeWidth: '0.5px',
                   textAnchor: isHorizontal ? 'end' : 'middle'

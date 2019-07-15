@@ -1,8 +1,8 @@
-import React from 'react'
+import * as React from 'react'
 import { SizeMe } from 'react-sizeme'
 import styled from 'styled-components'
 
-const Container = styled.div.attrs({
+const Container = styled.div.attrs<{ x?: number }>({
   style: {
     width: '100%',
     height: '100%'
@@ -11,7 +11,7 @@ const Container = styled.div.attrs({
   position: ${p => (p.x ? 'static' : 'relative')} !important;
 `
 
-export default function withParentSize(BaseComponent) {
+export default function withParentSize(BaseComponent: React.ReactNode) {
   const WrappedComponent = props => {
     const { x } = props
     return (
