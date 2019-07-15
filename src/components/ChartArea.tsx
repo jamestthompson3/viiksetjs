@@ -7,6 +7,7 @@ import isEmpty from 'lodash/isEmpty'
 import head from 'lodash/head'
 import get from 'lodash/get'
 import merge from 'lodash/merge'
+import memoize from 'lodash/memoize'
 import { localPoint } from '@vx/event'
 
 import { extractX, extractY, createScalarData } from '../utils/dataUtils'

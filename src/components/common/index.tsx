@@ -7,27 +7,27 @@ import { determineYScale } from '../../utils/chartUtils'
 import { AxisProps, Margin, ScaleFunction, Axis } from '../.././types/index'
 
 interface GridReturnProps {
-  yScale: ScaleFunction;
-  width: number;
-  left: number;
+  yScale: ScaleFunction
+  width: number
+  left: number
 }
 
 type Grid = (args: GridReturnProps) => React.ReactNode
 
 interface LeftAxisReturnProps {
-  type: string;
-  orientation: string;
-  height: number;
-  yPoints: number[] | string[];
-  margin: Margin;
+  type: string
+  orientation: string
+  height: number
+  yPoints: number[] | string[]
+  margin: Margin
 }
 
 export type LeftAxisReturn = (args: LeftAxisReturnProps) => React.ReactNode
 
 interface BottomAxisReturnProps {
-  margin: Margin;
-  height: number;
-  scale: ScaleFunction;
+  margin: Margin
+  height: number
+  scale: ScaleFunction
 }
 
 export type BottomAxisReturn = (args: BottomAxisReturnProps) => React.ReactNode
@@ -36,7 +36,7 @@ export const buildLeftAxis = ({
   y,
   color
 }: {
-  y: Partial<AxisProps>,
+  y: Partial<AxisProps>
   color: string
 }): LeftAxisReturn =>
   React.memo(function LeftAxis({ type, orientation, yPoints, height, margin }) {
@@ -68,7 +68,7 @@ export const buildBottomAxis = ({
   x,
   color
 }: {
-  x: Partial<AxisProps>,
+  x: Partial<AxisProps>
   color: string
 }): BottomAxisReturn =>
   React.memo(function BottomAxis({ height, margin, scale }) {
@@ -91,13 +91,13 @@ export const buildBottomAxis = ({
     )
   })
 
-export const buildAxis = (
+export function buildAxis(
   biaxialChildren: boolean,
   position: string,
   defaultAxes: Axis,
   axes: Axis,
   color: string
-): BottomAxisReturn | LeftAxisReturn | null => {
+): BottomAxisReturn | LeftAxisReturn | null {
   const { y, x } = merge({}, defaultAxes, axes)
 
   if (position === 'left' && !biaxialChildren && axes.y !== null) {
@@ -110,6 +110,7 @@ export const buildAxis = (
 
   return () => null
 }
+
 export const buildGrid = (gridStroke: string, noGrid: boolean): Grid => {
   if (noGrid) return () => null
   return React.memo(function Grid({ yScale, width, left }) {

@@ -13,8 +13,9 @@ function YAxis({
   margin,
   label,
   labelProps,
-  axes: { y },
   tickLabels,
+  numTicks,
+  tickFormat,
   ...rest
 }) {
   // Check if data exists
@@ -24,7 +25,7 @@ function YAxis({
     return null
   }
 
-  const dataPoints = data.map(item => get(item, axisId))
+  const dataPoints = data.map((item: T) => get(item, axisId))
   const yScale = scaleLinear()
     .domain([0, Math.max(...dataPoints)])
     .range([height, margin.top])
@@ -32,15 +33,15 @@ function YAxis({
     <StyledLeftAxis
       {...{ scale: yScale, label, labelProps, color }}
       left={margin.left}
-      numTicks={y.numTicks}
+      numTicks={numTicks}
       hideTicks
-      tickFormat={y.tickFormat}
+      tickFormat={tickFormat}
       tickLabelProps={
         tickLabels
           ? tickLabels
           : () => ({
-              dy: '-0.25rem',
-              dx: '-0.75rem',
+              dy: '-0.25em',
+              dx: '-0.75em',
               strokeWidth: '0.5px',
               fontWeight: '400',
               textAnchor: 'end',
@@ -53,15 +54,15 @@ function YAxis({
     <StyledRightAxis
       {...{ scale: yScale, label, labelProps, color }}
       left={width}
-      numTicks={y.numTicks}
+      numTicks={numTicks}
       hideTicks
-      tickFormat={y.tickFormat}
+      tickFormat={tickFormat}
       tickLabelProps={
         tickLabels
           ? tickLabels
           : () => ({
-              dy: '-0.25rem',
-              dx: '0.5rem',
+              dy: '-0.25em',
+              dx: '0.5em',
               strokeWidth: '0.5px',
               fontWeight: '400',
               textAnchor: 'end',

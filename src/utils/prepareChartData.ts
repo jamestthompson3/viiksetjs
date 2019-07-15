@@ -1,4 +1,5 @@
 import isEmpty from 'lodash/isEmpty'
+import memoize from 'lodash/memoize'
 
 import { getX, getY, extractLabels } from './dataUtils'
 import { determineXScale, determineYScale } from './chartUtils'
@@ -6,15 +7,9 @@ import { Margin, ScaleFunction, Size } from '../types/index'
 
 const DEFAULT_MARGIN = { top: 18, right: 15, bottom: 15, left: 30 }
 
-export function prepChartData({
-  size,
-  xKey,
-  yKey,
-  type,
-  margin = DEFAULT_MARGIN,
-  data,
-  orientation
-}: Props) {
+export const prepChartData = memoize(prep)
+
+function prep({ size, xKey, yKey, type, margin = DEFAULT_MARGIN, data, orientation }: Props) {
   if (isEmpty(data)) {
     // eslint-disable-next-line
     process.env.NODE_ENV !== 'production' && console.warn('Data is empty, cannot calculate chart')

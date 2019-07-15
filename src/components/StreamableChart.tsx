@@ -7,7 +7,8 @@ import { biaxial } from '../utils/chartUtils'
 import { ScaleFunction, RenderContainerProps, Axis, FromStreamArgs } from '../types/index'
 import withStream from './Streaming/withStream'
 import { LeftAxisReturn, BottomAxisReturn, buildAxis, buildGrid } from './common'
-// import { useChartData } from './DataContext/useChartData'
+import { prepChartData, State } from '../utils/prepareChartData'
+import withParentSize from './Responsive/withParentSize'
 
 const margin = { top: 18, right: 15, bottom: 15, left: 30 }
 
@@ -63,18 +64,21 @@ function StreamableChart<T>({
   orientation,
   color
 }: Props<T>) {
+  const [chartData, setChartData] = React.useState<State>(() => {})
   const chart = React.useRef(null)
   const socket = React.useRef()
-  //FIXME
-  // const { xScale, width, height, yPoints, yScale } = useChartData({
-  //   size,
-  //   margin,
-  //   data,
-  //   xKey,
-  //   yKey,
-  //   type,
-  //   orientation
-  // })
+  React.useEffect(() => {
+    const chartData = prepChartData({
+      data,
+      size,
+      xKey,
+      yKey,
+      margin,
+      type,
+      orientation
+    })
+    setChartData(chartData)
+  }, [data, size, type, margin, orientation, xKey, yKey])
   React.useEffect(() => {
     if (!connection) {
       // eslint-disable-next-line
@@ -84,16 +88,16 @@ function StreamableChart<T>({
 
     socket.current = new window.WebSocket(connection)
 
-    if (this.socket.current) {
-      this.socket.current.onclose = () => console.warn('connection closed')
-      this.socket.current.onmessage = message =>
+    if (socket.current) {
+      socket.current.onclose = () => console.warn('connection closed')
+      socket.current.onmessage = message =>
         fromStream({
           message: streamParser(message),
           mapStream,
           persist
         })
     }
-    return socket.current.close()
+    return () => socket.current.close()
   }, [])
 
   if (isEmpty(data)) return <Loading />
@@ -102,11 +106,21 @@ function StreamableChart<T>({
     socket.current && socket.current.close()
   }
 
+  const { xScale, width, height, yPoints, yScale } = chartData
+  if (!xScale) {
+    return null
+  }
   const biaxialChildren = children && biaxial(children)
   const LeftAxis = buildAxis(biaxialChildren, 'left', defaultAxes, axes, color) as LeftAxisReturn
-  const BottomAxis = buildAxis(biaxialChildren, 'bottom', defaultAxes, axes, color) as BottomAxisReturn
+  const BottomAxis = buildAxis(
+    biaxialChildren,
+    'bottom',
+    defaultAxes,
+    axes,
+    color
+  ) as BottomAxisReturn
   const Grid = buildGrid(gridStroke, noGrid)
-    return (
+  return (
     <svg
       width={size.width}
       height={size.height}
@@ -116,6 +130,10 @@ function StreamableChart<T>({
       }
       ref={chart}
     >
+      <Group left={margin.left}>
+        <Grid yScale={yScale} width={width} left={margin.left} />
+        <LeftAxis {...{ type, orientation, color, yPoints, height, margin }} />
+      </Group>
       {React.Children.map(children, child =>
         React.cloneElement(child, {
           data,
@@ -129,10 +147,6 @@ function StreamableChart<T>({
           inheritedScale: yScale
         })
       )}
-      <Group left={margin.left}>
-        <Grid yScale={yScale} width={width} left={margin.left} />
-          <LeftAxis {...{ type, orientation, color, yPoints, height, margin }} />
-      </Group>
 
       <BottomAxis scale={xScale} height={height} margin={margin} />
     </svg>
@@ -152,19 +166,19 @@ StreamableChart.defaultProps = {
 }
 
 interface Props<T> extends RenderContainerProps {
-  data: T[];
-  persist: number;
-  fromStream(args: FromStreamArgs): void;
-  xScale: ScaleFunction;
-  yScale: ScaleFunction;
-  loadingMessage: React.ReactNode;
-  yScales: { [key: string]: ScaleFunction };
-  yPoints: any[];
-  chartData: any[];
-  stopPersist: number;
-  connection: string;
-  streamParser: (message: any) => any;
-  mapStream(data: any, message: string): any[];
+  data: T[]
+  persist: number
+  fromStream(args: FromStreamArgs): void
+  xScale: ScaleFunction
+  yScale: ScaleFunction
+  loadingMessage: React.ReactNode
+  yScales: { [key: string]: ScaleFunction }
+  yPoints: any[]
+  chartData: any[]
+  stopPersist: number
+  connection: string
+  streamParser: (message: any) => any
+  mapStream(data: any, message: string): any[]
 }
 
-export default withStream(StreamableChart)
+export default withStream(withParentSize(StreamableChart))

@@ -1,5 +1,4 @@
 import * as React from 'react'
-import PropTypes from 'prop-types'
 import { Group } from '@vx/group'
 import { stack } from 'd3-shape'
 import { scaleOrdinal, scaleBand, scaleLinear, scaleTime } from 'd3-scale'
@@ -13,7 +12,7 @@ import { extractLabels, extractX } from '../../utils/dataUtils'
 import { StyledBar } from '../styledComponents'
 import { BarChartProps } from '../../types'
 
-function calcData({ data, keys, type, xPoints, yPoints, margin, height, width }) {
+function calcData<T>({ data, keys, type, orientation, xPoints, yPoints, margin, height, width }) {
   const dataDomain = Math.max(
     ...flatten(
       data.map((d: T) => keys.map((key: string) => get(d, key))).map((arr: number[]) => sum(arr))
@@ -22,7 +21,6 @@ function calcData({ data, keys, type, xPoints, yPoints, margin, height, width })
 
   const scalar = type === 'linear' ? scaleLinear : scaleTime
 
-  console.log('CALLING INSIDE OF SCALAR FUNCTION')
   if (orientation === 'horizontal') {
     const xScale = scalar()
       .domain([0, dataDomain])
@@ -66,9 +64,17 @@ function StackedBar<T>({
   React.useEffect(() => {
     declareBar()
   }, [])
-  console.log('ORIENTATION: ', orientation)
-  // const [scales, setScales] = React.useState({ xScale: null, yScale: null })
-  const scales = calcData({ data, keys, type, xPoints, yPoints, margin, height, width })
+  const scales = calcData({
+    data,
+    keys,
+    type,
+    xPoints,
+    yPoints,
+    margin,
+    height,
+    width,
+    orientation
+  })
 
   const determineBarWidth = ({ d, isHorizontal, xScale, yScale }) => {
     if (isHorizontal) {
@@ -89,7 +95,6 @@ function StackedBar<T>({
     .domain(keys || extractLabels(data[0]))
     .range(colors)
   const { xScale, yScale } = scales
-  console.log('xScale: ', xScale, 'yScale: ', yScale)
   const isHorizontal = orientation === 'horizontal'
   const series = stack().keys(keys || extractLabels(data[0]))(data)
   const bandwidth = isHorizontal ? yScale.bandwidth() : xScale.bandwidth()
