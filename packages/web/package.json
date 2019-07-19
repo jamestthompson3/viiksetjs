@@ -1,5 +1,5 @@
 {
-  "name": "web",
+  "name": "@viiksetjs/web",
   "version": "0.1.0",
   "main": "dist/index.js",
   "module": "dist/web.esm.js",
@@ -13,7 +13,7 @@
     "test": "tsdx test --env=jsdom"
   },
   "peerDependencies": {
-    "react": ">=16"
+    "styled-components": "^4.1.3"
   },
   "husky": {
     "hooks": {
@@ -35,8 +35,15 @@
     "pretty-quick": "^1.11.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "styled-components": "^4.3.2",
     "tsdx": "^0.7.2",
     "tslib": "^1.10.0",
     "typescript": "^3.5.3"
+  },
+  "dependencies": {
+    "@viiksetjs/utils": "^0.1.0",
+    "@vx/event": "^0.0.189",
+    "@vx/group": "^0.0.190",
+    "@vx/shape": "^0.0.190"
   }
 }

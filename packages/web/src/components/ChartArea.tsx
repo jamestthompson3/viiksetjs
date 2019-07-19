@@ -1,26 +1,43 @@
-import * as React from 'react'
-import { Group } from '@vx/group'
-import { Bar } from '@vx/shape'
-import { bisect } from 'd3-array'
-import flow from 'lodash/flow'
-import isEmpty from 'lodash/isEmpty'
-import head from 'lodash/head'
-import get from 'lodash/get'
-import merge from 'lodash/merge'
-import memoize from 'lodash/memoize'
-import { localPoint } from '@vx/event'
+import * as React from 'react';
+import { Group } from '@vx/group';
+import { Bar } from '@vx/shape';
+import { bisect } from 'd3-array';
+import flow from 'lodash/flow';
+import isEmpty from 'lodash/isEmpty';
+import head from 'lodash/head';
+import get from 'lodash/get';
+import merge from 'lodash/merge';
+import { localPoint } from '@vx/event';
 
-import { extractX, extractY, createScalarData } from '../utils/dataUtils'
-import { formatTicks, formatXTicks } from '../utils/formatUtils'
-import { findTooltipX, recursiveCloneChildren, biaxial } from '../utils/chartUtils'
-import { prepChartData, State } from '../utils/prepareChartData'
-import { TooltipData, ScaleFunction, RenderContainerProps, Axis } from '../types/index'
-import withTooltip from './Tooltip/withTooltip'
-import withParentSize from './Responsive/withParentSize'
-import { Indicator, defaultTooltipRenderer, defaultTooltipContent } from './styledComponents'
+import { extractX, extractY, createLinearScales } from '@viiksetjs/utils';
+import { formatTicks, formatXTicks } from '@viiksetjs/utils';
+import {
+  findTooltipX,
+  recursiveCloneChildren,
+  biaxial,
+} from '@viiksetjs/utils';
+import { prepChartData, State } from '@viiksetjs/utils';
+import {
+  TooltipData,
+  ScaleFunction,
+  RenderContainerProps,
+  Axis,
+} from '../types/index';
+import withTooltip from './Tooltip/withTooltip';
+import withParentSize from './Responsive/withParentSize';
+import {
+  Indicator,
+  defaultTooltipRenderer,
+  defaultTooltipContent,
+} from './styledComponents';
 
-import { buildAxis, BottomAxisReturn, LeftAxisReturn, buildGrid } from './common/index'
-const DEFAULT_MARGIN = { top: 18, right: 15, bottom: 15, left: 30 }
+import {
+  buildAxis,
+  BottomAxisReturn,
+  LeftAxisReturn,
+  buildGrid,
+} from './common/index';
+const DEFAULT_MARGIN = { top: 18, right: 15, bottom: 15, left: 30 };
 
 const defaultAxes: Axis = {
   x: {
@@ -28,37 +45,37 @@ const defaultAxes: Axis = {
       fontWeight: 400,
       strokeWidth: '0.5px',
       textAnchor: 'start',
-      fontSize: 12
+      fontSize: 12,
     }),
     numTicks: 6,
     label: '',
     stroke: '#000',
     tickStroke: 'transparent',
     labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black', dy: -10 },
-    tickFormat: formatXTicks
+    tickFormat: formatXTicks,
   },
   y: {
     tickLabelProps: () => ({
       strokeWidth: '0.5px',
       fontWeight: 400,
       textAnchor: 'end',
-      fontSize: 12
+      fontSize: 12,
     }),
     numTicks: 4,
     label: '',
     stroke: '#000',
     tickStroke: 'transparent',
     tickFormat: formatTicks,
-    labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' }
-  }
-}
+    labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' },
+  },
+};
 
 const defaultTooltip = {
   indicator: Indicator,
   renderer: defaultTooltipRenderer,
   content: defaultTooltipContent,
-  styles: {}
-}
+  styles: {},
+};
 
 function ChartArea<T>({
   children,
@@ -84,12 +101,12 @@ function ChartArea<T>({
   mouseX,
   showTooltip,
   mouseY,
-  x
+  x,
 }: Props<T>) {
-  const chart = React.useRef(null)
-  const [chartData, setChartData] = React.useState<State>(() => {})
-  const [bar, setBar] = React.useState(false)
-  const Grid = buildGrid(gridStroke, noGrid)
+  const chart = React.useRef(null);
+  const [chartData, setChartData] = React.useState<State>(() => {});
+  const [bar, setBar] = React.useState(false);
+  const Grid = buildGrid(gridStroke, noGrid);
   React.useEffect(() => {
     const chartData = prepChartData({
       data,
@@ -98,20 +115,28 @@ function ChartArea<T>({
       yKey,
       margin,
       type,
-      orientation
-    })
-    setChartData(chartData)
-  }, [data, size, type, margin, orientation, xKey, yKey])
+      orientation,
+    });
+    setChartData(chartData);
+  }, [data, size, type, margin, orientation, xKey, yKey]);
   // To prevent tooltips from not showing on bar chart due to minification changing names
-  const declareBar = React.useCallback(() => setBar(true), [])
+  const declareBar = React.useCallback(() => setBar(true), []);
 
   const mouseMove = React.useCallback(
-    ({ event, xPoints, xScale, yScale, yScales, dataKeys, datum }: MouseMove) => {
-      if (tooltip === null || noTool) return
+    ({
+      event,
+      xPoints,
+      xScale,
+      yScale,
+      yScales,
+      dataKeys,
+      datum,
+    }: MouseMove) => {
+      if (tooltip === null || noTool) return;
 
-      const svgPoint = localPoint(chart.current, event)
-      const mouseX = get(svgPoint, 'x')
-      const mouseY = get(svgPoint, 'y')
+      const svgPoint = localPoint(chart.current, event);
+      const mouseX = get(svgPoint, 'x');
+      const mouseY = get(svgPoint, 'y');
 
       // Case for data contained in bar / pie charts:
       // there won't be an associated value based on precise
@@ -122,70 +147,93 @@ function ChartArea<T>({
           x: mouseX,
           mouseX,
           mouseY,
-          showTooltip: true
-        })
+          showTooltip: true,
+        });
       }
 
-      const xValueOffset = biaxial(children) ? 0 : margin.right
-      const xValue = xScale.invert(get(svgPoint, 'x') - xValueOffset)
+      const xValueOffset = biaxial(children) ? 0 : margin.right;
+      const xValue = xScale.invert(get(svgPoint, 'x') - xValueOffset);
 
       return flow(
         (xValue: number) => bisect(xPoints as number[], xValue),
         (index: number) => {
           // Find the closest data point based on the actual mouse position
-          const bounds = { dLeft: data[index - 1], dRight: data[index] }
+          const bounds = { dLeft: data[index - 1], dRight: data[index] };
           // If the calculated xValue minus the value to the left is greater than
           // The indexed value minuse the calcuated value, take the right hand
           // value if available. If not, take the left hand value if available.
-          return xValue - (xPoints[index - 1] as number) > (xPoints[index] as number) - xValue
+          return xValue - (xPoints[index - 1] as number) >
+            (xPoints[index] as number) - xValue
             ? bounds.dRight || bounds.dLeft
-            : bounds.dLeft || bounds.dRight
+            : bounds.dLeft || bounds.dRight;
         },
         (calculatedData: T) => {
-          const calculatedX = head(extractX(calculatedData, xKey))
-          const x = findTooltipX({ type, calculatedX, xScale })
+          const calculatedX = head(extractX(calculatedData, xKey));
+          const x = findTooltipX({ type, calculatedX, xScale });
           const yCoords = yScales
             ? dataKeys.map(key => yScales[key](calculatedData[key]))
-            : extractY(calculatedData).map(item => yScale(item))
+            : extractY(calculatedData).map(item => yScale(item));
           return updateTooltip({
             calculatedData,
             x,
             showTooltip: true,
             mouseX,
             mouseY,
-            yCoords
-          })
+            yCoords,
+          });
         }
-      )(xValue)
+      )(xValue);
     },
     []
-  )
+  );
 
   const mouseLeave = React.useCallback(() => {
-    updateTooltip({ calculatedData: null, x: null, yCoords: null, showTooltip: false })
-  }, [])
+    updateTooltip({
+      calculatedData: null,
+      x: null,
+      yCoords: null,
+      showTooltip: false,
+    });
+  }, []);
 
-  const biaxialChildren = children && biaxial(children)
-  const LeftAxis = buildAxis(biaxialChildren, 'left', defaultAxes, axes, color) as LeftAxisReturn
+  const biaxialChildren = children && biaxial(children);
+  const LeftAxis = buildAxis(
+    biaxialChildren,
+    'left',
+    defaultAxes,
+    axes,
+    color
+  ) as LeftAxisReturn;
   const BottomAxis = buildAxis(
     biaxialChildren,
     'bottom',
     defaultAxes,
     axes,
     color
-  ) as BottomAxisReturn
+  ) as BottomAxisReturn;
   const {
     indicator: Indicator,
     renderer: tooltipRenderer,
     styles: tooltipStyles,
-    content: tooltipContent
-  } = merge({}, defaultTooltip, tooltip)
+    content: tooltipContent,
+  } = merge({}, defaultTooltip, tooltip);
   if (isEmpty(chartData)) {
-    return null
+    return null;
   }
-  const { xScale, dataKeys, width, height, yPoints, xPoints, yScale } = chartData
+  const {
+    xScale,
+    dataKeys,
+    width,
+    height,
+    yPoints,
+    xPoints,
+    yScale,
+  } = chartData;
   return (
-    <div style={{ width: size.width, height: size.height }} id="viiksetjsWrapperDiv">
+    <div
+      style={{ width: size.width, height: size.height }}
+      id="viiksetjsWrapperDiv"
+    >
       <svg
         width={size.width}
         height={size.height}
@@ -219,7 +267,7 @@ function ChartArea<T>({
             mouseLeave,
             xKey,
             yKey,
-            inheritedScale: yScale
+            inheritedScale: yScale,
           })}
           {bar || (
             <Bar
@@ -234,8 +282,10 @@ function ChartArea<T>({
                   xPoints,
                   xScale,
                   yScale,
-                  yScales: biaxialChildren && createScalarData(data, dataKeys, height, margin),
-                  dataKeys
+                  yScales:
+                    biaxialChildren &&
+                    createLinearScales(data, dataKeys, height, margin),
+                  dataKeys,
                 })
               }
               onTouchMove={(event: React.SyntheticEvent) =>
@@ -244,17 +294,22 @@ function ChartArea<T>({
                   xPoints,
                   xScale,
                   yScale,
-                  yScales: biaxialChildren && createScalarData(data, dataKeys, height, margin),
-                  dataKeys
+                  yScales:
+                    biaxialChildren &&
+                    createLinearScales(data, dataKeys, height, margin),
+                  dataKeys,
                 })
               }
               onTouchEnd={mouseLeave}
               onMouseLeave={mouseLeave}
             />
           )}
-          {glyphRenderer && glyphRenderer({ width, height, xScale, yScale, margin })}
+          {glyphRenderer &&
+            glyphRenderer({ width, height, xScale, yScale, margin })}
           <BottomAxis scale={xScale} height={height} margin={margin} />
-          {x && !bar && <Indicator {...{ yCoords, x, stroke, color, height, mouseX }} />}
+          {x && !bar && (
+            <Indicator {...{ yCoords, x, stroke, color, height, mouseX }} />
+          )}
         </Group>
       </svg>
       {showTooltip &&
@@ -269,11 +324,11 @@ function ChartArea<T>({
             mouseX,
             mouseY,
             height,
-            color
-          }
+            color,
+          },
         })}
     </div>
-  )
+  );
 }
 
 ChartArea.defaultProps = {
@@ -281,41 +336,41 @@ ChartArea.defaultProps = {
   margin: DEFAULT_MARGIN,
   axes: defaultAxes,
   tooltip: defaultTooltip,
-  glyphRenderer: () => null
-}
+  glyphRenderer: () => null,
+};
 
 interface MouseMove {
-  event: React.SyntheticEvent
-  xPoints: number[] | string[]
-  xScale: ScaleFunction
-  yScale: ScaleFunction
-  yScales: false | { [key: string]: ScaleFunction }
-  dataKeys: string[]
-  datum?: Object
+  event: React.SyntheticEvent;
+  xPoints: number[] | string[];
+  xScale: ScaleFunction;
+  yScale: ScaleFunction;
+  yScales: false | { [key: string]: ScaleFunction };
+  dataKeys: string[];
+  datum?: Object;
 }
 
 interface TooltipProps<T> {
-  indicator(indicatorProps: Partial<TooltipData<T>>): React.ReactNode
-  renderer(renderProps: Partial<TooltipData<T>>): React.ReactNode
-  content(tooltipData: T): React.ReactNode
+  indicator(indicatorProps: Partial<TooltipData<T>>): React.ReactNode;
+  renderer(renderProps: Partial<TooltipData<T>>): React.ReactNode;
+  content(tooltipData: T): React.ReactNode;
   styles: {
-    wrapper: Object
-    content: Object
-  }
+    wrapper: Object;
+    content: Object;
+  };
 }
 
 interface Props<T> extends RenderContainerProps {
-  data: T[]
-  noTool: boolean
-  noGrid: boolean
-  calculatedData?: T
-  yCoords?: number[]
-  mouseX?: number
-  mouseY?: number
-  tooltipData?: T
-  showTooltip: boolean
-  tooltip: Partial<TooltipProps<T>>
-  updateTooltip(tooltipData: Partial<TooltipData<T>>): void
+  data: T[];
+  noTool: boolean;
+  noGrid: boolean;
+  calculatedData?: T;
+  yCoords?: number[];
+  mouseX?: number;
+  mouseY?: number;
+  tooltipData?: T;
+  showTooltip: boolean;
+  tooltip: Partial<TooltipProps<T>>;
+  updateTooltip(tooltipData: Partial<TooltipData<T>>): void;
 }
 
-export default withTooltip(withParentSize(ChartArea))
+export default withTooltip(withParentSize(ChartArea));

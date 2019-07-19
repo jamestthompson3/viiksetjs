@@ -2194,6 +2194,13 @@
   dependencies:
     d3-shape "^1.0.6"
 
+"@vx/curve@0.0.189":
+  version "0.0.189"
+  resolved "https://registry.yarnpkg.com/@vx/curve/-/curve-0.0.189.tgz#0d1961a7dca69b65cdc1d5d325c75290e905771f"
+  integrity sha512-wD4OhvlcURIDjnWvaGurWqMEseqUoI4Y3vtDXS7c4VmdhkX5O4y6PVQaTkg2I417jMkOz6kU+Xc50AzB0tJoqw==
+  dependencies:
+    d3-shape "^1.0.6"
+
 "@vx/event@^0.0.189":
   version "0.0.189"
   resolved "https://registry.yarnpkg.com/@vx/event/-/event-0.0.189.tgz#5838f3cf64cc9ab20e71532431708fc68f61ebb9"
@@ -2228,6 +2235,14 @@
     classnames "^2.2.5"
     prop-types "^15.6.2"
 
+"@vx/group@0.0.190":
+  version "0.0.190"
+  resolved "https://registry.yarnpkg.com/@vx/group/-/group-0.0.190.tgz#9bc1e568dbd44c04a0abad9a9a74c7364f231a35"
+  integrity sha512-tyFIQS4iB987281ZWNmozdjqzyBrM4lsw4J8ObeJTeybTi1T5EgdkN/pmviCCIcT29Q1kVtFOC8FoQLXkcimcQ==
+  dependencies:
+    classnames "^2.2.5"
+    prop-types "^15.6.2"
+
 "@vx/pattern@^0.0.183":
   version "0.0.183"
   resolved "https://registry.yarnpkg.com/@vx/pattern/-/pattern-0.0.183.tgz#0e1781a0b071a7a5109ad33ad99744013d842cb8"
@@ -2246,7 +2261,7 @@
   resolved "https://registry.yarnpkg.com/@vx/point/-/point-0.0.189.tgz#2a52824dd3e7a1e74188c2ee9407aeee2a2a7a10"
   integrity sha512-OZW05k6Kozta1QAP3T5dEFO0OQH8ppf/dnOnF2DnTJQ4W7a+ctLVJQ0kBDbsWG2xB+sOiMjvccfMOZZKb5JnvA==
 
-"@vx/shape@0.0.183", "@vx/shape@^0.0.183":
+"@vx/shape@0.0.183":
   version "0.0.183"
   resolved "https://registry.yarnpkg.com/@vx/shape/-/shape-0.0.183.tgz#1001590586d90abf7769bc7459af49daf4c4d4ed"
   integrity sha512-+CoyLds/JJX/6KONz6tLBSQx8HluTDCQZectSMpXnLLTZPvOzPGMYqS3GqtkC8leWlggh33RCWPVJoCAePFiNQ==
@@ -2254,6 +2269,19 @@
     "@vx/curve" "0.0.182"
     "@vx/group" "0.0.183"
     "@vx/point" "0.0.182"
+    classnames "^2.2.5"
+    d3-path "^1.0.5"
+    d3-shape "^1.2.0"
+    prop-types "^15.5.10"
+
+"@vx/shape@^0.0.190":
+  version "0.0.190"
+  resolved "https://registry.yarnpkg.com/@vx/shape/-/shape-0.0.190.tgz#2807bb53dbea0922c9c12651a6bc33f8abe6d0e4"
+  integrity sha512-insrYP7+vQCZ1Eekq0tJ7impeghnXRodakSuhGkPITjHZUYIHRYswuV5ArfoeLtR+9VWA+BaIZ/d0L1ZNwdCkg==
+  dependencies:
+    "@vx/curve" "0.0.189"
+    "@vx/group" "0.0.190"
+    "@vx/point" "0.0.189"
     classnames "^2.2.5"
     d3-path "^1.0.5"
     d3-shape "^1.2.0"
