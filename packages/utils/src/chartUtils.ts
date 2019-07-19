@@ -5,6 +5,7 @@ import {
   scaleBand,
   ScaleBand,
   ScaleLinear,
+  ScaleTime,
 } from 'd3-scale';
 import { ScaleProps, ScaleFunction } from './typedef';
 import head from 'lodash/head';
@@ -40,7 +41,7 @@ export const determineXScale = ({
   width,
   orientation,
   margin,
-}: Partial<ScaleProps>): ScaleFunction<string | number, string | number> => {
+}: Partial<ScaleProps>): ScaleFunction<any, any> => {
   const range = [get(margin, 'left', 0), width || 0];
   const sortedX = sortedUniq(xPoints as number[]);
   const sortedDomain = [head(sortedX) || 0, last(sortedX) || 0];
@@ -62,7 +63,7 @@ export const determineXScale = ({
     default:
       return scaleTime()
         .domain(sortedDomain)
-        .range(range);
+        .range(range) as ScaleTime<number, number>;
   }
 };
 
@@ -73,7 +74,7 @@ export const determineYScale = ({
   height,
   invertedRange,
   margin,
-}: Partial<ScaleProps>): ScaleFunction<string | number, string | number> => {
+}: Partial<ScaleProps>): ScaleFunction<any, any> => {
   const marginTop = get(margin, 'top', 0) as number;
   const range = [height as number, marginTop];
   const reverseRange = [marginTop, height || 0];

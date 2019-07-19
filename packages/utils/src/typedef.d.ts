@@ -38,3 +38,8 @@ interface ScaleProps {
   orientation: string;
   margin: Margin;
 }
+
+export interface Size {
+  width: number;
+  height: number;
+}

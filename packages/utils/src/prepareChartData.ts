@@ -3,13 +3,15 @@ import memoize from 'lodash/memoize';
 
 import { getX, getY, extractLabels } from './dataUtils';
 import { determineXScale, determineYScale } from './chartUtils';
-import { Margin, ScaleFunction, Size } from '../types/index';
+import { Margin, ScaleFunction, Size } from './typedef';
 
 const DEFAULT_MARGIN = { top: 18, right: 15, bottom: 15, left: 30 };
 
-export const prepChartData = memoize(prep);
+export function prepChartData(): Function {
+  return memoize(prep);
+}
 
-function prep({
+function prep<R, O>({
   size,
   xKey,
   yKey,
@@ -39,7 +41,7 @@ function prep({
     orientation,
   });
   const xScale = determineXScale({ type, width, xPoints, margin });
-  const chartData: State = {
+  const chartData: State<R, O> = {
     width,
     height,
     xPoints,
@@ -52,12 +54,12 @@ function prep({
   return chartData;
 }
 
-export interface State {
+export interface State<R, O> {
   width?: number;
   height?: number;
-  xScale?: ScaleFunction;
-  yScale?: ScaleFunction;
-  yScales?: { [key: string]: ScaleFunction } | false;
+  xScale?: ScaleFunction<R, O>;
+  yScale?: ScaleFunction<R, O>;
+  yScales?: { [key: string]: ScaleFunction<any, any> } | false;
   biaxialChildren?: boolean;
   dataKeys?: string[];
   yPoints?: number[] | string[];
