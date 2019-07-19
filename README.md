@@ -48,7 +48,6 @@ To build the examples folder, run `yarn buildExamples` and open then `examples/i
         }),
       numTicks: 4
     }
-
   }}
   tooltip={{
     styles: {
