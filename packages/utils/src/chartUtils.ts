@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { scaleLinear, scaleTime, scaleBand } from 'd3-scale';
-import { Margin, ScaleFunction } from './typedef';
+import { scaleLinear, scaleTime, scaleBand, ScaleBand } from 'd3-scale';
+import { ScaleProps, ScaleFunction } from './typedef';
 import head from 'lodash/head';
+import get from 'lodash/get';
 import last from 'lodash/last';
 import sortedUniq from 'lodash/sortedUniq';
 
@@ -10,7 +11,7 @@ import sortedUniq from 'lodash/sortedUniq';
  */
 export const recursiveCloneChildren = (
   children: React.ReactNode,
-  props: Object
+  props: React.Props<any>
 ): React.ReactNode =>
   React.Children.map(children, child => {
     if (!React.isValidElement(child)) return child;
@@ -27,39 +28,29 @@ export const recursiveCloneChildren = (
     return child;
   });
 
-type ScaleProps = {
-  type: string;
-  xPoints: number[] | string[];
-  yPoints: number[] | string[];
-  width: number;
-  invertedRange: boolean;
-  height: number;
-  orientation: string;
-  margin: Margin;
-};
-
 export const determineXScale = ({
   type,
   xPoints,
   width,
   margin,
-}: Partial<ScaleProps>): ScaleFunction => {
-  const range = [margin.left, width];
+}: Partial<ScaleProps>): ScaleFunction<string | number, string | number> => {
+  const range = [get(margin, 'left', 0), width || 0];
   const sortedX = sortedUniq(xPoints as number[]);
+  const sortedDomain = [head(sortedX) || 0, last(sortedX) || 0];
 
   switch (type) {
     case 'ordinal':
       return scaleBand()
         .domain(xPoints as string[])
-        .range(range as [number, number])
-        .padding(0.1);
+        .range([get(margin, 'left', 0), width || 0])
+        .padding(0.1) as ScaleBand<React.ReactText>;
     case 'linear':
       return scaleLinear()
-        .domain([head(sortedX), last(sortedX)])
+        .domain(sortedDomain)
         .range(range);
     default:
       return scaleTime()
-        .domain([head(sortedX), last(sortedX)])
+        .domain(sortedDomain)
         .range(range);
   }
 };
@@ -71,9 +62,10 @@ export const determineYScale = ({
   height,
   invertedRange,
   margin,
-}: Partial<ScaleProps>): ScaleFunction => {
-  const range = [height, margin.top];
-  const reverseRange = [margin.top, height];
+}: Partial<ScaleProps>): ScaleFunction<string | number, string | number> => {
+  const marginTop = get(margin, 'top', 0) as number;
+  const range = [height as number, marginTop];
+  const reverseRange = [marginTop, height || 0];
   switch (type) {
     case 'ordinal':
       return scaleLinear()
@@ -81,10 +73,10 @@ export const determineYScale = ({
         .range(range);
     case 'linear':
       return orientation === 'horizontal'
-        ? scaleBand()
+        ? (scaleBand()
             .domain(yPoints as string[])
-            .range([height, margin.top])
-            .padding(0.1)
+            .range([height as number, marginTop])
+            .padding(0.1) as ScaleBand<React.ReactText>)
         : scaleLinear()
             .domain([0, Math.max(...(yPoints as number[]))])
             .range(invertedRange ? reverseRange : range);
