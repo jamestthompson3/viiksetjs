@@ -17,3 +17,10 @@ export interface Margin {
   top: number;
   bottom: number;
 }
+
+interface ScalarObject<R, O> {
+  [key: string]: ScaleFunction<R, O>;
+}
+interface GenericNumericData {
+  [key: string]: number;
+}

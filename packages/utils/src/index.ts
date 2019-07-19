@@ -6,5 +6,5 @@ export {
   extractY,
   extractX,
   extractLabels,
-  createScalarData,
+  createLinearScales,
 } from './dataUtils';

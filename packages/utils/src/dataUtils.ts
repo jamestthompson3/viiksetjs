@@ -5,12 +5,13 @@ import last from 'lodash/last';
 import get from 'lodash/get';
 import parse from 'date-fns/parse';
 import format from 'date-fns/format';
-import { Margin, ScaleFunction } from './typedef';
+import { Margin, ScalarObject, GenericNumericData } from './typedef';
 
-export const parseIfDate = (data: Object): Date | void => {
+export const parseIfDate = (data: Object): Date | undefined => {
   if (typeof data === 'string' || data instanceof Date) {
     return new Date(format(parse(data)));
   }
+  return undefined;
 };
 
 type Applicator<T> = (arg: any) => T;
@@ -34,8 +35,13 @@ export function parseObject<T>(
 export const getX = (data: Object[], xKey?: string): any[] =>
   xKey
     ? data.map(datum => get(datum, xKey))
-    : flatten(data.map(datum => parseObject(datum, 'string', parseIfDate)));
-
+    : flatten(
+        data.map(datum =>
+          parseObject<string>(datum, 'string').map((d: string) =>
+            parseIfDate(d)
+          )
+        )
+      );
 /**
  * Takes an array of objects and returns an array of y-value points
  */
@@ -56,7 +62,9 @@ export const extractY = (datum: Object, yKey: string | null = null): any[] =>
 export const extractX = (datum: Object, xKey: string | null = null): any[] =>
   xKey
     ? [get(datum, xKey)]
-    : flatten(parseObject(datum, 'string', parseIfDate));
+    : flatten(
+        parseObject<string>(datum, 'string').map((d: string) => parseIfDate(d))
+      );
 /**
  * Takes a data object and extracts all Y labels by parsing which values contain numbers
  */
@@ -67,40 +75,38 @@ export const extractLabels = (datum: Object): string[] =>
         return head(value);
       }
     })
-    // eslint-disable-next-line
   ).filter((i: string) => i != null);
 
-interface ScalarObject<R,O> {
-  [key: string]: ScaleFunction<R, O>;
-}
 /**
  * Takes four parameters and produces and object with a scale for each column
  * in the dataset
  */
-export function createScalarData<R, O>  (
-  data: Object[],
+export function createLinearScales(
+  data: GenericNumericData[],
   dataKeys: string[],
   height: number,
   margin: Margin
-): ScalarObject<R, O> {
-  const scalarObject: ScalarObject<R, O> = {};
-  dataKeys.map(
-    key =>
-      (scalarObject[key] = scaleLinear()
+): ScalarObject<number, number> {
+  const scalarObject: ScalarObject<number, number> = dataKeys.reduce(
+    (accu: ScalarObject<number, number>, curr: string) => {
+      accu[curr] = scaleLinear()
         .domain([
           0,
           Math.max(
             ...data.map(item => {
-              if (!item[key]) {
-                new Error(`no data key by name of ${key} found`);
+              if (!item[curr]) {
+                new Error(`no data key by name of ${curr} found`);
                 return 0;
               }
 
-              return item[key];
+              return item[curr];
             })
           ),
         ])
-        .range([height, margin.top]))
+        .range([height, margin.top]);
+      return accu;
+    },
+    {}
   );
   return scalarObject;
-};
+}
