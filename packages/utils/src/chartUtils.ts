@@ -32,6 +32,7 @@ export const determineXScale = ({
   type,
   xPoints,
   width,
+  orientation,
   margin,
 }: Partial<ScaleProps>): ScaleFunction<string | number, string | number> => {
   const range = [get(margin, 'left', 0), width || 0];
@@ -40,13 +41,17 @@ export const determineXScale = ({
 
   switch (type) {
     case 'ordinal':
-      return scaleBand()
-        .domain(xPoints as string[])
-        .range([get(margin, 'left', 0), width || 0])
-        .padding(0.1) as ScaleBand<React.ReactText>;
+      return orientation === 'horizontal'
+        ? scaleLinear()
+            .domain([0, Math.max(...(xPoints as number[]))])
+            .range(range)
+        : (scaleBand()
+            .domain(xPoints as string[])
+            .range([get(margin, 'left', 0), width || 0])
+            .padding(0.1) as ScaleBand<React.ReactText>);
     case 'linear':
       return scaleLinear()
-        .domain(sortedDomain)
+        .domain([0, Math.max(...(xPoints as number[]))])
         .range(range);
     default:
       return scaleTime()
@@ -67,11 +72,11 @@ export const determineYScale = ({
   const range = [height as number, marginTop];
   const reverseRange = [marginTop, height || 0];
   switch (type) {
-    case 'ordinal':
+    case 'linear':
       return scaleLinear()
         .domain([0, Math.max(...(yPoints as number[]))])
         .range(range);
-    case 'linear':
+    case 'ordinal':
       return orientation === 'horizontal'
         ? (scaleBand()
             .domain(yPoints as string[])

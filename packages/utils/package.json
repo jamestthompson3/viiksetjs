@@ -1,5 +1,5 @@
 {
-  "name": "utils",
+  "name": "@viiksetjs/utils",
   "version": "0.1.0",
   "main": "dist/index.js",
   "module": "dist/utils.esm.js",

@@ -30,7 +30,7 @@ interface GenericNumericData {
 
 interface ScaleProps {
   type: string;
-  xPoints: number[] | string[];
+  xPoints: number[] | string[] | Date[];
   yPoints: number[] | string[];
   width: number;
   invertedRange: boolean;
