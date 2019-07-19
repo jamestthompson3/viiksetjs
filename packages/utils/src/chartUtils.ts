@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { scaleLinear, scaleTime, scaleBand, ScaleBand } from 'd3-scale';
+import {
+  scaleLinear,
+  scaleTime,
+  scaleBand,
+  ScaleBand,
+  ScaleLinear,
+} from 'd3-scale';
 import { ScaleProps, ScaleFunction } from './typedef';
 import head from 'lodash/head';
 import get from 'lodash/get';
@@ -42,9 +48,9 @@ export const determineXScale = ({
   switch (type) {
     case 'ordinal':
       return orientation === 'horizontal'
-        ? scaleLinear()
+        ? (scaleLinear()
             .domain([0, Math.max(...(xPoints as number[]))])
-            .range(range)
+            .range(range) as ScaleLinear<number, number>)
         : (scaleBand()
             .domain(xPoints as string[])
             .range([get(margin, 'left', 0), width || 0])
@@ -52,7 +58,7 @@ export const determineXScale = ({
     case 'linear':
       return scaleLinear()
         .domain([0, Math.max(...(xPoints as number[]))])
-        .range(range);
+        .range(range) as ScaleLinear<number, number>;
     default:
       return scaleTime()
         .domain(sortedDomain)
@@ -75,20 +81,23 @@ export const determineYScale = ({
     case 'linear':
       return scaleLinear()
         .domain([0, Math.max(...(yPoints as number[]))])
-        .range(range);
+        .range(range) as ScaleLinear<number, number>;
     case 'ordinal':
       return orientation === 'horizontal'
         ? (scaleBand()
             .domain(yPoints as string[])
             .range([height as number, marginTop])
             .padding(0.1) as ScaleBand<React.ReactText>)
-        : scaleLinear()
+        : (scaleLinear()
             .domain([0, Math.max(...(yPoints as number[]))])
-            .range(invertedRange ? reverseRange : range);
+            .range(invertedRange ? reverseRange : range) as ScaleLinear<
+            number,
+            number
+          >);
     default:
       return scaleLinear()
         .domain([0, Math.max(...(yPoints as number[]))])
-        .range(range);
+        .range(range) as ScaleLinear<number, number>;
   }
 };
 
@@ -97,21 +106,13 @@ export const determineYScale = ({
  * TODO Support more chart types
  */
 export const findTooltipX = ({
-  type,
   calculatedX,
   xScale,
 }: {
-  type: string;
   calculatedX: number;
   xScale(num: number): number;
 }): number => {
-  switch (type) {
-    case 'ordinal':
-    case 'linear':
-      return xScale(calculatedX);
-    default:
-      return xScale(calculatedX);
-  }
+  return xScale(calculatedX);
 };
 
 /**

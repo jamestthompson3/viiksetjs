@@ -1,4 +1,5 @@
 import * as chart from '../src/chartUtils';
+import { ScaleLinear } from 'd3-scale';
 
 describe('Chart Utilities', () => {
   describe('create scales', () => {
@@ -75,6 +76,20 @@ describe('Chart Utilities', () => {
       });
       expect(result.domain()).toEqual([0, 553]);
       expect(result.range()).toEqual([10, 400]);
+    });
+  });
+  describe('finds tooltip points', () => {
+    it('finds a tooltip value', () => {
+      const xPoints = [0, 45, 234, 553, 3];
+      const scale = chart.determineXScale({
+        xPoints,
+        type: 'ordinal',
+        orientation: 'horizontal',
+        width: 400,
+        margin: { top: 10, bottom: 10, left: 10, right: 10 },
+      }) as ScaleLinear<number, number>;
+      const ttValue = chart.findTooltipX({ calculatedX: 100, xScale: scale });
+      expect(ttValue).toEqual(80.5244122965642);
     });
   });
 });
