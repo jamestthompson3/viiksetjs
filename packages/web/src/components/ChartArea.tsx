@@ -1,3 +1,4 @@
+/// <reference path="../modules.d.ts"/>
 import * as React from 'react';
 import { Group } from '@vx/group';
 import { Bar } from '@vx/shape';
@@ -16,13 +17,8 @@ import {
   recursiveCloneChildren,
   biaxial,
 } from '@viiksetjs/utils';
-import { prepChartData, State } from '@viiksetjs/utils';
-import {
-  TooltipData,
-  ScaleFunction,
-  RenderContainerProps,
-  Axis,
-} from '../types/index';
+import { prepChartData, State, ScaleFunction } from '@viiksetjs/utils';
+import { Tooltip, RenderContainerProps, Axis } from '../typedef';
 import withTooltip from './Tooltip/withTooltip';
 import withParentSize from './Responsive/withParentSize';
 import {
@@ -143,7 +139,7 @@ function ChartArea<T>({
       // cursor position
       if (datum) {
         return updateTooltip({
-          calculatedData: datum as T,
+          calculatedData: datum,
           x: mouseX,
           mouseX,
           mouseY,
@@ -167,7 +163,7 @@ function ChartArea<T>({
             ? bounds.dRight || bounds.dLeft
             : bounds.dLeft || bounds.dRight;
         },
-        (calculatedData: T) => {
+        (calculatedData: { [key: string]: any }) => {
           const calculatedX = head(extractX(calculatedData, xKey));
           const x = findTooltipX({ type, calculatedX, xScale });
           const yCoords = yScales
@@ -349,9 +345,15 @@ interface MouseMove {
   datum?: Object;
 }
 
+interface GenericToolTipData {
+  [key: string]: any;
+}
+
+type ToolTipData = GenericToolTipData | null;
+
 interface TooltipProps<T> {
-  indicator(indicatorProps: Partial<TooltipData<T>>): React.ReactNode;
-  renderer(renderProps: Partial<TooltipData<T>>): React.ReactNode;
+  indicator(indicatorProps: Partial<Tooltip<ToolTipData>>): React.ReactNode;
+  renderer(renderProps: Partial<Tooltip<ToolTipData>>): React.ReactNode;
   content(tooltipData: T): React.ReactNode;
   styles: {
     wrapper: Object;
@@ -363,14 +365,14 @@ interface Props<T> extends RenderContainerProps {
   data: T[];
   noTool: boolean;
   noGrid: boolean;
-  calculatedData?: T;
+  calculatedData?: { [key: string]: any };
   yCoords?: number[];
   mouseX?: number;
   mouseY?: number;
   tooltipData?: T;
   showTooltip: boolean;
-  tooltip: Partial<TooltipProps<T>>;
-  updateTooltip(tooltipData: Partial<TooltipData<T>>): void;
+  tooltip: Partial<TooltipProps<ToolTipData>>;
+  updateTooltip(tooltipData: Partial<Tooltip<ToolTipData>>): void;
 }
 
 export default withTooltip(withParentSize(ChartArea));

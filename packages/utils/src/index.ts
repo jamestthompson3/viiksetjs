@@ -23,3 +23,11 @@ export {
   findTooltipX,
   biaxial,
 } from './chartUtils';
+
+export {
+  ScaleProps,
+  ScaleFunction,
+  Margin,
+  Size,
+  ScalarObject,
+} from './typedef';

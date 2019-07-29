@@ -24,7 +24,7 @@ export const formatTicks = (d: string | number) =>
 /**
  * Default formatter function. Parses dates if passed a data, if not, just returns what it was given
  */
-export const formatXTicks = (d: string | Date | number) => {
+export const formatXTicks = (d: string | Date | number): any => {
   const parsed = parseIfDate(d);
 
   if (parsed && isValid(parsed)) {

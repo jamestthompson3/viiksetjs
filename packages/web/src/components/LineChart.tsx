@@ -1,16 +1,16 @@
-import * as React from 'react'
-import get from 'lodash/get'
-import { curveMonotoneX } from '@vx/curve'
+import * as React from 'react';
+import get from 'lodash/get';
+import { curveMonotoneX } from '@vx/curve';
 
 import {
   StyledGradient,
   StyledPatternLines,
   StyledLinePath,
-  StyledAreaClosed
-} from './styledComponents'
-import { extractX } from '../utils/dataUtils'
-import { determineYScale } from '../utils/chartUtils'
-import { RenderedChildProps } from '../types/index'
+  StyledAreaClosed,
+} from './styledComponents';
+import { extractX } from '@viiksetjs/utils';
+import { determineYScale } from '@viiksetjs/utils';
+import { RenderedChildProps } from '../types/index';
 
 function LineChart<T>({
   data,
@@ -27,36 +27,41 @@ function LineChart<T>({
   type,
   areaProps,
   lineProps,
-  gradientOpacity
+  gradientOpacity,
 }: Props) {
-  const dataPoints = data.map((item: T) => get(item, dataKey))
+  const dataPoints = data.map((item: T) => get(item, dataKey));
   React.useEffect(() => {
     // eslint-disable-next-line
     if (process.env.NODE_ENV !== 'production') {
       if (dataPoints.includes(undefined)) {
-        console.warn(`LineChart: No data found with dataKey ${dataKey}`)
+        console.warn(`LineChart: No data found with dataKey ${dataKey}`);
       }
     }
-  }, [])
+  }, []);
 
-  const getAxis = () => (!axisId ? inheritedScale : yScale)
+  const getAxis = () => (!axisId ? inheritedScale : yScale);
   const yScale = determineYScale({
     type: type || 'linear',
     yPoints: dataPoints,
     height,
-    margin
-  })
-  const xPoints = (d: T) => xScale(xKey ? get(d, xKey) : extractX(d)[0])
-  const yPoints = (d: T) => getAxis()(get(d, dataKey))
+    margin,
+  });
+  const xPoints = (d: T) => xScale(xKey ? get(d, xKey) : extractX(d)[0]);
+  const yPoints = (d: T) => getAxis()(get(d, dataKey));
 
-  const gradientKey = typeof dataKey === 'string' ? dataKey.split(' ').join('') : dataKey
+  const gradientKey =
+    typeof dataKey === 'string' ? dataKey.split(' ').join('') : dataKey;
   const findFill = (gradient: boolean) =>
-    gradient ? `url(#gradient${gradientKey})` : `url(#dlines${gradientKey})`
+    gradient ? `url(#gradient${gradientKey})` : `url(#dlines${gradientKey})`;
   return (
     <>
       {!nofill && (
         <>
-          <StyledGradient opacity={gradientOpacity} color={color} id={`gradient${gradientKey}`} />
+          <StyledGradient
+            opacity={gradientOpacity}
+            color={color}
+            id={`gradient${gradientKey}`}
+          />
           <StyledPatternLines color={color} id={`dlines${gradientKey}`} />
         </>
       )}
@@ -91,21 +96,21 @@ function LineChart<T>({
           />
         ))}
     </>
-  )
+  );
 }
 
 LineChart.defaultProps = {
   color: 'rgb(0, 157, 253)',
   nofill: false,
-  nopattern: false
-}
+  nopattern: false,
+};
 
 interface Props extends RenderedChildProps {
-  areaProps: Object
-  lineProps: Object
-  gradientOpacity: number[]
-  nofill: boolean
-  nopattern: boolean
+  areaProps: Object;
+  lineProps: Object;
+  gradientOpacity: number[];
+  nofill: boolean;
+  nopattern: boolean;
 }
 
-export default React.memo(LineChart)
+export default React.memo(LineChart);

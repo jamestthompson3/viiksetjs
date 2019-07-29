@@ -3,96 +3,13 @@
   "version": "0.0.30",
   "description": "Javascript graphing utility based on SVG",
   "homepage": "https://jamestthompson3.github.io/viiksetjs",
-  "main": "lib/index.js",
   "repository": "https://github.com/jamestthompson3/viiksetjs.git",
   "author": "Taylor Thompson <taylor@easyanticheat.net>",
   "license": "MIT",
   "private": false,
-  "files": [
-    "lib"
-  ],
-  "scripts": {
-    "build": "rm -rf ./lib && babel src --out-dir lib --extensions '.ts,.tsx'",
-    "buildExamples": "webpack --config=examples.webpack.config.js",
-    "watch": "babel --watch src --out-dir lib --extensions '.ts,.tsx'",
-    "lint": "eslint --fix --ext .js ./src/",
-    "precommit": "lint-staged"
-  },
-  "lint-staged": {
-    "*.{js}": [
-      "eslint --fix ./src/",
-      "prettier --write",
-      "git add"
-    ]
-  },
-  "jest": {
-    "watchPathIgnorePatterns": [
-      "<rootDir>/lib/"
-    ],
-    "transform": {
-      "^.+\\.(j|t)sx?$": "babel-jest"
-    }
-  },
-  "dependencies": {
-    "@vx/axis": "^0.0.183",
-    "@vx/bounds": "^0.0.182",
-    "@vx/curve": "^0.0.182",
-    "@vx/event": "^0.0.189",
-    "@vx/gradient": "^0.0.183",
-    "@vx/grid": "^0.0.183",
-    "@vx/group": "^0.0.183",
-    "@vx/pattern": "^0.0.183",
-    "@vx/point": "^0.0.182",
-    "@vx/shape": "^0.0.190",
-    "@vx/threshold": "^0.0.183",
-    "d3-array": "^2.0.3",
-    "d3-scale": "^3.0.0",
-    "d3-shape": "^1.2.0",
-    "date-fns": "^1.29.0",
-    "lodash": "^4.17.11",
-    "polished": "^3.2.0",
-    "prop-types": "^15.6.2",
-    "react": "^16.7.0",
-    "react-sizeme": "^2.3.6"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "@babel/cli": "^7.2.3",
-    "@babel/core": "^7.2.2",
-    "@babel/plugin-proposal-class-properties": "^7.2.3",
-    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
-    "@babel/plugin-transform-typescript": "^7.4.4",
-    "@babel/preset-env": "^7.0.0",
-    "@babel/preset-react": "^7.0.0",
-    "@babel/preset-typescript": "^7.3.3",
-    "@types/d3": "^5.7.2",
-    "@types/d3-scale": "^2.1.1",
-    "@types/lodash": "^4.14.124",
-    "@typescript-eslint/eslint-plugin": "^1.7.0",
-    "@typescript-eslint/parser": "^1.7.0",
-    "babel-core": "7.0.0-bridge.0",
-    "babel-eslint": "^10.0.1",
-    "babel-jest": "^24.0.0",
-    "babel-loader": "^8.0.5",
-    "babel-preset-minify": "^0.5.0",
-    "eslint": "^5.6.0",
-    "eslint-plugin-react": "^7.9.1",
-    "husky": "^1.3.1",
-    "jest": "^24.7.1",
-    "lerna": "^3.16.0",
-    "lint-staged": "^8.1.0",
-    "prettier": "^1.13.4",
-    "react-dom": "^16.2.0",
-    "regenerator-runtime": "^0.13.1",
-    "styled-components": "^4.1.3",
-    "swc-loader": "^0.1.6",
-    "terser-webpack-plugin": "^1.2.2",
-    "webpack": "^4.29.0",
-    "webpack-cli": "^3.2.1"
+    "lerna": "^3.16.0"
   },
-  "peerDependencies": {
-    "styled-components": "^4.1.3"
-  },
-  "resolutions": {
-    "babel-core": "7.0.0-bridge.0"
-  }
+  "peerDependencies": {}
 }

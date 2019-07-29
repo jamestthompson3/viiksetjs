@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "start": "tsdx watch",
+    "buildExamples": "webpack --config=examples/examples.webpack.config.js",
     "build": "tsdx build",
     "test": "tsdx test --env=jsdom"
   },
@@ -27,9 +28,17 @@
     "trailingComma": "es5"
   },
   "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "@babel/preset-react": "^7.0.0",
+    "@types/d3-array": "^2.0.0",
+    "@types/d3-scale": "^2.1.1",
     "@types/jest": "^24.0.15",
+    "@types/lodash": "^4.14.136",
     "@types/react": "^16.8.23",
     "@types/react-dom": "^16.8.4",
+    "babel-loader": "^8.0.6",
     "husky": "^3.0.1",
     "prettier": "^1.18.2",
     "pretty-quick": "^1.11.1",
@@ -38,10 +47,13 @@
     "styled-components": "^4.3.2",
     "tsdx": "^0.7.2",
     "tslib": "^1.10.0",
-    "typescript": "^3.5.3"
+    "typescript": "^3.5.3",
+    "webpack": "^4.38.0",
+    "webpack-cli": "^3.3.6"
   },
   "dependencies": {
     "@viiksetjs/utils": "^0.1.0",
+    "@vx/curve": "^0.0.189",
     "@vx/event": "^0.0.189",
     "@vx/group": "^0.0.190",
     "@vx/shape": "^0.0.190"
