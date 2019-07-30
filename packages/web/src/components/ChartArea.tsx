@@ -192,7 +192,7 @@ function ChartArea<T>({
     });
   }, []);
 
-  const biaxialChildren = children && biaxial(children);
+  const biaxialChildren = biaxial(children);
   const LeftAxis = buildAxis(
     biaxialChildren,
     'left',
@@ -366,9 +366,9 @@ interface Props<T> extends RenderContainerProps {
   noTool: boolean;
   noGrid: boolean;
   calculatedData?: { [key: string]: any };
-  yCoords?: number[];
-  mouseX?: number;
-  mouseY?: number;
+  yCoords: number[] | null;
+  mouseX: number | null;
+  mouseY: number | null;
   tooltipData?: T;
   showTooltip: boolean;
   tooltip: Partial<TooltipProps<ToolTipData>>;
