@@ -11,20 +11,35 @@ import { AreaClosed, LinePath, Bar, Line, Pie } from '@vx/shape';
 import { AxisBottom, AxisLeft, AxisRight } from '@vx/axis';
 import { Threshold } from '@vx/threshold';
 import { rgba } from 'polished';
+import { GenericData, ToolTipData, RenderedWithTooltipProps } from 'typedef';
 
-const findStroke = p =>
+interface Theme {
+  [key: string]: string;
+}
+
+interface StyledProps {
+  [key: string]: any;
+  theme: Theme;
+}
+
+const findStroke = (p: StyledProps) =>
   p.theme ? p.theme[p.stroke] || p.stroke || p.theme.primaryColor : p.stroke;
 
-export const findColor = p =>
+export const findColor = (p: StyledProps) =>
   p.theme ? p.theme[p.color] || p.color || p.theme.primaryColor : p.color;
 
-const findFill = p =>
+const findFill = (p: StyledProps) =>
   p.theme ? p.theme[p.fill] || p.fill || p.theme.primaryColor : p.fill;
 
 /**
  * Takes a function and returns the another function containing the correct props for axes
  */
-const propsColorSetter = (func, p, value, index) => {
+const propsColorSetter = (
+  func: Function,
+  p: StyledProps,
+  value: any,
+  index: number
+) => {
   const exec = func(value, index);
   const combinedProps = { ...exec, ...p };
   const fill = get(combinedProps, 'fill')
@@ -36,7 +51,7 @@ const propsColorSetter = (func, p, value, index) => {
 /**
  * Takes props from VX components and uses styled-component's theme to return the proper color
  */
-const colorSetter = (formatProps, p) => {
+const colorSetter = (formatProps: GenericData, p: StyledProps) => {
   /* eslint-disable */
   switch (true) {
     case get(formatProps, 'color') != null:
@@ -102,7 +117,7 @@ export const StyledLeftAxis = withTheme(props => (
   <AxisLeft
     {...props}
     stroke={findColor(props)}
-    tickLabelProps={(value, index) =>
+    tickLabelProps={(value: any, index: number) =>
       propsColorSetter(props.tickLabelProps, props, value, index)
     }
     labelProps={colorSetter(props.labelProps, props)}
@@ -118,7 +133,7 @@ export const StyledRightAxis = withTheme(props => (
   <AxisRight
     {...props}
     stroke={findColor(props)}
-    tickLabelProps={(value, index) =>
+    tickLabelProps={(value: any, index: number) =>
       propsColorSetter(props.tickLabelProps, props, value, index)
     }
     labelProps={colorSetter(props.labelProps, props)}
@@ -135,7 +150,7 @@ export const StyledBottomAxis = withTheme(props => (
     {...{
       ...props,
       stroke: findColor(props),
-      tickLabelProps: (value, index) =>
+      tickLabelProps: (value: any, index: number) =>
         propsColorSetter(props.tickLabelProps, props, value, index),
       top: props.height,
       labelProps: colorSetter(props.labelProps, props),
@@ -247,7 +262,7 @@ const TooltipContainer = styled.div<{ bounds: { left: number; top: number } }>`
   align-items: center;
 `;
 
-const boundsSetter = ({ left, rect, parentRect }) => {
+const boundsSetter = ({ left, rect, parentRect }: Bounder) => {
   if (left + rect.width > parentRect.width) {
     return left - rect.width; // case for shifting to the right
   } else if (rect.width / 3 === parentRect.left) {
@@ -257,14 +272,17 @@ const boundsSetter = ({ left, rect, parentRect }) => {
   }
 };
 
+interface Bounder {
+  rect: ClientRect;
+  parentRect: ClientRect;
+  left: number;
+}
+
 /**
  * TooltipBounder sets bounds for the tooltip and passes them down
  */
-interface BounderProps {
+interface BounderProps extends Bounder {
   children: React.ReactNode[];
-  rect?: ClientRect;
-  parentRect?: ClientRect;
-  left: number;
   style?: React.CSSProperties;
 }
 
@@ -307,7 +325,8 @@ const BoundedTooltip = withBoundingRects(TooltipBounder);
  * allowing the wrapped component to have access to both its own bounding rect
  * and the it's parent's bounding rect
  */
-export const withBounds = component => withBoundingRects(component);
+export const withBounds = (component: React.ReactNode) =>
+  withBoundingRects(component);
 
 /**
  * Wrapper component for default tooltip
@@ -329,23 +348,32 @@ export const defaultTooltipRenderer = ({
 /**
  * Default tooltip content function
  */
-export const defaultTooltipContent = ({ tooltipData }) =>
-  Object.entries(tooltipData).map((entry, i) => (
+export const defaultTooltipContent = ({
+  tooltipData,
+}: {
+  tooltipData: ToolTipData;
+}) =>
+  Object.entries(tooltipData || {}).map((entry, i) => (
     <p key={`tooltip-content-${entry[0]}-${i}`}>{`${entry[0]}: ${entry[1]}`}</p>
   ));
 
-export const Indicator = ({ yCoords, x, stroke, color }) => {
+export const Indicator = ({
+  yCoords,
+  x,
+  stroke,
+  color,
+}: RenderedWithTooltipProps) => {
   return (
     <>
       <Line
         from={{ x: x, y: 0 }}
-        to={{ x: x, y: Math.max(...yCoords) }}
+        to={{ x: x, y: Math.max(...(yCoords || [])) }}
         stroke={stroke}
         strokeWidth={1}
         strokeOpacity={0.5}
         style={{ pointerEvents: 'none' }}
       />
-      {yCoords.map((coord: number, i: number) => (
+      {(yCoords || []).map((coord: number, i: number) => (
         <circle
           key={`${coord}-${i}`}
           cx={x}

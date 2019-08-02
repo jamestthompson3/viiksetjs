@@ -5,6 +5,19 @@ export interface GenericData {
   [key: string]: any;
 }
 
+export type ToolTipData = GenericData | null;
+
+export interface TooltipUpdateData {
+  calculatedData: GenericData;
+  x: number;
+  mouseX: number;
+  mouseY: number;
+  yCoords: number[];
+  showTooltip: boolean;
+}
+
+export type RenderedWithTooltipProps = Partial<Tooltip<ToolTipData>>;
+
 export type GenericGetter = (d: GenericData) => any;
 
 export interface AxisProps {

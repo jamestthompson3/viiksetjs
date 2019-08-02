@@ -18,7 +18,15 @@ import {
   biaxial,
 } from '@viiksetjs/utils';
 import { prepChartData, Margin, State, ScaleFunction } from '@viiksetjs/utils';
-import { Tooltip, RenderContainerProps, Axis, GenericData } from '../typedef';
+import {
+  Tooltip,
+  RenderContainerProps,
+  Axis,
+  GenericData,
+  ToolTipData,
+  TooltipUpdateData,
+  RenderedWithTooltipProps,
+} from '../typedef';
 import withParentSize from './Responsive/withParentSize';
 import {
   Indicator,
@@ -341,25 +349,14 @@ interface MouseMove {
   datum?: Object;
 }
 
-type ToolTipData = GenericData | null;
-
 interface TooltipProps<T> {
-  indicator(indicatorProps: Partial<Tooltip<ToolTipData>>): React.ReactNode;
-  renderer(renderProps: Partial<Tooltip<ToolTipData>>): React.ReactNode;
+  indicator(indicatorProps: RenderedWithTooltipProps): React.ReactNode;
+  renderer(renderProps: RenderedWithTooltipProps): React.ReactNode;
   content(tooltipData: T): React.ReactNode;
   styles: {
     wrapper: Object;
     content: Object;
   };
-}
-
-interface TooltipUpdateData {
-  calculatedData: GenericData;
-  x: number;
-  mouseX: number;
-  mouseY: number;
-  yCoords: number[];
-  showTooltip: boolean;
 }
 
 interface Props extends RenderContainerProps {
