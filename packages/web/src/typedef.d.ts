@@ -1,6 +1,12 @@
 import { ReactNode } from 'react';
 import { ScaleFunction, Margin, Size } from '@viiksetjs/utils';
 
+export interface GenericData {
+  [key: string]: any;
+}
+
+export type GenericGetter = (d: GenericData) => any;
+
 export interface AxisProps {
   format(d: any, i: number): string;
   tickLabelProps(
@@ -12,7 +18,7 @@ export interface AxisProps {
     textAnchor: string;
     fontSize: number | string;
   };
-  tickFormat(d: any, i: number): string;
+  tickFormat(d: any, i?: number): string | number;
   tickStroke: number | string;
   labelProps: Object;
   tickFormat(d: string | number, i?: number): string | number;
@@ -51,7 +57,7 @@ export interface RenderContainerProps {
   orientation?: 'horizontal';
   xKey?: string;
   glyphRenderer?: GlyphRenderer;
-  determineViewBox({ size: Size, margin: Margin }): string;
+  determineViewBox({ size, margin }: { size: Size; margin: Margin }): string;
   type: 'ordinal' | 'linear';
   noGrid: boolean;
   margin: Margin;

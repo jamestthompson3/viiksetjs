@@ -1,53 +1,71 @@
-import * as React from 'react'
-import merge from 'lodash/merge'
+import * as React from 'react';
+import merge from 'lodash/merge';
 
-import { StyledLeftAxis, StyledBottomAxis, StyledGridRows } from '../styledComponents'
+import {
+  StyledLeftAxis,
+  StyledBottomAxis,
+  StyledGridRows,
+} from '../styledComponents';
 
-import { determineYScale } from '../../utils/chartUtils'
-import { AxisProps, Margin, ScaleFunction, Axis } from '../.././types/index'
+import { AxisProps, Axis } from '../../typedef';
+import { determineYScale, Margin, ScaleFunction } from '@viiksetjs/utils';
 
 interface GridReturnProps {
-  yScale: ScaleFunction
-  width: number
-  left: number
+  yScale: ScaleFunction;
+  width: number;
+  left: number;
 }
 
-type Grid = (args: GridReturnProps) => React.ReactNode
+type Grid = (args: GridReturnProps) => React.ReactNode;
 
 interface LeftAxisReturnProps {
-  type: string
-  orientation: string
-  height: number
-  yPoints: number[] | string[]
-  margin: Margin
+  type: string;
+  orientation: string;
+  height: number;
+  yPoints: number[] | string[];
+  margin: Margin;
 }
 
-export type LeftAxisReturn = (args: LeftAxisReturnProps) => React.ReactNode
+// interface AxisRendererProps {
+//   type: 'ordinal' | 'linear';
+//   orientation?: 'horizontal';
+//   yPoints: number[];
+//   height: number[];
+//   margin: Margin;
+// }
+export type LeftAxisReturn = (args: LeftAxisReturnProps) => React.ReactNode;
 
 interface BottomAxisReturnProps {
-  margin: Margin
-  height: number
-  scale: ScaleFunction
+  margin: Margin;
+  height: number;
+  scale: ScaleFunction;
 }
 
-export type BottomAxisReturn = (args: BottomAxisReturnProps) => React.ReactNode
+export type BottomAxisReturn = (args: BottomAxisReturnProps) => React.ReactNode;
 
 export const buildLeftAxis = ({
   y,
-  color
+  color,
 }: {
-  y: Partial<AxisProps>
-  color: string
+  y: Partial<AxisProps>;
+  color: string;
 }): LeftAxisReturn =>
   React.memo(function LeftAxis({ type, orientation, yPoints, height, margin }) {
-    const { label, numTicks, tickLabelProps, tickFormat, labelProps, ...rest } = y
+    const {
+      label,
+      numTicks,
+      tickLabelProps,
+      tickFormat,
+      labelProps,
+      ...rest
+    } = y;
     const scale = determineYScale({
       type,
       orientation,
       yPoints,
       height,
-      margin
-    })
+      margin,
+    });
     return (
       <StyledLeftAxis
         scale={scale}
@@ -58,21 +76,28 @@ export const buildLeftAxis = ({
           tickFormat,
           label,
           labelProps,
-          ...rest
+          ...rest,
         }}
       />
-    )
-  })
+    );
+  });
 
 export const buildBottomAxis = ({
   x,
-  color
+  color,
 }: {
-  x: Partial<AxisProps>
-  color: string
+  x: Partial<AxisProps>;
+  color: string;
 }): BottomAxisReturn =>
   React.memo(function BottomAxis({ height, margin, scale }) {
-    const { label, numTicks, tickLabelProps, tickFormat, labelProps, ...rest } = x
+    const {
+      label,
+      numTicks,
+      tickLabelProps,
+      tickFormat,
+      labelProps,
+      ...rest
+    } = x;
     return (
       <StyledBottomAxis
         {...{
@@ -85,11 +110,11 @@ export const buildBottomAxis = ({
           tickFormat,
           label,
           labelProps,
-          ...rest
+          ...rest,
         }}
       />
-    )
-  })
+    );
+  });
 
 export function buildAxis(
   biaxialChildren: boolean,
@@ -98,22 +123,32 @@ export function buildAxis(
   axes: Axis,
   color: string
 ): BottomAxisReturn | LeftAxisReturn | null {
-  const { y, x } = merge({}, defaultAxes, axes)
+  const { y, x } = merge({}, defaultAxes, axes);
 
   if (position === 'left' && !biaxialChildren && axes.y !== null) {
-    return buildLeftAxis({ y, color })
+    return buildLeftAxis({ y, color });
   }
 
   if (position === 'bottom' && axes.x !== null) {
-    return buildBottomAxis({ x, color })
+    return buildBottomAxis({ x, color });
   }
 
-  return () => null
+  return () => null;
 }
 
 export const buildGrid = (gridStroke: string, noGrid: boolean): Grid => {
-  if (noGrid) return () => null
-  return React.memo(function Grid({ yScale, width, left }) {
-    return <StyledGridRows scale={yScale} stroke={gridStroke} width={width - left} />
-  })
-}
+  if (noGrid) return () => null;
+  return React.memo(function Grid({
+    yScale,
+    width,
+    left,
+  }: {
+    yScale: ScaleFunction;
+    width: number;
+    left: number;
+  }) {
+    return (
+      <StyledGridRows scale={yScale} stroke={gridStroke} width={width - left} />
+    );
+  });
+};

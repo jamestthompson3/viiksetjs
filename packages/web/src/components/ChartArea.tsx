@@ -17,9 +17,8 @@ import {
   recursiveCloneChildren,
   biaxial,
 } from '@viiksetjs/utils';
-import { prepChartData, State, ScaleFunction } from '@viiksetjs/utils';
-import { Tooltip, RenderContainerProps, Axis } from '../typedef';
-import withTooltip from './Tooltip/withTooltip';
+import { prepChartData, Margin, State, ScaleFunction } from '@viiksetjs/utils';
+import { Tooltip, RenderContainerProps, Axis, GenericData } from '../typedef';
 import withParentSize from './Responsive/withParentSize';
 import {
   Indicator,
@@ -33,7 +32,8 @@ import {
   LeftAxisReturn,
   buildGrid,
 } from './common/index';
-const DEFAULT_MARGIN = { top: 18, right: 15, bottom: 15, left: 30 };
+
+const DEFAULT_MARGIN: Margin = { top: 18, right: 15, bottom: 15, left: 30 };
 
 const defaultAxes: Axis = {
   x: {
@@ -66,14 +66,14 @@ const defaultAxes: Axis = {
   },
 };
 
-const defaultTooltip = {
+const defaultTooltip: TooltipProps<GenericData> = {
   indicator: Indicator,
   renderer: defaultTooltipRenderer,
   content: defaultTooltipContent,
-  styles: {},
+  styles: { wrapper: {}, content: {} },
 };
 
-function ChartArea<T>({
+const ChartArea: React.FunctionComponent<Props> = ({
   children,
   determineViewBox,
   data,
@@ -86,25 +86,20 @@ function ChartArea<T>({
   axes,
   stroke,
   tooltip,
-  updateTooltip,
   noTool = false,
   gridStroke,
   color,
   margin = DEFAULT_MARGIN,
-  yCoords,
-  calculatedData,
   glyphRenderer,
-  mouseX,
-  showTooltip,
-  mouseY,
-  x,
-}: Props<T>) {
+}) => {
   const chart = React.useRef(null);
-  const [chartData, setChartData] = React.useState<State>(() => {});
+  const [chartData, setChartData] = React.useState<Partial<State<any, any>>>(
+    {}
+  );
   const [bar, setBar] = React.useState(false);
   const Grid = buildGrid(gridStroke, noGrid);
   React.useEffect(() => {
-    const chartData = prepChartData({
+    const chartData = prepChartData<any, any>({
       data,
       size,
       xKey,
@@ -115,9 +110,12 @@ function ChartArea<T>({
     });
     setChartData(chartData);
   }, [data, size, type, margin, orientation, xKey, yKey]);
-  // To prevent tooltips from not showing on bar chart due to minification changing names
-  const declareBar = React.useCallback(() => setBar(true), []);
+  const [tooltipData, updateTooltip] = React.useState<
+    Partial<TooltipUpdateData>
+  >({});
 
+  // To prevent tooltips from not showing on bar chart due to minification changing names
+  const declareBar = () => setBar(true);
   const mouseMove = React.useCallback(
     ({
       event,
@@ -165,7 +163,7 @@ function ChartArea<T>({
         },
         (calculatedData: { [key: string]: any }) => {
           const calculatedX = head(extractX(calculatedData, xKey));
-          const x = findTooltipX({ type, calculatedX, xScale });
+          const x: number = findTooltipX({ calculatedX, xScale });
           const yCoords = yScales
             ? dataKeys.map(key => yScales[key](calculatedData[key]))
             : extractY(calculatedData).map(item => yScale(item));
@@ -184,13 +182,17 @@ function ChartArea<T>({
   );
 
   const mouseLeave = React.useCallback(() => {
-    updateTooltip({
-      calculatedData: null,
-      x: null,
-      yCoords: null,
-      showTooltip: false,
-    });
+    updateTooltip({});
   }, []);
+
+  const {
+    calculatedData,
+    yCoords,
+    x,
+    mouseX,
+    mouseY,
+    showTooltip,
+  } = tooltipData;
 
   const biaxialChildren = biaxial(children);
   const LeftAxis = buildAxis(
@@ -325,14 +327,6 @@ function ChartArea<T>({
         })}
     </div>
   );
-}
-
-ChartArea.defaultProps = {
-  data: [],
-  margin: DEFAULT_MARGIN,
-  axes: defaultAxes,
-  tooltip: defaultTooltip,
-  glyphRenderer: () => null,
 };
 
 interface MouseMove {
@@ -345,11 +339,7 @@ interface MouseMove {
   datum?: Object;
 }
 
-interface GenericToolTipData {
-  [key: string]: any;
-}
-
-type ToolTipData = GenericToolTipData | null;
+type ToolTipData = GenericData | null;
 
 interface TooltipProps<T> {
   indicator(indicatorProps: Partial<Tooltip<ToolTipData>>): React.ReactNode;
@@ -361,18 +351,31 @@ interface TooltipProps<T> {
   };
 }
 
-interface Props<T> extends RenderContainerProps {
-  data: T[];
-  noTool: boolean;
-  noGrid: boolean;
-  calculatedData?: { [key: string]: any };
-  yCoords: number[] | null;
-  mouseX: number | null;
-  mouseY: number | null;
-  tooltipData?: T;
+interface TooltipUpdateData {
+  calculatedData: GenericData;
+  x: number;
+  mouseX: number;
+  mouseY: number;
+  yCoords: number[];
   showTooltip: boolean;
-  tooltip: Partial<TooltipProps<ToolTipData>>;
-  updateTooltip(tooltipData: Partial<Tooltip<ToolTipData>>): void;
 }
 
-export default withTooltip(withParentSize(ChartArea));
+interface Props extends RenderContainerProps {
+  data: GenericData[];
+  noTool: boolean;
+  noGrid: boolean;
+  calculatedData?: GenericData;
+  tooltipData?: GenericData;
+  tooltip: Partial<TooltipProps<ToolTipData>>;
+}
+
+ChartArea.defaultProps = {
+  data: [],
+  margin: DEFAULT_MARGIN,
+  axes: defaultAxes,
+  tooltip: defaultTooltip,
+  type: 'linear',
+  glyphRenderer: () => null,
+};
+
+export default withParentSize(ChartArea);

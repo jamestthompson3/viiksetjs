@@ -7,8 +7,10 @@ import { Margin, ScaleFunction, Size } from './typedef';
 
 const DEFAULT_MARGIN = { top: 18, right: 15, bottom: 15, left: 30 };
 
-export function prepChartData(): Function {
-  return memoize(prep);
+export function prepChartData<Range, Output>(
+  args: Props
+): State<Range, Output> {
+  return memoize(prep)(args) as State<Range, Output>;
 }
 
 function prep<R, O>({
@@ -54,11 +56,11 @@ function prep<R, O>({
   return chartData;
 }
 
-export interface State<R, O> {
-  width?: number;
-  height?: number;
-  xScale?: ScaleFunction<R, O>;
-  yScale?: ScaleFunction<R, O>;
+export interface State<Range, Output> {
+  width: number;
+  height: number;
+  xScale?: ScaleFunction<Range, Output>;
+  yScale?: ScaleFunction<Range, Output>;
   yScales?: { [key: string]: ScaleFunction<any, any> } | false;
   biaxialChildren?: boolean;
   dataKeys?: string[];

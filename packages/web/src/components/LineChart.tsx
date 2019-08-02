@@ -10,9 +10,9 @@ import {
 } from './styledComponents';
 import { extractX } from '@viiksetjs/utils';
 import { determineYScale } from '@viiksetjs/utils';
-import { RenderedChildProps } from '../types/index';
+import { RenderedChildProps, GenericData } from '../typedef';
 
-function LineChart<T>({
+const LineChart: React.FunctionComponent<Props> = ({
   data,
   color,
   dataKey,
@@ -28,8 +28,8 @@ function LineChart<T>({
   areaProps,
   lineProps,
   gradientOpacity,
-}: Props) {
-  const dataPoints = data.map((item: T) => get(item, dataKey));
+}) => {
+  const dataPoints = data.map((item: GenericData) => get(item, dataKey));
   React.useEffect(() => {
     // eslint-disable-next-line
     if (process.env.NODE_ENV !== 'production') {
@@ -46,8 +46,9 @@ function LineChart<T>({
     height,
     margin,
   });
-  const xPoints = (d: T) => xScale(xKey ? get(d, xKey) : extractX(d)[0]);
-  const yPoints = (d: T) => getAxis()(get(d, dataKey));
+  const xPoints = (d: GenericData) =>
+    xScale(xKey ? get(d, xKey) : extractX(d)[0]);
+  const yPoints = (d: GenericData) => getAxis()(get(d, dataKey));
 
   const gradientKey =
     typeof dataKey === 'string' ? dataKey.split(' ').join('') : dataKey;
@@ -97,7 +98,7 @@ function LineChart<T>({
         ))}
     </>
   );
-}
+};
 
 LineChart.defaultProps = {
   color: 'rgb(0, 157, 253)',

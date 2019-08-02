@@ -110,7 +110,7 @@ export const findTooltipX = ({
   calculatedX,
   xScale,
 }: {
-  calculatedX: number;
+  calculatedX: any;
   xScale(num: number): number;
 }): number => {
   return xScale(calculatedX);

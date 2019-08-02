@@ -31,3 +31,5 @@ export {
   Size,
   ScalarObject,
 } from './typedef';
+
+export { prepChartData, State } from './prepareChartData';
