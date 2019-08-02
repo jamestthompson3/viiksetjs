@@ -13,12 +13,15 @@ import get from 'lodash/get';
 import last from 'lodash/last';
 import sortedUniq from 'lodash/sortedUniq';
 
+interface ChildProps extends React.ClassAttributes<any> {
+  children: any;
+}
 /**
  * Recursively clones children, passing props down nested DOM structures
  */
 export const recursiveCloneChildren = (
   children: React.ReactNode,
-  props: React.Props<any>
+  props: ChildProps
 ): React.ReactNode =>
   React.Children.map(children, child => {
     if (!React.isValidElement(child)) return child;
