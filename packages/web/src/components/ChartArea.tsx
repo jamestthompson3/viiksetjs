@@ -28,9 +28,9 @@ import {
 
 import {
   buildAxis,
-  BottomAxisReturn,
-  LeftAxisReturn,
   buildGrid,
+  LeftAxisRendererProps,
+  BottomAxisRendererProps,
 } from './common/index';
 
 const DEFAULT_MARGIN: Margin = { top: 18, right: 15, bottom: 15, left: 30 };
@@ -93,9 +93,10 @@ const ChartArea: React.FunctionComponent<Props> = ({
   glyphRenderer,
 }) => {
   const chart = React.useRef(null);
-  const [chartData, setChartData] = React.useState<Partial<State<any, any>>>(
-    {}
-  );
+  const [chartData, setChartData] = React.useState<State<any, any>>({
+    width: 0,
+    height: 0,
+  });
   const [bar, setBar] = React.useState(false);
   const Grid = buildGrid(gridStroke, noGrid);
   React.useEffect(() => {
@@ -125,8 +126,8 @@ const ChartArea: React.FunctionComponent<Props> = ({
       yScales,
       dataKeys,
       datum,
-    }: MouseMove) => {
-      if (tooltip === null || noTool) return;
+    }: Partial<MouseMove>) => {
+      if (tooltip === null || noTool || !xPoints) return;
 
       const svgPoint = localPoint(chart.current, event);
       const mouseX = get(svgPoint, 'x');
@@ -164,9 +165,10 @@ const ChartArea: React.FunctionComponent<Props> = ({
         (calculatedData: { [key: string]: any }) => {
           const calculatedX = head(extractX(calculatedData, xKey));
           const x: number = findTooltipX({ calculatedX, xScale });
-          const yCoords = yScales
-            ? dataKeys.map(key => yScales[key](calculatedData[key]))
-            : extractY(calculatedData).map(item => yScale(item));
+          const yCoords =
+            yScales && dataKeys
+              ? dataKeys.map(key => yScales[key](calculatedData[key]))
+              : extractY(calculatedData).map(item => yScale(item));
           return updateTooltip({
             calculatedData,
             x,
@@ -201,14 +203,14 @@ const ChartArea: React.FunctionComponent<Props> = ({
     defaultAxes,
     axes,
     color
-  ) as LeftAxisReturn;
+  ) as React.FunctionComponent<LeftAxisRendererProps>;
   const BottomAxis = buildAxis(
     biaxialChildren,
     'bottom',
     defaultAxes,
     axes,
     color
-  ) as BottomAxisReturn;
+  ) as React.FunctionComponent<BottomAxisRendererProps>;
   const {
     indicator: Indicator,
     renderer: tooltipRenderer,
@@ -282,7 +284,7 @@ const ChartArea: React.FunctionComponent<Props> = ({
                   yScale,
                   yScales:
                     biaxialChildren &&
-                    createLinearScales(data, dataKeys, height, margin),
+                    createLinearScales(data, dataKeys || [], height, margin),
                   dataKeys,
                 })
               }
@@ -294,7 +296,7 @@ const ChartArea: React.FunctionComponent<Props> = ({
                   yScale,
                   yScales:
                     biaxialChildren &&
-                    createLinearScales(data, dataKeys, height, margin),
+                    createLinearScales(data, dataKeys || [], height, margin),
                   dataKeys,
                 })
               }

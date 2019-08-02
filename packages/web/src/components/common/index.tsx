@@ -10,38 +10,25 @@ import {
 import { AxisProps, Axis } from '../../typedef';
 import { determineYScale, Margin, ScaleFunction } from '@viiksetjs/utils';
 
-interface GridReturnProps {
+interface GridRendererProps {
   yScale: ScaleFunction;
   width: number;
   left: number;
 }
 
-type Grid = (args: GridReturnProps) => React.ReactNode;
-
-interface LeftAxisReturnProps {
-  type: string;
-  orientation: string;
+export interface LeftAxisRendererProps {
+  type?: string;
+  orientation?: string;
   height: number;
-  yPoints: number[] | string[];
+  yPoints?: number[] | string[];
   margin: Margin;
 }
 
-// interface AxisRendererProps {
-//   type: 'ordinal' | 'linear';
-//   orientation?: 'horizontal';
-//   yPoints: number[];
-//   height: number[];
-//   margin: Margin;
-// }
-export type LeftAxisReturn = (args: LeftAxisReturnProps) => React.ReactNode;
-
-interface BottomAxisReturnProps {
+export interface BottomAxisRendererProps {
   margin: Margin;
   height: number;
   scale: ScaleFunction;
 }
-
-export type BottomAxisReturn = (args: BottomAxisReturnProps) => React.ReactNode;
 
 export const buildLeftAxis = ({
   y,
@@ -49,7 +36,7 @@ export const buildLeftAxis = ({
 }: {
   y: Partial<AxisProps>;
   color: string;
-}): LeftAxisReturn =>
+}): React.FunctionComponent<LeftAxisRendererProps> =>
   React.memo(function LeftAxis({ type, orientation, yPoints, height, margin }) {
     const {
       label,
@@ -88,7 +75,7 @@ export const buildBottomAxis = ({
 }: {
   x: Partial<AxisProps>;
   color: string;
-}): BottomAxisReturn =>
+}): React.FunctionComponent<BottomAxisRendererProps> =>
   React.memo(function BottomAxis({ height, margin, scale }) {
     const {
       label,
@@ -122,7 +109,10 @@ export function buildAxis(
   defaultAxes: Axis,
   axes: Axis,
   color: string
-): BottomAxisReturn | LeftAxisReturn | null {
+):
+  | React.FunctionComponent<LeftAxisRendererProps>
+  | React.FunctionComponent<BottomAxisRendererProps>
+  | null {
   const { y, x } = merge({}, defaultAxes, axes);
 
   if (position === 'left' && !biaxialChildren && axes.y !== null) {
@@ -136,7 +126,10 @@ export function buildAxis(
   return () => null;
 }
 
-export const buildGrid = (gridStroke: string, noGrid: boolean): Grid => {
+export const buildGrid = (
+  gridStroke: string,
+  noGrid: boolean
+): React.FunctionComponent<GridRendererProps> => {
   if (noGrid) return () => null;
   return React.memo(function Grid({
     yScale,
