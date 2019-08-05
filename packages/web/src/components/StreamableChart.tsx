@@ -9,14 +9,10 @@ import {
   biaxial,
   State,
   prepChartData,
+  Axis,
   recursiveCloneChildren,
 } from '@viiksetjs/utils';
-import {
-  RenderContainerProps,
-  Axis,
-  FromStreamArgs,
-  GenericData,
-} from '../typedef';
+import { RenderContainerProps, FromStreamArgs, GenericData } from '../typedef';
 import {
   LeftAxisRendererProps,
   BottomAxisRendererProps,
@@ -176,7 +172,7 @@ const StreamableChart: React.FunctionComponent<Props> = ({
         xScale,
         margin,
         height,
-        notool: true,
+        noTool: true,
         yPoints,
         width,
         xKey,

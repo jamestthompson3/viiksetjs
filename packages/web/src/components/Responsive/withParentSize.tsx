@@ -1,32 +1,35 @@
-import * as React from 'react'
-import { SizeMe } from 'react-sizeme'
-import styled from 'styled-components'
+import * as React from 'react';
+import { SizeMe } from 'react-sizeme';
+import styled from 'styled-components';
 
-const Container = styled.div.attrs<{ x?: number }>({
+interface ContainerProps {
+  x: number;
+}
+
+const Container = styled.div.attrs((_p: ContainerProps): any => ({
   style: {
     width: '100%',
-    height: '100%'
-  }
-})`
+    height: '100%',
+  },
+}))`
   position: ${p => (p.x ? 'static' : 'relative')} !important;
-`
+`;
 
-export default function withParentSize(BaseComponent: React.ReactNode) {
-  const WrappedComponent = props => {
-    const { x } = props
+export default function withParentSize(
+  BaseComponent: React.FunctionComponent<any>
+) {
+  const WrappedComponent: React.FunctionComponent<any> = (props: any) => {
+    const { x } = props;
     return (
-      <SizeMe
-        monitorHeight
-        refreshMode="debounce"
-        refreshRate={100}
-        render={({ size }) => (
+      <SizeMe monitorHeight refreshMode="debounce" refreshRate={100}>
+        {({ size }) => (
           <Container x={x}>
             <BaseComponent {...{ ...props, size }} />
           </Container>
         )}
-      />
-    )
-  }
+      </SizeMe>
+    );
+  };
 
-  return WrappedComponent
+  return WrappedComponent;
 }

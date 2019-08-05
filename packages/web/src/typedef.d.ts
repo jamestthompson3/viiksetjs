@@ -7,6 +7,16 @@ export interface GenericData {
 
 export type ToolTipData = GenericData | null;
 
+type ScaleType =
+  | ScaleFunction<number, number>
+  | ScaleFunction<number, Date>
+  | ScaleFunction<number, string>;
+
+export interface Scales {
+  xScale: ScaleType;
+  yScale: ScaleType;
+}
+
 export interface TooltipUpdateData {
   calculatedData: GenericData;
   x: number;
@@ -84,6 +94,7 @@ export interface Tooltip<T> {
   mouseY: number;
   showTooltip: boolean;
   yCoords?: number[];
+  width: number;
   stroke: string;
   color: string | ((arg: any) => string);
   height: number;

@@ -328,12 +328,12 @@ const BoundedTooltip = withBoundingRects(TooltipBounder);
 export const withBounds = (component: React.ReactNode) =>
   withBoundingRects(component);
 
-interface TooltipRendererProps extends RenderedWithTooltipProps {
+export interface TooltipRendererProps extends RenderedWithTooltipProps {
   tooltipStyles: {
     content: React.CSSProperties;
     wrapper: React.CSSProperties;
   };
-  tooltipContent(tooltipDataa: ToolTipData): React.ReactElement;
+  tooltipContent(tooltipData: ToolTipData): React.ReactElement;
 }
 /**
  * Wrapper component for default tooltip

@@ -1,14 +1,19 @@
-import * as React from 'react'
-import get from 'lodash/get'
-import { Group } from '@vx/group'
-import { scaleBand, scaleLinear, scaleTime } from 'd3-scale'
+import * as React from 'react';
+import get from 'lodash/get';
+import { Group } from '@vx/group';
+import { scaleBand, scaleLinear, scaleTime } from 'd3-scale';
+import {
+  extractX,
+  getY,
+  determineYScale,
+  determineXScale,
+  ScaleFunction,
+} from '@viiksetjs/utils';
 
-import { StyledGradient, StyledBar } from '../styledComponents'
-import { extractX, getY } from '../../utils/dataUtils'
-import { determineYScale, determineXScale } from '../../utils/chartUtils'
-import { ScaleFunction, BarChartProps } from '../../types/index'
+import { StyledGradient, StyledBar } from '../styledComponents';
+import { BarChartProps, GenericData, Scales } from 'typedef';
 
-function BarChart<T>({
+const BarChart: React.FunctionComponent<Props> = ({
   declareBar,
   type,
   margin,
@@ -27,59 +32,69 @@ function BarChart<T>({
   nofill,
   orientation,
   inverted,
-  barProps
-}: Props<T>) {
-  const [scales, setScales] = React.useState({ xScale: null, yScale: null })
+  barProps,
+}) => {
+  const [scales, setScales] = React.useState<Scales>({
+    xScale: null,
+    yScale: null,
+  });
   React.useEffect(() => {
     if (process.env.NODE_ENV !== 'production') {
       if (data.map(item => get(item, dataKey)).includes(undefined)) {
         // eslint-disable-next-line
-        console.warn(`BarChart: No data found with dataKey ${dataKey}`)
+        console.warn(`BarChart: No data found with dataKey ${dataKey}`);
       }
     }
-  }, [])
+  }, []);
   React.useEffect(() => {
-    declareBar()
-  }, [])
+    declareBar();
+  }, []);
 
   React.useEffect(() => {
-    const yPoints = getY(data, axisId)
-    const scalar = type === 'linear' ? scaleLinear : scaleTime
+    const yPoints = getY(data, axisId);
+    const scalar = type === 'linear' ? scaleLinear : scaleTime;
 
     if (orientation === 'horizontal') {
-      const xScale = scalar()
-        .domain([0, Math.max(...yPoints)])
-        .range([margin.left, width])
+      const xScale = scalar() as ScaleFunction<number, number>;
+      xScale.domain([0, Math.max(...yPoints)]).range([margin.left, width]);
       const yScale = scaleBand()
         .domain(yPoints)
         .range([height, margin.top])
-        .padding(0.1)
+        .padding(0.1);
 
-      setScales({ xScale, yScale })
+      setScales({ xScale, yScale });
     } else {
-      const xScale = determineXScale({ type: 'ordinal', xPoints, width, margin })
-      const yScale = axisId
-        ? determineYScale({
-            type: 'linear',
-            yPoints,
-            height,
-            invertedRange: true,
-            margin
-          })
-        : scalar()
-            .domain([Math.max(...inheritedPoints), 0])
-            .range([height, margin.top])
-
-      setScales({ xScale, yScale })
+      const xScale = determineXScale({
+        type: 'ordinal',
+        xPoints,
+        width,
+        margin,
+      });
+      if (axisId) {
+        const yScale = determineYScale({
+          type: 'linear',
+          yPoints,
+          height,
+          invertedRange: true,
+          margin,
+        });
+        setScales({ xScale, yScale });
+      } else {
+        const yScale = scalar() as ScaleFunction<number, number>;
+        yScale
+          .domain([Math.max(...inheritedPoints), 0])
+          .range([height, margin.top]);
+        setScales({ xScale, yScale });
+      }
     }
-  }, [type, orientation])
+  }, [type, orientation]);
 
-  const { xScale, yScale } = scales
-  const xPoint = (d: T) => extractX(d, xKey)
-  const barHeight = (d: T) => yScale(get(d, dataKey))
-  const isHorizontal = orientation === 'horizontal'
+  const { xScale, yScale } = scales;
+  const xPoint = (d: GenericData) => extractX(d, xKey);
+  const barHeight = (d: GenericData) => yScale(get(d, dataKey));
+  const isHorizontal = orientation === 'horizontal';
   if (!xScale) {
-    return null
+    return null;
   }
   return (
     <>
@@ -91,32 +106,37 @@ function BarChart<T>({
             height={barHeight(d)}
             x={xScale(xPoint(d))}
             key="BarChart"
-            y={isHorizontal ? barHeight(d) : inverted ? 0 : height - barHeight(d)}
+            y={
+              isHorizontal ? barHeight(d) : inverted ? 0 : height - barHeight(d)
+            }
             data={d}
             fill={!nofill && `url(#gradient${xKey})`}
-            onMouseMove={(event: React.SyntheticEvent) => noTool || mouseMove({ event, datum: d })}
+            onMouseMove={(event: React.SyntheticEvent) =>
+              noTool || mouseMove({ event, datum: d })
+            }
             onMouseLeave={() => mouseLeave()}
             {...barProps}
           />
         </Group>
       ))}
     </>
-  )
-}
+  );
+};
 
 BarChart.defaultProps = {
   color: 'rgb(0, 157, 253)',
   nofill: false,
-  inverted: false
+  inverted: false,
+};
+
+interface Props extends BarChartProps {
+  data: GenericData[];
+  dataKey: string;
+  inheritedScale: ScaleFunction;
+  nofill: boolean;
+  axisId: string;
+  inverted: boolean;
+  color: string;
 }
 
-interface Props<T> extends BarChartProps {
-  data: T[]
-  dataKey: string
-  inheritedScale: ScaleFunction
-  axisId: string
-  inverted: boolean
-  color: string
-}
-
-export default React.memo(BarChart)
+export default React.memo(BarChart);

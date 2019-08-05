@@ -30,6 +30,9 @@ export {
   Margin,
   Size,
   ScalarObject,
+  Axis,
+  AxisProps,
+  MouseMove,
 } from './typedef';
 
 export { prepChartData, State } from './prepareChartData';

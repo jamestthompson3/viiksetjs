@@ -7,8 +7,13 @@ import {
   StyledGridRows,
 } from '../styledComponents';
 
-import { AxisProps, Axis } from '../../typedef';
-import { determineYScale, Margin, ScaleFunction } from '@viiksetjs/utils';
+import {
+  determineYScale,
+  Axis,
+  AxisProps,
+  Margin,
+  ScaleFunction,
+} from '@viiksetjs/utils';
 
 interface GridRendererProps {
   yScale: ScaleFunction;
