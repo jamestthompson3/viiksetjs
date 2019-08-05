@@ -30,23 +30,14 @@ const ScatterPlot = ({
   stroke,
   pointProps,
 }: Props): React.ReactElement[] | null => {
-  // Check if data exists
-  if (data.map((item: GenericData) => get(item, dataKey)).includes(undefined)) {
+  React.useEffect(() => {
     // eslint-disable-next-line
-    process.env.NODE_ENV !== 'production' &&
-      console.warn(`ScatterPlot: No data found with dataKey ${dataKey}`);
-    return null;
-  }
-
-  if (
-    axisId &&
-    data.map((item: GenericData) => get(item, axisId)).includes(undefined)
-  ) {
-    // eslint-disable-next-line
-    process.env.NODE_ENV !== 'production' &&
-      console.warn(`ScatterPlot: No data found with axisId ${axisId}`);
-    return null;
-  }
+    if (process.env.NODE_ENV !== 'production') {
+      if (dataPoints.includes(undefined)) {
+        console.warn(`ScatterPlot: No data found with dataKey ${dataKey}`);
+      }
+    }
+  }, []);
 
   const getAxis = () => (!axisId ? inheritedScale : yScale);
   const dataPoints = data.map((item: GenericData) => get(item, dataKey));

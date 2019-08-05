@@ -10,18 +10,23 @@ import get from 'lodash/get';
 import merge from 'lodash/merge';
 import { localPoint } from '@vx/event';
 
-import { extractX, extractY, createLinearScales } from '@viiksetjs/utils';
-import { formatTicks, formatXTicks } from '@viiksetjs/utils';
 import {
+  extractX,
+  MouseMove,
+  extractY,
+  createLinearScales,
+  formatTicks,
+  formatXTicks,
   findTooltipX,
   recursiveCloneChildren,
   biaxial,
-} from '@viiksetjs/utils';
-import { prepChartData, Margin, State, ScaleFunction } from '@viiksetjs/utils';
-import {
-  Tooltip,
-  RenderContainerProps,
+  prepChartData,
   Axis,
+  Margin,
+  State,
+} from '@viiksetjs/utils';
+import {
+  RenderContainerProps,
   GenericData,
   ToolTipData,
   TooltipUpdateData,
@@ -125,75 +130,72 @@ const ChartArea: React.FunctionComponent<Props> = ({
 
   // To prevent tooltips from not showing on bar chart due to minification changing names
   const declareBar = () => setBar(true);
-  const mouseMove = React.useCallback(
-    ({
-      event,
-      xPoints,
-      xScale,
-      yScale,
-      yScales,
-      dataKeys,
-      datum,
-    }: Partial<MouseMove>) => {
-      if (tooltip === null || noTool || !xPoints) return;
+  const mouseMove = ({
+    event,
+    xPoints,
+    xScale,
+    yScale,
+    yScales,
+    dataKeys,
+    datum,
+  }: Partial<MouseMove>): void => {
+    if (tooltip === null || noTool || !xPoints) return;
 
-      const svgPoint = localPoint(chart.current, event);
-      const mouseX = get(svgPoint, 'x');
-      const mouseY = get(svgPoint, 'y');
+    const svgPoint = localPoint(chart.current, event);
+    const mouseX = get(svgPoint, 'x');
+    const mouseY = get(svgPoint, 'y');
 
-      // Case for data contained in bar / pie charts:
-      // there won't be an associated value based on precise
-      // cursor position
-      if (datum) {
-        return updateTooltip({
-          calculatedData: datum,
-          x: mouseX,
+    // Case for data contained in bar / pie charts:
+    // there won't be an associated value based on precise
+    // cursor position
+    if (datum) {
+      return updateTooltip({
+        calculatedData: datum,
+        x: mouseX,
+        mouseX,
+        mouseY,
+        showTooltip: true,
+      });
+    }
+
+    const xValueOffset = biaxial(children) ? 0 : margin.right;
+    const xValue = xScale.invert(get(svgPoint, 'x') - xValueOffset);
+
+    return flow(
+      (xValue: number) => bisect(xPoints as number[], xValue),
+      (index: number) => {
+        // Find the closest data point based on the actual mouse position
+        const bounds = { dLeft: data[index - 1], dRight: data[index] };
+        // If the calculated xValue minus the value to the left is greater than
+        // The indexed value minuse the calcuated value, take the right hand
+        // value if available. If not, take the left hand value if available.
+        return xValue - (xPoints[index - 1] as number) >
+          (xPoints[index] as number) - xValue
+          ? bounds.dRight || bounds.dLeft
+          : bounds.dLeft || bounds.dRight;
+      },
+      (calculatedData: { [key: string]: any }) => {
+        const calculatedX = head(extractX(calculatedData, xKey));
+        const x: number = findTooltipX({ calculatedX, xScale });
+        const yCoords =
+          yScales && dataKeys
+            ? dataKeys.map((key: string) => yScales[key](calculatedData[key]))
+            : extractY(calculatedData).map(item => yScale(item));
+        updateTooltip({
+          calculatedData,
+          x,
+          showTooltip: true,
           mouseX,
           mouseY,
-          showTooltip: true,
+          yCoords,
         });
       }
+    )(xValue);
+  };
 
-      const xValueOffset = biaxial(children) ? 0 : margin.right;
-      const xValue = xScale.invert(get(svgPoint, 'x') - xValueOffset);
-
-      return flow(
-        (xValue: number) => bisect(xPoints as number[], xValue),
-        (index: number) => {
-          // Find the closest data point based on the actual mouse position
-          const bounds = { dLeft: data[index - 1], dRight: data[index] };
-          // If the calculated xValue minus the value to the left is greater than
-          // The indexed value minuse the calcuated value, take the right hand
-          // value if available. If not, take the left hand value if available.
-          return xValue - (xPoints[index - 1] as number) >
-            (xPoints[index] as number) - xValue
-            ? bounds.dRight || bounds.dLeft
-            : bounds.dLeft || bounds.dRight;
-        },
-        (calculatedData: { [key: string]: any }) => {
-          const calculatedX = head(extractX(calculatedData, xKey));
-          const x: number = findTooltipX({ calculatedX, xScale });
-          const yCoords =
-            yScales && dataKeys
-              ? dataKeys.map(key => yScales[key](calculatedData[key]))
-              : extractY(calculatedData).map(item => yScale(item));
-          return updateTooltip({
-            calculatedData,
-            x,
-            showTooltip: true,
-            mouseX,
-            mouseY,
-            yCoords,
-          });
-        }
-      )(xValue);
-    },
-    []
-  );
-
-  const mouseLeave = React.useCallback(() => {
+  const mouseLeave = () => {
     updateTooltip({});
-  }, []);
+  };
 
   const {
     calculatedData,
@@ -339,18 +341,8 @@ const ChartArea: React.FunctionComponent<Props> = ({
   );
 };
 
-interface MouseMove {
-  event: React.SyntheticEvent;
-  xPoints: number[] | string[];
-  xScale: ScaleFunction;
-  yScale: ScaleFunction;
-  yScales: false | { [key: string]: ScaleFunction };
-  dataKeys: string[];
-  datum?: Object;
-}
-
 interface TooltipProps<T> {
-  indicator(indicatorProps: RenderedWithTooltipProps): React.ReactNode;
+  indicator(indicatorProps: RenderedWithTooltipProps): React.ReactElement;
   renderer(renderProps: RenderedWithTooltipProps): React.ReactNode;
   content(tooltipData: T): React.ReactNode;
   styles: {

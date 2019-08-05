@@ -1,9 +1,10 @@
-import React from 'react'
-import { scaleLinear } from 'd3-scale'
-import get from 'lodash/get'
-import { StyledLeftAxis, StyledRightAxis } from './styledComponents'
+import * as React from 'react';
+import { scaleLinear } from 'd3-scale';
+import get from 'lodash/get';
+import { StyledLeftAxis, StyledRightAxis } from './styledComponents';
+import { RenderedChildProps, GenericData } from 'typedef';
 
-function YAxis({
+const YAxis = ({
   height,
   data,
   axisId,
@@ -17,18 +18,20 @@ function YAxis({
   numTicks,
   tickFormat,
   ...rest
-}) {
-  // Check if data exists
-  if (data.map(item => get(item, axisId)).includes(undefined)) {
+}: Props): React.ReactElement => {
+  React.useEffect(() => {
     // eslint-disable-next-line
-    console.error(`YAxis: No data found with axisId ${axisId}`)
-    return null
-  }
+    if (process.env.NODE_ENV !== 'production') {
+      if (dataPoints.includes(undefined)) {
+        console.warn(`YAxis: No data found with axisId ${axisId}`);
+      }
+    }
+  }, []);
 
-  const dataPoints = data.map((item: T) => get(item, axisId))
+  const dataPoints = data.map((item: GenericData) => get(item, axisId));
   const yScale = scaleLinear()
     .domain([0, Math.max(...dataPoints)])
-    .range([height, margin.top])
+    .range([height, margin.top]);
   return position === 'left' ? (
     <StyledLeftAxis
       {...{ scale: yScale, label, labelProps, color }}
@@ -45,7 +48,7 @@ function YAxis({
               strokeWidth: '0.5px',
               fontWeight: '400',
               textAnchor: 'end',
-              fontSize: 12
+              fontSize: 12,
             })
       }
       {...rest}
@@ -66,17 +69,35 @@ function YAxis({
               strokeWidth: '0.5px',
               fontWeight: '400',
               textAnchor: 'end',
-              fontSize: 12
+              fontSize: 12,
             })
       }
       {...rest}
     />
-  )
+  );
+};
+
+interface Props extends RenderedChildProps {
+  position: 'left' | 'right';
+  label: string;
+  tickFormat(d: any, i: number): string;
+  numTicks: number;
+  axisId: string;
+  tickLabels(
+    d: any,
+    i: number
+  ): {
+    fontWeight: number;
+    strokeWidth: number | string;
+    textAnchor: string;
+    fontSize: number | string;
+  };
+  labelProps: Object;
 }
 
 YAxis.defaultProps = {
   labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' },
-  data: []
-}
+  data: [],
+};
 
-export default React.memo(YAxis)
+export default React.memo(YAxis);

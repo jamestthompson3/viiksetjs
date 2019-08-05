@@ -328,6 +328,13 @@ const BoundedTooltip = withBoundingRects(TooltipBounder);
 export const withBounds = (component: React.ReactNode) =>
   withBoundingRects(component);
 
+interface TooltipRendererProps extends RenderedWithTooltipProps {
+  tooltipStyles: {
+    content: React.CSSProperties;
+    wrapper: React.CSSProperties;
+  };
+  tooltipContent(tooltipDataa: ToolTipData): React.ReactElement;
+}
 /**
  * Wrapper component for default tooltip
  */
@@ -337,9 +344,9 @@ export const defaultTooltipRenderer = ({
   color,
   x,
   tooltipStyles,
-}) => (
+}: TooltipRendererProps) => (
   <BoundedTooltip left={x} style={tooltipStyles.wrapper}>
-    <TooltipWrapper style={tooltipStyles.content} color={color}>
+    <TooltipWrapper style={tooltipStyles.content} color={color as string}>
       {tooltipContent({ tooltipData })}
     </TooltipWrapper>
   </BoundedTooltip>
@@ -357,18 +364,18 @@ export const defaultTooltipContent = ({
     <p key={`tooltip-content-${entry[0]}-${i}`}>{`${entry[0]}: ${entry[1]}`}</p>
   ));
 
-export const Indicator = ({
+export function Indicator({
   yCoords,
   x,
   stroke,
   color,
-}: RenderedWithTooltipProps) => {
+}: RenderedWithTooltipProps) {
   return (
     <>
       <Line
         from={{ x: x, y: 0 }}
         to={{ x: x, y: Math.max(...(yCoords || [])) }}
-        stroke={stroke}
+        stroke={stroke as string}
         strokeWidth={1}
         strokeOpacity={0.5}
         style={{ pointerEvents: 'none' }}
@@ -379,7 +386,7 @@ export const Indicator = ({
           cx={x}
           cy={coord}
           fill="rgb(28, 42, 44)"
-          stroke={color}
+          stroke={color as string}
           strokeWidth={1}
           style={{ pointerEvents: 'none' }}
           fillOpacity={1}
@@ -388,4 +395,4 @@ export const Indicator = ({
       ))}
     </>
   );
-};
+}

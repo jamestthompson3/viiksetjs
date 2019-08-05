@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { ScaleFunction, Margin, Size } from '@viiksetjs/utils';
+import { ScaleFunction, Margin, Size, Axis } from '@viiksetjs/utils';
 
 export interface GenericData {
   [key: string]: any;
@@ -19,31 +19,6 @@ export interface TooltipUpdateData {
 export type RenderedWithTooltipProps = Partial<Tooltip<ToolTipData>>;
 
 export type GenericGetter = (d: GenericData) => any;
-
-export interface AxisProps {
-  format(d: any, i: number): string;
-  tickLabelProps(
-    d: any,
-    i: number
-  ): {
-    fontWeight: number;
-    strokeWidth: number | string;
-    textAnchor: string;
-    fontSize: number | string;
-  };
-  tickFormat(d: any, i?: number): string | number;
-  tickStroke: number | string;
-  labelProps: Object;
-  tickFormat(d: string | number, i?: number): string | number;
-  label: string;
-  numTicks: number;
-  stroke: string;
-}
-
-export interface Axis {
-  x: Partial<AxisProps>;
-  y: Partial<AxisProps>;
-}
 
 interface GlyphRendererProps {
   width: number;
@@ -77,7 +52,7 @@ export interface RenderContainerProps {
   axes: Axis;
   grid: GridProps;
   gridStroke: string;
-  stroke: string | number;
+  stroke: string;
 }
 
 export interface RenderedChildProps {

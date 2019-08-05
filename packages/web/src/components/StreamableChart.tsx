@@ -1,18 +1,35 @@
-import * as React from 'react'
-import { Group } from '@vx/group'
-import isEmpty from 'lodash/isEmpty'
+import * as React from 'react';
+import { Group } from '@vx/group';
+import isEmpty from 'lodash/isEmpty';
 
-import { formatTicks, formatXTicks } from '../utils/formatUtils'
-import { biaxial } from '../utils/chartUtils'
-import { ScaleFunction, RenderContainerProps, Axis, FromStreamArgs } from '../types/index'
-import withStream from './Streaming/withStream'
-import { LeftAxisReturn, BottomAxisReturn, buildAxis, buildGrid } from './common'
-import { prepChartData, State } from '../utils/prepareChartData'
-import withParentSize from './Responsive/withParentSize'
+import {
+  formatTicks,
+  ScaleFunction,
+  formatXTicks,
+  biaxial,
+  State,
+  prepChartData,
+  recursiveCloneChildren,
+} from '@viiksetjs/utils';
+import {
+  RenderContainerProps,
+  Axis,
+  FromStreamArgs,
+  GenericData,
+} from '../typedef';
+import {
+  LeftAxisRendererProps,
+  BottomAxisRendererProps,
+  buildAxis,
+  buildGrid,
+} from './common/index';
+import withParentSize from './Responsive/withParentSize';
 
-const margin = { top: 18, right: 15, bottom: 15, left: 30 }
+const margin = { top: 18, right: 15, bottom: 15, left: 30 };
 
-const DefaultLoadingMessage: React.FunctionComponent = () => <h2>Loading data...</h2>
+const DefaultLoadingMessage: React.FunctionComponent = () => (
+  <h2>Loading data...</h2>
+);
 
 const defaultAxes: Axis = {
   x: {
@@ -20,37 +37,40 @@ const defaultAxes: Axis = {
       fontWeight: 400,
       strokeWidth: '0.5px',
       textAnchor: 'start',
-      fontSize: 12
+      fontSize: 12,
     }),
     numTicks: 6,
     label: '',
     stroke: '#000',
-    labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black', dy: '-0.5rem' },
-    tickFormat: formatXTicks
+    labelProps: {
+      fontSize: 12,
+      textAnchor: 'middle',
+      fill: 'black',
+      dy: '-0.5rem',
+    },
+    tickFormat: formatXTicks,
   },
   y: {
     tickLabelProps: () => ({
       strokeWidth: '0.5px',
       fontWeight: 400,
       textAnchor: 'end',
-      fontSize: 12
+      fontSize: 12,
     }),
     numTicks: 4,
     label: '',
     stroke: '#000',
     tickFormat: formatTicks,
-    labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' }
-  }
-}
+    labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' },
+  },
+};
 
-function StreamableChart<T>({
+const StreamableChart: React.FunctionComponent<Props> = ({
   connection,
   mapStream,
   persist,
   streamParser,
-  fromStream,
   stopPersist,
-  data,
   children,
   determineViewBox,
   xKey,
@@ -62,11 +82,22 @@ function StreamableChart<T>({
   size,
   loadingMessage: Loading,
   orientation,
-  color
-}: Props<T>) {
-  const [chartData, setChartData] = React.useState<State>(() => {})
-  const chart = React.useRef(null)
-  const socket = React.useRef()
+  color,
+}) => {
+  const [chartData, setChartData] = React.useState<State<any, any>>({
+    width: 0,
+    height: 0,
+  });
+  const chart = React.useRef(null);
+  const socket = React.useRef<WebSocket>();
+  const [data, setData] = React.useState<GenericData[]>([]);
+  const fromStream = ({ message }: any) => {
+    const appendedData =
+      mapStream(data, message).length <= persist
+        ? mapStream(data, message)
+        : mapStream(data, message).slice(1);
+    setData(appendedData);
+  };
   React.useEffect(() => {
     const chartData = prepChartData({
       data,
@@ -75,58 +106,64 @@ function StreamableChart<T>({
       yKey,
       margin,
       type,
-      orientation
-    })
-    setChartData(chartData)
-  }, [data, size, type, margin, orientation, xKey, yKey])
+      orientation,
+    });
+    setChartData(chartData);
+  }, [data, size, type, margin, orientation, xKey, yKey]);
   React.useEffect(() => {
     if (!connection) {
       // eslint-disable-next-line
-      console.error('Connection string is needed for StreamableChart')
-      return null
+      console.error('Connection string is needed for StreamableChart');
+      return;
     }
 
-    socket.current = new window.WebSocket(connection)
+    socket.current = new WebSocket(connection);
 
     if (socket.current) {
-      socket.current.onclose = () => console.warn('connection closed')
+      socket.current.onclose = () => console.warn('connection closed');
       socket.current.onmessage = message =>
         fromStream({
           message: streamParser(message),
-          mapStream,
-          persist
-        })
+        });
     }
-    return () => socket.current.close()
-  }, [])
+    return () => socket.current && socket.current.close();
+  }, []);
 
-  if (isEmpty(data)) return <Loading />
+  if (isEmpty(data)) return <Loading />;
 
   if (stopPersist && data.length >= stopPersist) {
-    socket.current && socket.current.close()
+    socket.current && socket.current.close();
   }
 
-  const { xScale, width, height, yPoints, yScale } = chartData
+  const { xScale, width, height, yPoints, yScale } = chartData;
   if (!xScale) {
-    return null
+    return null;
   }
-  const biaxialChildren = children && biaxial(children)
-  const LeftAxis = buildAxis(biaxialChildren, 'left', defaultAxes, axes, color) as LeftAxisReturn
+  const biaxialChildren = biaxial(children);
+  const LeftAxis = buildAxis(
+    biaxialChildren,
+    'left',
+    defaultAxes,
+    axes,
+    color
+  ) as React.FunctionComponent<LeftAxisRendererProps>;
   const BottomAxis = buildAxis(
     biaxialChildren,
     'bottom',
     defaultAxes,
     axes,
     color
-  ) as BottomAxisReturn
-  const Grid = buildGrid(gridStroke, noGrid)
+  ) as React.FunctionComponent<BottomAxisRendererProps>;
+  const Grid = buildGrid(gridStroke, noGrid);
   return (
     <svg
       width={size.width}
       height={size.height}
       preserveAspectRatio="none"
       viewBox={
-        determineViewBox ? determineViewBox({ size, margin }) : `-10 0 ${size.width} ${height}`
+        determineViewBox
+          ? determineViewBox({ size, margin })
+          : `-10 0 ${size.width} ${height}`
       }
       ref={chart}
     >
@@ -134,51 +171,47 @@ function StreamableChart<T>({
         <Grid yScale={yScale} width={width} left={margin.left} />
         <LeftAxis {...{ type, orientation, color, yPoints, height, margin }} />
       </Group>
-      {React.Children.map(children, child =>
-        React.cloneElement(child, {
-          data,
-          xScale,
-          margin,
-          height,
-          notool: true,
-          yPoints,
-          width,
-          xKey,
-          inheritedScale: yScale
-        })
-      )}
+      {recursiveCloneChildren(children, {
+        data,
+        xScale,
+        margin,
+        height,
+        notool: true,
+        yPoints,
+        width,
+        xKey,
+        inheritedScale: yScale,
+      })}
 
       <BottomAxis scale={xScale} height={height} margin={margin} />
     </svg>
-  )
-}
+  );
+};
 
 StreamableChart.defaultProps = {
-  data: [],
   persist: 2500,
   color: '#000',
   axes: defaultAxes,
   stroke: '#000',
   loadingMessage: DefaultLoadingMessage,
-  streamParser: message => message,
+  streamParser: (message: any) => message,
   mapStream: (data: any[], message: any) => [...data, message],
-  margin: margin
+  margin: margin,
+};
+
+interface Props extends RenderContainerProps {
+  persist: number;
+  fromStream(args: FromStreamArgs): void;
+  xScale: ScaleFunction;
+  yScale: ScaleFunction;
+  loadingMessage: React.FunctionComponent;
+  yScales: { [key: string]: ScaleFunction };
+  yPoints: any[];
+  chartData: GenericData[];
+  stopPersist: number;
+  connection: string;
+  streamParser: (message: any) => any;
+  mapStream(data: GenericData, message: string): GenericData[];
 }
 
-interface Props<T> extends RenderContainerProps {
-  data: T[]
-  persist: number
-  fromStream(args: FromStreamArgs): void
-  xScale: ScaleFunction
-  yScale: ScaleFunction
-  loadingMessage: React.ReactNode
-  yScales: { [key: string]: ScaleFunction }
-  yPoints: any[]
-  chartData: any[]
-  stopPersist: number
-  connection: string
-  streamParser: (message: any) => any
-  mapStream(data: any, message: string): any[]
-}
-
-export default withStream(withParentSize(StreamableChart))
+export default withParentSize(StreamableChart);
