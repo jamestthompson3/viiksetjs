@@ -86,7 +86,7 @@ const defaultTooltip: TooltipProps<GenericData> = {
   styles: { wrapper: {}, content: {} },
 };
 
-const ChartArea: React.FunctionComponent<Props> = ({
+function ChartArea({
   children,
   determineViewBox,
   data,
@@ -104,7 +104,7 @@ const ChartArea: React.FunctionComponent<Props> = ({
   color,
   margin = DEFAULT_MARGIN,
   glyphRenderer,
-}) => {
+}: Props) {
   const chart = React.useRef(null);
   const [chartData, setChartData] = React.useState<State<any, any>>({
     width: 0,
@@ -339,7 +339,7 @@ const ChartArea: React.FunctionComponent<Props> = ({
         })}
     </div>
   );
-};
+}
 
 interface TooltipProps<T> {
   indicator(indicatorProps: RenderedWithTooltipProps): React.ReactElement;

@@ -4,16 +4,21 @@
   "main": "dist/index.js",
   "module": "dist/web.esm.js",
   "typings": "dist/index.d.ts",
+  "author": {
+    "name": "taylor thompson",
+    "email": "taylor@teukka.tech"
+  },
+  "license": "MIT",
   "files": [
     "dist"
   ],
   "scripts": {
     "start": "tsdx watch",
-    "buildExamples": "webpack --config=examples/examples.webpack.config.js",
     "build": "tsdx build",
     "test": "tsdx test --env=jsdom"
   },
   "peerDependencies": {
+    "react": ">=16",
     "styled-components": "^4.1.3"
   },
   "husky": {
@@ -28,10 +33,6 @@
     "trailingComma": "es5"
   },
   "devDependencies": {
-    "@babel/core": "^7.5.5",
-    "@babel/plugin-proposal-class-properties": "^7.5.5",
-    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
-    "@babel/preset-react": "^7.0.0",
     "@types/d3-array": "^2.0.0",
     "@types/d3-scale": "^2.1.1",
     "@types/d3-shape": "^1.3.1",
@@ -40,7 +41,6 @@
     "@types/react": "^16.8.23",
     "@types/react-dom": "^16.8.4",
     "@types/styled-components": "^4.1.18",
-    "babel-loader": "^8.0.6",
     "husky": "^3.0.1",
     "prettier": "^1.18.2",
     "pretty-quick": "^1.11.1",
@@ -49,16 +49,25 @@
     "styled-components": "^4.3.2",
     "tsdx": "^0.7.2",
     "tslib": "^1.10.0",
-    "typescript": "^3.5.3",
-    "webpack": "^4.38.0",
-    "webpack-cli": "^3.3.6"
+    "typescript": "^3.5.3"
   },
   "dependencies": {
-    "@viiksetjs/utils": "^0.1.0",
+    "@viiksetjs/utils": "file:../utils",
+    "@vx/axis": "^0.0.190",
+    "@vx/bounds": "^0.0.189",
     "@vx/curve": "^0.0.189",
     "@vx/event": "^0.0.189",
+    "@vx/gradient": "^0.0.189",
+    "@vx/grid": "^0.0.190",
     "@vx/group": "^0.0.190",
+    "@vx/pattern": "^0.0.189",
     "@vx/shape": "^0.0.190",
+    "@vx/threshold": "^0.0.190",
+    "d3-scale": "^3.0.1",
+    "date-fns": "^1.30.1",
+    "lodash": "^4.17.15",
+    "lodash-es": "^4.17.15",
+    "polished": "^3.4.1",
     "react-sizeme": "^2.6.7"
   }
 }
