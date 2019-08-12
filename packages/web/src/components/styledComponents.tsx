@@ -107,7 +107,6 @@ StyledBar.defaultProps = {
 };
 
 export const StyledGridRows = withTheme(props => {
-  console.log(props);
   return (
     <GridRows
       {...{ ...props, stroke: findStroke(props) }}

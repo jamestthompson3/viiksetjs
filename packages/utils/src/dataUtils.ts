@@ -4,7 +4,7 @@ import head from 'lodash/head';
 import last from 'lodash/last';
 import get from 'lodash/get';
 import parse from 'date-fns/parse';
-import format from 'date-fns/format';
+import { format } from 'date-fns';
 import { Margin, ScalarObject, GenericNumericData } from './typedef';
 
 export const parseIfDate = (data: Object): Date | undefined => {

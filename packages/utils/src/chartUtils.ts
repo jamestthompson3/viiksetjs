@@ -7,65 +7,37 @@ import {
   ScaleLinear,
   ScaleTime,
 } from 'd3-scale';
-import { ScaleProps, Axis, MouseMove, ScaleFunction, Margin } from './typedef';
+import { ScaleProps, ScaleFunction, InheritedChartProps } from './typedef';
 import head from 'lodash/head';
 import get from 'lodash/get';
 import last from 'lodash/last';
 import sortedUniq from 'lodash/sortedUniq';
 
-interface InheritedChartProps {
-  data: { [key: string]: any }[];
-  xScale: ScaleFunction<any, any>;
-  margin: Margin;
-  height: number;
-  noTool: boolean;
-  axes: Axis;
-  yPoints: any[];
-  xPoints: any[];
-  width: number;
-  declareBar(): void;
-  type: string;
-  orientation: string;
-  mouseLeave(): void;
-  mouseMove({
-    event,
-    xPoints,
-    xScale,
-    yScale,
-    yScales,
-    dataKeys,
-    datum,
-  }: Partial<MouseMove>): void;
-  xKey: string;
-  yKey: string;
-  inheritedScale: ScaleFunction<any, any>;
-}
-
-interface ChildProps extends InheritedChartProps {
-  children: any;
-}
-
 /**
  * Recursively clones children, passing props down nested DOM structures
  */
-export const recursiveCloneChildren = (
+export function recursiveCloneChildren(
   children: React.ReactNode,
-  props: Partial<ChildProps>
-): React.ReactNode =>
-  React.Children.map(children, child => {
-    if (!React.isValidElement(child)) return child;
+  props: InheritedChartProps
+) {
+  return React.Children.map(
+    children as React.ReactElement<any>[],
+    (child: React.ReactElement<InheritedChartProps>) => {
+      if (!React.isValidElement(child)) return child;
 
-    if (child.props) {
-      props['children'] = recursiveCloneChildren(
-        child.props['children'],
-        props
-      );
+      if (child.props) {
+        props['children'] = recursiveCloneChildren(child.props.children, props);
 
-      return React.cloneElement(child, props);
+        return React.cloneElement(
+          child as React.ReactElement<InheritedChartProps>,
+          props
+        );
+      }
+
+      return child;
     }
-
-    return child;
-  });
+  );
+}
 
 export const determineXScale = ({
   type,

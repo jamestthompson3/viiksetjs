@@ -64,8 +64,8 @@ export interface State<Range, Output> {
   yScales?: { [key: string]: ScaleFunction<any, any> } | false;
   biaxialChildren?: boolean;
   dataKeys?: string[];
-  yPoints?: number[] | string[];
-  xPoints?: number[] | string[];
+  yPoints: number[] | string[];
+  xPoints: number[] | string[];
 }
 
 interface Props {

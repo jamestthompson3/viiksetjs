@@ -83,6 +83,8 @@ const StreamableChart: React.FunctionComponent<Props> = ({
   const [chartData, setChartData] = React.useState<State<any, any>>({
     width: 0,
     height: 0,
+    yPoints: [],
+    xPoints: [],
   });
   const chart = React.useRef(null);
   const socket = React.useRef<WebSocket>();

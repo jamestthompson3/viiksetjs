@@ -2,11 +2,9 @@ import * as React from 'react';
 import { scaleLinear } from 'd3-scale';
 import get from 'lodash/get';
 import { StyledLeftAxis, StyledRightAxis } from './styledComponents';
-import {
-  GenericData,
-  RenderedChildPassedProps,
-  RenderedChildInheritedProps,
-} from 'typedef';
+import { GenericData, RenderedChildPassedProps } from 'typedef';
+
+import { InheritedChartProps } from '@viiksetjs/utils';
 
 const YAxis = ({
   height,
@@ -105,6 +103,6 @@ YAxis.defaultProps = {
   data: [],
 };
 
-type Props = Partial<YAxisProps> & Readonly<RenderedChildInheritedProps>;
+type Props = Partial<YAxisProps> & Readonly<InheritedChartProps>;
 
 export default React.memo(YAxis);

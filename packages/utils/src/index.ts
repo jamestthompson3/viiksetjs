@@ -33,6 +33,7 @@ export {
   Axis,
   AxisProps,
   MouseMove,
+  InheritedChartProps,
 } from './typedef';
 
 export { prepChartData, State } from './prepareChartData';

@@ -4,7 +4,6 @@ import { Group } from '@vx/group';
 import { Bar } from '@vx/shape';
 import { bisect } from 'd3-array';
 import flow from 'lodash/flow';
-import isEmpty from 'lodash/isEmpty';
 import head from 'lodash/head';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
@@ -21,6 +20,7 @@ import {
   recursiveCloneChildren,
   biaxial,
   prepChartData,
+  InheritedChartProps,
   Axis,
   Margin,
   State,
@@ -109,6 +109,8 @@ function ChartArea({
   const [chartData, setChartData] = React.useState<State<any, any>>({
     width: 0,
     height: 0,
+    yPoints: [],
+    xPoints: [],
   });
   const [bar, setBar] = React.useState(false);
   const Grid = buildGrid(gridStroke, noGrid);
@@ -227,7 +229,8 @@ function ChartArea({
     styles: tooltipStyles,
     content: tooltipContent,
   } = merge({}, defaultTooltip, tooltip);
-  if (isEmpty(chartData)) {
+  // if we haven't set scales, we know it's not ready to render the chart
+  if (!chartData.xScale) {
     return null;
   }
   const {
@@ -278,7 +281,7 @@ function ChartArea({
             xKey,
             yKey,
             inheritedScale: yScale,
-          })}
+          } as InheritedChartProps)}
           {bar || (
             <Bar
               width={size.width}

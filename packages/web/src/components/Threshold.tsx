@@ -5,7 +5,8 @@ import { curveBasis } from '@vx/curve';
 import { extractX } from '@viiksetjs/utils';
 
 import { StyledThreshold } from './styledComponents';
-import { RenderedChildProps, GenericData } from '../typedef';
+import { GenericData, RenderedChildPassedProps } from '../typedef';
+import { InheritedChartProps } from '@viiksetjs/utils';
 
 const Threshold: React.FunctionComponent<Props> = ({
   data,
@@ -23,6 +24,8 @@ const Threshold: React.FunctionComponent<Props> = ({
   belowAreaProps,
   lineProps,
 }) => {
+  if (!y0 || !y1) throw new Error('Threshold: no y0 or y1 keys given');
+  // FIXME!!! Shouldn't be mapping through the data twice...
   const dataPoints = [
     ...data.map((item: GenericData) => get(item, y0)),
     ...data.map((item: GenericData) => get(item, y1)),
@@ -68,7 +71,7 @@ Threshold.defaultProps = {
   },
 };
 
-interface Props extends RenderedChildProps {
+interface ThresholdProps extends RenderedChildPassedProps {
   y0: string;
   y1: string;
   aboveAreaProps: Object;
@@ -77,5 +80,7 @@ interface Props extends RenderedChildProps {
   clipAboveTo: number;
   lineProps: Object;
 }
+
+type Props = Partial<ThresholdProps> & Readonly<InheritedChartProps>;
 
 export default React.memo(Threshold);

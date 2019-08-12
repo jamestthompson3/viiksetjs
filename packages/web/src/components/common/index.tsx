@@ -145,7 +145,6 @@ export const buildGrid = (
     width: number;
     left: number;
   }) {
-    console.log(`%c${yScale}`, 'color: blue;');
     return (
       <StyledGridRows scale={yScale} stroke={gridStroke} width={width - left} />
     );

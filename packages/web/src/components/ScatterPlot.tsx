@@ -7,8 +7,8 @@ import {
   GenericGetter,
   GenericData,
   RenderedChildPassedProps,
-  RenderedChildInheritedProps,
 } from '../typedef';
+import { InheritedChartProps } from '@viiksetjs/utils';
 
 const genericGetter: GenericGetter = d => d;
 
@@ -90,6 +90,6 @@ interface ScatterPlotProps extends RenderedChildPassedProps {
   opacity: NumGetter | GenericGetter | number;
 }
 
-type Props = Readonly<RenderedChildInheritedProps> & Partial<ScatterPlotProps>;
+type Props = Readonly<InheritedChartProps> & Partial<ScatterPlotProps>;
 
 export default ScatterPlot;

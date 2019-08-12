@@ -4,6 +4,11 @@
   "main": "dist/index.js",
   "module": "dist/utils.esm.js",
   "typings": "dist/index.d.ts",
+  "author": {
+    "name": "taylor thompson",
+    "email": "taylor@teukka.tech"
+  },
+  "license": "MIT",
   "files": [
     "dist"
   ],

@@ -20,6 +20,32 @@ export interface Margin {
   bottom: number;
 }
 
+interface GenericData {
+  [key: string]: any;
+}
+
+export interface InheritedChartProps {
+  noTool: boolean;
+  axes: Axis;
+  xPoints: string[] | number[];
+  declareBar(): void;
+  type: string;
+  orientation?: 'horizontal';
+  mouseMove(args: any): void;
+  mouseLeave(): void;
+  xKey?: string;
+  yKey?: string;
+  height: number;
+  width: number;
+  margin: Margin;
+  size: Size;
+  yPoints: string[] | number[];
+  data: GenericData[];
+  xScale: ScaleFunction<any, any>;
+  inheritedScale: ScaleFunction<any, any>;
+  children: any;
+}
+
 interface ScalarObject<R, O> {
   [key: string]: ScaleFunction<R, O>;
 }

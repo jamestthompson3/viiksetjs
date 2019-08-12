@@ -16,8 +16,8 @@ import {
   GenericData,
   TooltipUpdateData,
   RenderedChildPassedProps,
-  RenderedChildInheritedProps,
 } from '../typedef';
+import { InheritedChartProps } from '@viiksetjs/utils';
 
 interface LabelProps {
   x: number;
@@ -232,7 +232,7 @@ interface PieChartProps {
 
 type Props = Partial<RenderedChildPassedProps> &
   PieChartProps &
-  Readonly<RenderedChildInheritedProps>;
+  Readonly<InheritedChartProps>;
 
 interface BodyProps {
   data: GenericData[];

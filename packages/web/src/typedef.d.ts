@@ -73,17 +73,6 @@ export interface RenderedChildPassedProps {
   xKey: string;
 }
 
-export interface RenderedChildInheritedProps {
-  height: number;
-  width: number;
-  margin: Margin;
-  size: Size;
-  yPoints: number[];
-  data: Object[];
-  xScale: ScaleFunction;
-  inheritedScale: ScaleFunction;
-}
-
 export interface Size {
   width: number;
   height: number;

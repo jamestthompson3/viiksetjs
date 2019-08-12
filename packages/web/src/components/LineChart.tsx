@@ -9,12 +9,8 @@ import {
   StyledAreaClosed,
 } from './styledComponents';
 import { extractX } from '@viiksetjs/utils';
-import { determineYScale } from '@viiksetjs/utils';
-import {
-  GenericData,
-  RenderedChildInheritedProps,
-  RenderedChildPassedProps,
-} from '../typedef';
+import { determineYScale, InheritedChartProps } from '@viiksetjs/utils';
+import { GenericData, RenderedChildPassedProps } from '../typedef';
 
 const LineChart: React.FunctionComponent<Props> = ({
   data,
@@ -120,6 +116,6 @@ interface LineChartProps extends RenderedChildPassedProps {
   nopattern: boolean;
 }
 
-type Props = Readonly<RenderedChildInheritedProps> & Partial<LineChartProps>;
+type Props = Readonly<InheritedChartProps> & Partial<LineChartProps>;
 
 export default React.memo(LineChart);
