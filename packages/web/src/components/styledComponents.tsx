@@ -106,12 +106,15 @@ StyledBar.defaultProps = {
   ry: 0,
 };
 
-export const StyledGridRows = withTheme(props => (
-  <GridRows
-    {...{ ...props, stroke: findStroke(props) }}
-    style={{ pointerEvents: 'none' }}
-  />
-));
+export const StyledGridRows = withTheme(props => {
+  console.log(props);
+  return (
+    <GridRows
+      {...{ ...props, stroke: findStroke(props) }}
+      style={{ pointerEvents: 'none' }}
+    />
+  );
+});
 
 export const StyledLeftAxis = withTheme(props => (
   <AxisLeft

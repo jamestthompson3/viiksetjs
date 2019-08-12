@@ -10,7 +10,11 @@ import {
 } from './styledComponents';
 import { extractX } from '@viiksetjs/utils';
 import { determineYScale } from '@viiksetjs/utils';
-import { RenderedChildProps, GenericData } from '../typedef';
+import {
+  GenericData,
+  RenderedChildInheritedProps,
+  RenderedChildPassedProps,
+} from '../typedef';
 
 const LineChart: React.FunctionComponent<Props> = ({
   data,
@@ -29,6 +33,7 @@ const LineChart: React.FunctionComponent<Props> = ({
   lineProps,
   gradientOpacity,
 }) => {
+  if (!dataKey) throw new Error('LineChart: no data key given');
   const dataPoints = data.map((item: GenericData) => get(item, dataKey));
   React.useEffect(() => {
     // eslint-disable-next-line
@@ -104,14 +109,17 @@ LineChart.defaultProps = {
   color: 'rgb(0, 157, 253)',
   nofill: false,
   nopattern: false,
+  data: [],
 };
 
-interface Props extends RenderedChildProps {
+interface LineChartProps extends RenderedChildPassedProps {
   areaProps: Object;
   lineProps: Object;
   gradientOpacity: number[];
   nofill: boolean;
   nopattern: boolean;
 }
+
+type Props = Readonly<RenderedChildInheritedProps> & Partial<LineChartProps>;
 
 export default React.memo(LineChart);

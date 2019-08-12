@@ -2,7 +2,11 @@ import * as React from 'react';
 import { scaleLinear } from 'd3-scale';
 import get from 'lodash/get';
 import { StyledLeftAxis, StyledRightAxis } from './styledComponents';
-import { RenderedChildProps, GenericData } from 'typedef';
+import {
+  GenericData,
+  RenderedChildPassedProps,
+  RenderedChildInheritedProps,
+} from 'typedef';
 
 const YAxis = ({
   height,
@@ -19,6 +23,7 @@ const YAxis = ({
   tickFormat,
   ...rest
 }: Props): React.ReactElement => {
+  if (!axisId) throw new Error('YAxis: no axisId given');
   React.useEffect(() => {
     // eslint-disable-next-line
     if (process.env.NODE_ENV !== 'production') {
@@ -77,7 +82,7 @@ const YAxis = ({
   );
 };
 
-interface Props extends RenderedChildProps {
+interface YAxisProps extends RenderedChildPassedProps {
   position: 'left' | 'right';
   label: string;
   tickFormat(d: any, i: number): string;
@@ -99,5 +104,7 @@ YAxis.defaultProps = {
   labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' },
   data: [],
 };
+
+type Props = Partial<YAxisProps> & Readonly<RenderedChildInheritedProps>;
 
 export default React.memo(YAxis);

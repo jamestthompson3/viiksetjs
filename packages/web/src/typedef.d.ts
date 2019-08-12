@@ -65,19 +65,23 @@ export interface RenderContainerProps {
   stroke: string;
 }
 
-export interface RenderedChildProps {
+export interface RenderedChildPassedProps {
   dataKey: string;
-  axisId?: string;
-  type?: string;
+  axisId: string;
+  type: string;
   color: string | ((arg: any) => string);
+  xKey: string;
+}
+
+export interface RenderedChildInheritedProps {
   height: number;
   width: number;
   margin: Margin;
+  size: Size;
   yPoints: number[];
   data: Object[];
   xScale: ScaleFunction;
   inheritedScale: ScaleFunction;
-  xKey: string;
 }
 
 export interface Size {

@@ -1,6 +1,6 @@
 {
   "name": "@viiksetjs/web",
-  "version": "0.1.0",
+  "version": "0.1.0-alpha.0",
   "main": "dist/index.js",
   "module": "dist/web.esm.js",
   "typings": "dist/index.d.ts",
@@ -33,6 +33,8 @@
     "trailingComma": "es5"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^4.0.0",
+    "@testing-library/react": "^9.1.0",
     "@types/d3-array": "^2.0.0",
     "@types/d3-scale": "^2.1.1",
     "@types/d3-shape": "^1.3.1",
@@ -44,15 +46,15 @@
     "husky": "^3.0.1",
     "prettier": "^1.18.2",
     "pretty-quick": "^1.11.1",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
     "styled-components": "^4.3.2",
     "tsdx": "^0.7.2",
     "tslib": "^1.10.0",
     "typescript": "^3.5.3"
   },
   "dependencies": {
-    "@viiksetjs/utils": "file:../utils",
+    "@viiksetjs/utils": "^0.1.0",
     "@vx/axis": "^0.0.190",
     "@vx/bounds": "^0.0.189",
     "@vx/curve": "^0.0.189",

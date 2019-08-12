@@ -3,7 +3,12 @@ import get from 'lodash/get';
 
 import { StyledPoint } from './styledComponents';
 import { extractX, determineYScale } from '@viiksetjs/utils';
-import { RenderedChildProps, GenericGetter, GenericData } from '../typedef';
+import {
+  GenericGetter,
+  GenericData,
+  RenderedChildPassedProps,
+  RenderedChildInheritedProps,
+} from '../typedef';
 
 const genericGetter: GenericGetter = d => d;
 
@@ -30,6 +35,7 @@ const ScatterPlot = ({
   stroke,
   pointProps,
 }: Props): React.ReactElement[] | null => {
+  if (!dataKey) throw new Error('ScatterPlot: no data key given');
   React.useEffect(() => {
     // eslint-disable-next-line
     if (process.env.NODE_ENV !== 'production') {
@@ -75,7 +81,7 @@ ScatterPlot.defaultProps = {
 type NumGetter = (arg: GenericData) => number;
 type StringGetter = (arg: GenericData) => string;
 
-interface Props extends RenderedChildProps {
+interface ScatterPlotProps extends RenderedChildPassedProps {
   radius: NumGetter | GenericGetter | number;
   color: StringGetter | GenericGetter | string;
   stroke: string;
@@ -83,5 +89,7 @@ interface Props extends RenderedChildProps {
   data: GenericData[];
   opacity: NumGetter | GenericGetter | number;
 }
+
+type Props = Readonly<RenderedChildInheritedProps> & Partial<ScatterPlotProps>;
 
 export default ScatterPlot;

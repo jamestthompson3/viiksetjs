@@ -12,11 +12,11 @@ import {
 } from './styledComponents';
 import withParentSize from './Responsive/withParentSize';
 import {
-  RenderedChildProps,
   ToolTipData,
-  Size,
   GenericData,
   TooltipUpdateData,
+  RenderedChildPassedProps,
+  RenderedChildInheritedProps,
 } from '../typedef';
 
 interface LabelProps {
@@ -146,6 +146,7 @@ const PieChart: React.FunctionComponent<Props> = ({
   size,
   pieProps,
 }) => {
+  if (!dataKey) throw new Error('PieChart: no data key given');
   const [tooltipData, updateTooltip] = React.useState<
     Partial<TooltipUpdateData>
   >({});
@@ -193,6 +194,7 @@ const PieChart: React.FunctionComponent<Props> = ({
         </Group>
       </svg>
       {showTooltip &&
+        tooltipRenderer &&
         tooltipRenderer({
           ...{
             tooltipData: calculatedData,
@@ -217,20 +219,20 @@ PieChart.defaultProps = {
   margin: { top: 10, bottom: 10, left: 10, right: 10 },
 };
 
-interface Props extends RenderedChildProps {
+interface PieChartProps {
   labelKey: string;
   determineOpacity(arg: any): number;
-  mouseX: number;
-  mouseY: number;
-  labelProps: GenericData;
-  tooltipRenderer(arg: Partial<ToolTipData>): React.ReactNode;
-  tooltipContent(tooltipData: Object): React.ReactNode;
-  showTooltip: boolean;
+  labelProps?: GenericData;
+  tooltipRenderer?(arg: Partial<ToolTipData>): React.ReactNode;
+  tooltipContent?(tooltipData: Object): React.ReactNode;
   innerRadius: number;
   outerRadius: number;
   pieProps: Object;
-  size: Size;
 }
+
+type Props = Partial<RenderedChildPassedProps> &
+  PieChartProps &
+  Readonly<RenderedChildInheritedProps>;
 
 interface BodyProps {
   data: GenericData[];
@@ -244,9 +246,9 @@ interface BodyProps {
   determineOpacity(arg: any): number;
   mouseMove(arg: any): void;
   mouseLeave(): void;
-  color: string | ((arg: any) => string);
+  color?: string | ((arg: any) => string);
   labelKey: string;
-  labelProps: Object;
+  labelProps?: GenericData;
 }
 
 export default withParentSize(PieChart);
