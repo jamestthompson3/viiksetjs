@@ -20,6 +20,7 @@ import {
   buildGrid,
 } from './common/index';
 import withParentSize from './Responsive/withParentSize';
+import { withStream } from './withStream';
 
 const margin = { top: 18, right: 15, bottom: 15, left: 30 };
 
@@ -65,6 +66,8 @@ const StreamableChart: React.FunctionComponent<Props> = ({
   connection,
   mapStream,
   persist,
+  data,
+  fromStream,
   streamParser,
   stopPersist,
   children,
@@ -87,15 +90,6 @@ const StreamableChart: React.FunctionComponent<Props> = ({
     xPoints: [],
   });
   const chart = React.useRef(null);
-  const socket = React.useRef<WebSocket>();
-  const [data, setData] = React.useState<GenericData[]>([]);
-  const fromStream = ({ message }: any) => {
-    const appendedData =
-      mapStream(data, message).length <= persist
-        ? mapStream(data, message)
-        : mapStream(data, message).slice(1);
-    setData(appendedData);
-  };
   React.useEffect(() => {
     const chartData = prepChartData({
       data,
@@ -108,33 +102,32 @@ const StreamableChart: React.FunctionComponent<Props> = ({
     });
     setChartData(chartData);
   }, [data, size, type, margin, orientation, xKey, yKey]);
+
   React.useEffect(() => {
     if (!connection) {
-      // eslint-disable-next-line
       console.error('Connection string is needed for StreamableChart');
       return;
     }
 
-    socket.current = new WebSocket(connection);
+    const socket = new WebSocket(connection);
 
-    if (socket.current) {
-      socket.current.onclose = () => console.warn('connection closed');
-      socket.current.onmessage = message =>
-        fromStream({
-          message: streamParser(message),
-        });
+    if (stopPersist && data.length >= stopPersist) {
+      socket.close();
     }
-    return () => socket.current && socket.current.close();
+    socket.onclose = () => console.warn('connection closed');
+    socket.onmessage = message =>
+      fromStream({
+        message: streamParser(message),
+        mapStream,
+        persist,
+      });
+    return () => socket.close();
   }, []);
 
   if (isEmpty(data)) return <Loading />;
 
-  if (stopPersist && data.length >= stopPersist) {
-    socket.current && socket.current.close();
-  }
-
-  const { xScale, width, height, yPoints, yScale } = chartData;
-  if (!xScale) {
+  const { width, height, yPoints, yScale, xScale } = chartData;
+  if (!yScale) {
     return null;
   }
   const biaxialChildren = biaxial(children);
@@ -193,7 +186,7 @@ StreamableChart.defaultProps = {
   stroke: '#000',
   loadingMessage: DefaultLoadingMessage,
   streamParser: (message: any) => message,
-  mapStream: (data: any[], message: any) => [...data, message],
+  mapStream: (message: any) => message,
   margin: margin,
 };
 
@@ -205,11 +198,11 @@ interface Props extends RenderContainerProps {
   loadingMessage: React.FunctionComponent;
   yScales: { [key: string]: ScaleFunction };
   yPoints: any[];
-  chartData: GenericData[];
+  data: GenericData[];
   stopPersist: number;
   connection: string;
-  streamParser: (message: any) => any;
-  mapStream(data: GenericData, message: string): GenericData[];
+  streamParser(message: any): any;
+  mapStream(message: any): any;
 }
 
-export default withParentSize(StreamableChart);
+export default withStream(withParentSize(StreamableChart));

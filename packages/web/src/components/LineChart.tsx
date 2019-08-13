@@ -50,7 +50,6 @@ const LineChart: React.FunctionComponent<Props> = ({
   const xPoints = (d: GenericData) =>
     xScale(xKey ? get(d, xKey) : extractX(d)[0]);
   const yPoints = (d: GenericData) => getAxis()(get(d, dataKey));
-
   const gradientKey =
     typeof dataKey === 'string' ? dataKey.split(' ').join('') : dataKey;
   const findFill = (gradient: boolean) =>

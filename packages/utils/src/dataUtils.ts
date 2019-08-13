@@ -4,12 +4,15 @@ import head from 'lodash/head';
 import last from 'lodash/last';
 import get from 'lodash/get';
 import parse from 'date-fns/parse';
-import { format } from 'date-fns';
+import { isValid } from 'date-fns';
 import { Margin, ScalarObject, GenericNumericData } from './typedef';
 
-export const parseIfDate = (data: Object): Date | undefined => {
-  if (typeof data === 'string' || data instanceof Date) {
-    return new Date(format(parse(data)));
+export const parseIfDate = (data: any): Date | undefined => {
+  if (data instanceof Date) return data;
+  if (typeof data === 'string') {
+    const date = parse(data);
+    if (!isValid(date)) return undefined;
+    return date;
   }
   return undefined;
 };

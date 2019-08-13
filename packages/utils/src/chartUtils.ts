@@ -8,10 +8,7 @@ import {
   ScaleTime,
 } from 'd3-scale';
 import { ScaleProps, ScaleFunction, InheritedChartProps } from './typedef';
-import head from 'lodash/head';
 import get from 'lodash/get';
-import last from 'lodash/last';
-import sortedUniq from 'lodash/sortedUniq';
 
 /**
  * Recursively clones children, passing props down nested DOM structures
@@ -46,10 +43,8 @@ export const determineXScale = ({
   orientation,
   margin,
 }: Partial<ScaleProps>): ScaleFunction<any, any> => {
+  if (!xPoints) throw new Error('xPoints not found');
   const range = [get(margin, 'left', 0), width || 0];
-  const sortedX = sortedUniq(xPoints as number[]);
-  const sortedDomain = [head(sortedX) || 0, last(sortedX) || 0];
-
   switch (type) {
     case 'ordinal':
       return orientation === 'horizontal'
@@ -66,7 +61,7 @@ export const determineXScale = ({
         .range(range) as ScaleLinear<number, number>;
     default:
       return scaleTime()
-        .domain(sortedDomain)
+        .domain([xPoints[0] as Date, xPoints[xPoints.length - 1] as Date])
         .range(range) as ScaleTime<number, number>;
   }
 };

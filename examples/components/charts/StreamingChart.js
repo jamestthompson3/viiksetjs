@@ -18,14 +18,14 @@ const streamedData = {
   talk: 0
 }
 
-const streamMap = (data, message) => {
+const streamMap = message => {
   const type = get(message, 'type')
   streamedData[type] != null
     ? set(streamedData, type, streamedData[type] + 1)
     : set(streamedData, type, 1)
   const appendedData = clone(streamedData)
   set(appendedData, 'time', get(message, 'time'))
-  return [...data, appendedData]
+  return appendedData
 }
 
 export const StreamingChart = () => (

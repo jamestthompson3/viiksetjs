@@ -1051,10 +1051,10 @@
   resolved "https://registry.yarnpkg.com/@types/yargs/-/yargs-12.0.12.tgz#45dd1d0638e8c8f153e87d296907659296873916"
   integrity sha512-SOhuU4wNBxhhTHxYaiG5NY4HBhDIDnJF60GU+2LqHAdKKer86//e4yg69aENCtQ04n0ovz+tq2YPME5t5yp4pw==
 
-"@viiksetjs/utils@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@viiksetjs/utils/-/utils-0.1.0.tgz#df072acae6bd4aa02e53cc032e0577d21b0819c9"
-  integrity sha512-xn3j1MXJIqkb2SJHs/wGWGr1JmGuMii1re3dZuKL1LOcsk7/FMqvGzFHgV4W64g4tM3bvZDr1KvrldsC6Fs1VQ==
+"@viiksetjs/utils@^0.1.0-alpha":
+  version "0.1.0-alpha"
+  resolved "https://registry.yarnpkg.com/@viiksetjs/utils/-/utils-0.1.0-alpha.tgz#8e5de2b44100f604d04a1916f0f81e4d08357aa0"
+  integrity sha512-NJo2/6IJvFStuGQSnOigckDN/0BeH2kaAEXiOpkxxFbgO8m25xgBHJwxOnjOQbTl4t6t2XEUBwZJCJCCTSLuVQ==
   dependencies:
     d3-scale "^3.0.0"
     d3-time-format "^2.1.3"

@@ -764,7 +764,7 @@
   resolved "https://registry.yarnpkg.com/@emotion/unitless/-/unitless-0.7.4.tgz#a87b4b04e5ae14a88d48ebef15015f6b7d1f5677"
   integrity sha512-kBa+cDHOR9jpRJ+kcGMsysrls0leukrm68DmFQoMIWQcXdr2cZvyvypWuGYT7U+9kAExUE7+T7r6G3C3A6L8MQ==
 
-"@viiksetjs/utils@^0.1.0":
+"@viiksetjs/utils@^0.1.0-alpha":
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/@viiksetjs/utils/-/utils-0.1.0.tgz#df072acae6bd4aa02e53cc032e0577d21b0819c9"
   integrity sha512-xn3j1MXJIqkb2SJHs/wGWGr1JmGuMii1re3dZuKL1LOcsk7/FMqvGzFHgV4W64g4tM3bvZDr1KvrldsC6Fs1VQ==
@@ -775,10 +775,12 @@
     lodash "^4.17.15"
     lodash-es "^4.17.15"
 
-"@viiksetjs/web@file:../packages/web":
-  version "0.1.0-alpha.0"
+"@viiksetjs/web@^0.1.0-alpha.1":
+  version "0.1.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/@viiksetjs/web/-/web-0.1.0-alpha.1.tgz#8d6ab082da726c7933a4af76616036f7706b2358"
+  integrity sha512-IzH9rIRH6HCHEdb/KvlhPuZd9JXjxcceFqb/yXenfX59N4g/oH0msrG6K5UAAsPgc4uyDBGKbL3YTI2DT9/eMQ==
   dependencies:
-    "@viiksetjs/utils" "^0.1.0"
+    "@viiksetjs/utils" "^0.1.0-alpha"
     "@vx/axis" "^0.0.190"
     "@vx/bounds" "^0.0.189"
     "@vx/curve" "^0.0.189"

@@ -132,6 +132,7 @@ function ChartArea({
 
   // To prevent tooltips from not showing on bar chart due to minification changing names
   const declareBar = () => setBar(true);
+
   const mouseMove = ({
     event,
     xPoints,
@@ -141,7 +142,7 @@ function ChartArea({
     dataKeys,
     datum,
   }: Partial<MouseMove>): void => {
-    if (tooltip === null || noTool || !xPoints) return;
+    if (tooltip === null || noTool) return;
 
     const svgPoint = localPoint(chart.current, event);
     const mouseX = get(svgPoint, 'x');
@@ -207,7 +208,10 @@ function ChartArea({
     mouseY,
     showTooltip,
   } = tooltipData;
-
+  // if we haven't set scales, we know it's not ready to render the chart
+  if (!chartData.xScale) {
+    return null;
+  }
   const biaxialChildren = biaxial(children);
   const LeftAxis = buildAxis(
     biaxialChildren,
@@ -229,10 +233,6 @@ function ChartArea({
     styles: tooltipStyles,
     content: tooltipContent,
   } = merge({}, defaultTooltip, tooltip);
-  // if we haven't set scales, we know it's not ready to render the chart
-  if (!chartData.xScale) {
-    return null;
-  }
   const {
     xScale,
     dataKeys,
@@ -368,7 +368,6 @@ ChartArea.defaultProps = {
   margin: DEFAULT_MARGIN,
   axes: defaultAxes,
   tooltip: defaultTooltip,
-  type: 'linear',
   glyphRenderer: () => null,
 };
 
