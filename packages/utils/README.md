@@ -1,27 +1,14 @@
-# TSDX Bootstrap
+# @viiksetjs/utils
 
-This project was bootstrapped with [TSDX](https://github.com/jaredpalmer/tsdx).
+This library contains useful functions for manipulating data for data visualizations. It does not necessarily have to be used in conjunction with [@viiksetjs/web](https://github.com/jamestthompson3/viiksetjs/blob/master/packages/web/README.md)
 
-## Local Development
+## Exported Functions
 
-Below is a list of commands you will probably find useful.
+| Function Name | Signature                                                    | Desc                                                                                                                                                                                                                                                                                   |
+| :------------ | :----------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `parseIfDate` | (data: any): Date \| undefined                               | takes any piece of data and tries to convert it into instance of Date. Returns undefined if the conversion fails                                                                                                                                                                       |
+| `parseObject` | <T>(obj: Object, arg: string, applicator: (obj) => any): T[] | takes and object, a `typeof` argument, and an applicator function. It will map through the object's values with the applicator, then filter the results according to the `typeof` argument                                                                                             |
+| `getX`        | (data: Object[], xKey?: string): any[]                       | takes an array of data objects and optionally an xKey and returns the xKey points for each object in the data array, or tries to parse a date from each object. Example: `getX([{messages: 123, users: 133}, {messages: 100, users: 33}, 'messages'])` would return: `[123, 100, ...]` |
+| `getY`        | (data: Object[], yKey?: string): any[]                       | same as `getX` except it tries to fall back to a number instead of trying to parse a Date. Example: `getY([{messages: 123, date: '11-10-2018'},{messages: 100, date: '08-10-2018'}, ...])` would result in `[123, 100,...]`                                                            |
 
-### `npm start` or `yarn start`
-
-Runs the project in development/watch mode. Your project will be rebuilt upon changes. TSDX has a special logger for you convenience. Error messages are pretty printed and formatted for compatibility VS Code's Problems tab.
-
-<img src="https://user-images.githubusercontent.com/4060187/52168303-574d3a00-26f6-11e9-9f3b-71dbec9ebfcb.gif" width="600" />
-
-Your library will be rebuilt if you make edits.
-
-### `npm run build` or `yarn build`
-
-Bundles the package to the `dist` folder.
-The package is optimized and bundled with Rollup into multiple formats (CommonJS, UMD, and ES Module).
-
-<img src="https://user-images.githubusercontent.com/4060187/52168322-a98e5b00-26f6-11e9-8cf6-222d716b75ef.gif" width="600" />
-
-### `npm test` or `yarn test`
-
-Runs the test watcher (Jest) in an interactive mode.
-By default, runs tests related to files changed since the last commit.
+## Exported Interfaces
