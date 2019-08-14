@@ -11,6 +11,7 @@ import {
   prepChartData,
   Axis,
   recursiveCloneChildren,
+  InheritedChartProps,
 } from '@viiksetjs/utils';
 import { RenderContainerProps, FromStreamArgs, GenericData } from '../typedef';
 import {
@@ -162,7 +163,7 @@ const StreamableChart: React.FunctionComponent<Props> = ({
         <Grid yScale={yScale} width={width} left={margin.left} />
         <LeftAxis {...{ type, orientation, color, yPoints, height, margin }} />
       </Group>
-      {recursiveCloneChildren(children, {
+      {recursiveCloneChildren<InheritedChartProps>(children, {
         data,
         xScale,
         margin,
