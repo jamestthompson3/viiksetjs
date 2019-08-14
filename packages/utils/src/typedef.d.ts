@@ -54,7 +54,7 @@ interface GenericNumericData {
   [key: string]: number;
 }
 
-interface ScaleProps {
+export interface ScaleProps {
   type: string;
   xPoints: number[] | string[] | Date[];
   yPoints: number[] | string[];

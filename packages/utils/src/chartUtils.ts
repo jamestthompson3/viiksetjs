@@ -10,12 +10,15 @@ import {
 import { ScaleProps, ScaleFunction, InheritedChartProps } from './typedef';
 import get from 'lodash/get';
 
+interface ChildProps {
+  children: any;
+}
 /**
  * Recursively clones children, passing props down nested DOM structures
  */
-export function recursiveCloneChildren(
+export function recursiveCloneChildren<T extends ChildProps>(
   children: React.ReactNode,
-  props: InheritedChartProps
+  props: T
 ) {
   return React.Children.map(
     children as React.ReactElement<any>[],
@@ -121,5 +124,7 @@ export const findTooltipX = ({
 export const biaxial = (children: React.ReactNode): boolean =>
   React.Children.map(
     children,
-    child => React.isValidElement(child) && child.props.hasOwnProperty('axisId')
+    child =>
+      React.isValidElement(child) &&
+      Object.prototype.hasOwnProperty.call(child.props, 'axisId')
   ).includes(true);
