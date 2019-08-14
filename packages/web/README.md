@@ -1,11 +1,11 @@
 # @viiksetjs/web
 
-| [BarChart](https://github.com/jamestthompson3/viiksetjs#barchart)
-| [ChartArea](https://github.com/jamestthompson3/viiksetjs#chartarea)
-| [DataContext](https://github.com/jamestthompson3/viiksetjs#datacontext)
-| [LineChart](https://github.com/jamestthompson3/viiksetjs#linechart)
-| [PieChart](https://github.com/jamestthompson3/viiksetjs#piechart)
-| [ScatterPlot](https://github.com/jamestthompson3/viiksetjs#scatterplot) |
+| [BarChart](https://github.com/jamestthompson3/viiksetjs/blog/packages/web#barchart)
+| [ChartArea](https://github.com/jamestthompson3/viiksetjs/blog/packages/web#chartarea)
+| [DataContext](https://github.com/jamestthompson3/viiksetjs/blog/packages/web#datacontext)
+| [LineChart](https://github.com/jamestthompson3/viiksetjs/blog/packages/web#linechart)
+| [PieChart](https://github.com/jamestthompson3/viiksetjs/blog/packages/web#piechart)
+| [ScatterPlot](https://github.com/jamestthompson3/viiksetjs/blog/packages/web#scatterplot) |
 
 | [StackedBar](https://github.com/jamestthompson3/viiksetjs#stackedbar)
 | [StreamableChart](https://github.com/jamestthompson3/viiksetjs#streamablechart)
