@@ -5,7 +5,7 @@ import clone from 'lodash/clone'
 import parse from 'date-fns/parse'
 import format from 'date-fns/format'
 
-import { LineChart, StreamableChart } from '../../../lib/index'
+import { LineChart, StreamableChart } from '@viiksetjs/web'
 import { GraphContainer, Snippet, LabelContainer, LabelBlock, Label } from '../styledComponents'
 import { isMobile } from './constants'
 
@@ -18,14 +18,14 @@ const streamedData = {
   talk: 0
 }
 
-const streamMap = (data, message) => {
+const streamMap = message => {
   const type = get(message, 'type')
   streamedData[type] != null
     ? set(streamedData, type, streamedData[type] + 1)
     : set(streamedData, type, 1)
   const appendedData = clone(streamedData)
   set(appendedData, 'time', get(message, 'time'))
-  return [...data, appendedData]
+  return appendedData
 }
 
 export const StreamingChart = () => (

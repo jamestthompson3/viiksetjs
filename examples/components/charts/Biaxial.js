@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { ChartArea, LineChart, YAxis } from '../../../lib/index'
+import { ChartArea, LineChart, YAxis } from '@viiksetjs/web'
 
 import biaxialSeries from '../../data/biaxialSeries.json'
 import { GraphContainer, Snippet, BiaxialTooltip } from '../styledComponents'

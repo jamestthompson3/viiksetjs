@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 import stackedData from '../../data/stackedData.json'
 import { GraphContainer, Snippet } from '../styledComponents'
-import { ChartArea, StackedBar } from '../../../lib/index'
+import { ChartArea, StackedBar } from '@viiksetjs/web'
 import { isMobile } from './constants'
 
 const InputContainer = styled.div`

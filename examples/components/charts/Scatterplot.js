@@ -3,7 +3,7 @@ import * as React from 'react'
 import numericSeries from '../../data/numericSeries.json'
 import { GraphContainer, Snippet, Indicator, LinearTooltip } from '../styledComponents'
 
-import { ChartArea, ScatterPlot } from '../../../lib/index'
+import { ChartArea, ScatterPlot } from '@viiksetjs/web'
 import { isMobile } from './constants'
 
 export const Scatterplot = () => (

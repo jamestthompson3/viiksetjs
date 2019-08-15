@@ -4,8 +4,7 @@ import format from 'date-fns/format'
 
 import timeSeries from '../../data/timeSeries.json'
 import { GraphContainer, Snippet } from '../styledComponents'
-import ChartArea from '../../../lib/components/ChartArea'
-import LineChart from '../../../lib/components/LineChart'
+import { ChartArea, LineChart } from '@viiksetjs/web'
 import { isMobile } from './constants'
 
 export const tooltipContent = ({ tooltipData }) => (

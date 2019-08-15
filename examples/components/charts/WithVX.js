@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import timeSeries from '../../data/timeSeries.json'
 import { GraphContainer, Snippet } from '../styledComponents'
-import { ChartArea, LineChart } from '../../../lib/index'
+import { ChartArea, LineChart } from '@viiksetjs/web'
 import { Line } from '@vx/shape'
 import { isMobile } from './constants'
 
@@ -15,7 +15,11 @@ const ThresholdLine = ({ inheritedScale, margin, width }) => (
       stroke="#000"
       strokeDasharray={(5, 10)}
     />
-    <text style={{ transform: `translate( ${margin.left + 5}px,${inheritedScale(4600)}px)` }}>
+    <text
+      style={{
+        transform: `translate( ${margin.left + 5}px,${inheritedScale(4600)}px)`
+      }}
+    >
       all time max
     </text>
   </g>

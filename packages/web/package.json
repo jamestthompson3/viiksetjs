@@ -1,0 +1,75 @@
+{
+  "name": "@viiksetjs/web",
+  "version": "0.1.3",
+  "main": "dist/index.js",
+  "module": "dist/web.esm.js",
+  "typings": "dist/index.d.ts",
+  "author": {
+    "name": "taylor thompson",
+    "email": "taylor@teukka.tech"
+  },
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test --env=jsdom"
+  },
+  "peerDependencies": {
+    "react": ">=16",
+    "styled-components": "^4.1.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^4.0.0",
+    "@testing-library/react": "^9.1.0",
+    "@types/d3-array": "^2.0.0",
+    "@types/d3-scale": "^2.1.1",
+    "@types/d3-shape": "^1.3.1",
+    "@types/jest": "^24.0.15",
+    "@types/lodash": "^4.14.136",
+    "@types/react": "^16.8.23",
+    "@types/react-dom": "^16.8.4",
+    "@types/styled-components": "^4.1.18",
+    "husky": "^3.0.1",
+    "prettier": "^1.18.2",
+    "pretty-quick": "^1.11.1",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
+    "styled-components": "^4.3.2",
+    "tsdx": "^0.7.2",
+    "tslib": "^1.10.0",
+    "typescript": "^3.5.3"
+  },
+  "dependencies": {
+    "@viiksetjs/utils": "^0.1.2",
+    "@vx/axis": "^0.0.190",
+    "@vx/bounds": "^0.0.189",
+    "@vx/curve": "^0.0.189",
+    "@vx/event": "^0.0.189",
+    "@vx/gradient": "^0.0.189",
+    "@vx/grid": "^0.0.190",
+    "@vx/group": "^0.0.190",
+    "@vx/pattern": "^0.0.189",
+    "@vx/shape": "^0.0.190",
+    "@vx/threshold": "^0.0.190",
+    "d3-scale": "^3.0.1",
+    "date-fns": "^1.30.1",
+    "lodash": "^4.17.15",
+    "lodash-es": "^4.17.15",
+    "polished": "^3.4.1",
+    "react-sizeme": "^2.6.7"
+  }
+}

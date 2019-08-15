@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { ChartArea, Threshold, LineChart } from '../../../lib/index'
+import { ChartArea, Threshold, LineChart } from '@viiksetjs/web'
 import thresholdSeries from '../../data/thresholdSeries.json'
 import { GraphContainer, Snippet } from '../styledComponents'
 import { isMobile } from './constants'
