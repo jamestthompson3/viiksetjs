@@ -23,6 +23,7 @@ const LineChart: React.FunctionComponent<Props> = ({
   margin,
   nopattern,
   inheritedScale,
+  dataPoints,
   axisId,
   type,
   areaProps,
@@ -30,20 +31,20 @@ const LineChart: React.FunctionComponent<Props> = ({
   gradientOpacity,
 }) => {
   if (!dataKey) throw new Error('LineChart: no data key given');
-  const dataPoints = data.map((item: GenericData) => get(item, dataKey));
-  React.useEffect(() => {
-    // eslint-disable-next-line
-    if (process.env.NODE_ENV !== 'production') {
-      if (dataPoints.includes(undefined)) {
-        console.warn(`LineChart: No data found with dataKey ${dataKey}`);
-      }
-    }
-  }, []);
+  const yData = dataPoints[dataKey];
+  // React.useEffect(() => {
+  //   // eslint-disable-next-line
+  //   if (process.env.NODE_ENV !== 'production') {
+  //     if (dataPoints.includes(undefined)) {
+  //       console.warn(`LineChart: No data found with dataKey ${dataKey}`);
+  //     }
+  //   }
+  // }, []);
 
   const getAxis = () => (!axisId ? inheritedScale : yScale);
   const yScale = determineYScale({
     type: type || 'linear',
-    yPoints: dataPoints,
+    yPoints: yData,
     height,
     margin,
   });
@@ -110,6 +111,7 @@ LineChart.defaultProps = {
 interface LineChartProps extends RenderedChildPassedProps {
   areaProps: Object;
   lineProps: Object;
+  dataPoints: GenericData;
   gradientOpacity: number[];
   nofill: boolean;
   nopattern: boolean;

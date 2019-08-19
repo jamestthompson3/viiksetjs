@@ -54,7 +54,7 @@
     "typescript": "^3.5.3"
   },
   "dependencies": {
-    "@viiksetjs/utils": "^0.1.2",
+    "@viiksetjs/utils": "file:../utils",
     "@vx/axis": "^0.0.190",
     "@vx/bounds": "^0.0.189",
     "@vx/curve": "^0.0.189",

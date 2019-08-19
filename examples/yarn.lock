@@ -764,23 +764,20 @@
   resolved "https://registry.yarnpkg.com/@emotion/unitless/-/unitless-0.7.4.tgz#a87b4b04e5ae14a88d48ebef15015f6b7d1f5677"
   integrity sha512-kBa+cDHOR9jpRJ+kcGMsysrls0leukrm68DmFQoMIWQcXdr2cZvyvypWuGYT7U+9kAExUE7+T7r6G3C3A6L8MQ==
 
-"@viiksetjs/utils@^0.1.0-alpha":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@viiksetjs/utils/-/utils-0.1.0.tgz#df072acae6bd4aa02e53cc032e0577d21b0819c9"
-  integrity sha512-xn3j1MXJIqkb2SJHs/wGWGr1JmGuMii1re3dZuKL1LOcsk7/FMqvGzFHgV4W64g4tM3bvZDr1KvrldsC6Fs1VQ==
+"@viiksetjs/utils@file:../packages/utils":
+  version "0.1.2"
   dependencies:
     d3-scale "^3.0.0"
     d3-time-format "^2.1.3"
     date-fns "^1.30.1"
+    kdbush "^3.0.0"
     lodash "^4.17.15"
     lodash-es "^4.17.15"
 
-"@viiksetjs/web@^0.1.0-alpha.1":
-  version "0.1.0-alpha.1"
-  resolved "https://registry.yarnpkg.com/@viiksetjs/web/-/web-0.1.0-alpha.1.tgz#8d6ab082da726c7933a4af76616036f7706b2358"
-  integrity sha512-IzH9rIRH6HCHEdb/KvlhPuZd9JXjxcceFqb/yXenfX59N4g/oH0msrG6K5UAAsPgc4uyDBGKbL3YTI2DT9/eMQ==
+"@viiksetjs/web@file:../packages/web":
+  version "0.1.3"
   dependencies:
-    "@viiksetjs/utils" "^0.1.0-alpha"
+    "@viiksetjs/utils" "file:../../../Library/Caches/Yarn/v4/npm-@viiksetjs-web-0.1.3-873895e9-36ea-4588-a5fd-ddecdbd0be4d-1566217091588/node_modules/@viiksetjs/utils"
     "@vx/axis" "^0.0.190"
     "@vx/bounds" "^0.0.189"
     "@vx/curve" "^0.0.189"
@@ -2637,6 +2634,11 @@ json5@^2.1.0:
   integrity sha512-8Mh9h6xViijj36g7Dxi+Y4S6hNGV96vcJZr/SrlHh1LR/pEn/8j/+qIBbs44YKl69Lrfctp4QD+AdWLTMqEZAQ==
   dependencies:
     minimist "^1.2.0"
+
+kdbush@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/kdbush/-/kdbush-3.0.0.tgz#f8484794d47004cc2d85ed3a79353dbe0abc2bf0"
+  integrity sha512-hRkd6/XW4HTsA9vjVpY9tuXJYLSlelnkTmVFu4M9/7MIYQtFcHpbugAU7UbOfjOiVSVYl2fqgBuJ32JUmRo5Ew==
 
 kind-of@^3.0.2, kind-of@^3.0.3, kind-of@^3.2.0:
   version "3.2.2"
