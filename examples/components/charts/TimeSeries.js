@@ -30,13 +30,15 @@ export const TimeSeries = () => (
           }
         }}
         yKey="users.peak"
+        xKey="time"
+        type="time"
         color="#2189C8"
         stroke="grey"
         tooltip={{
           content: tooltipContent
         }}
       >
-        <LineChart dataKey="users.peak" color="#2189C8" />
+        <LineChart nofill nopattern dataKey="users.peak" color="#2189C8" />
       </ChartArea>
     </GraphContainer>
     <Snippet>

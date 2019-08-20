@@ -112,6 +112,10 @@ function ChartArea({
     yPoints: [],
     xPoints: [],
   });
+
+  // Let's get wild....
+  const canvas = React.useRef(null);
+
   const [bar, setBar] = React.useState(false);
   const Grid = buildGrid(gridStroke, noGrid);
   React.useEffect(() => {
@@ -131,9 +135,9 @@ function ChartArea({
   >({});
 
   // To prevent tooltips from not showing on bar chart due to minification changing names
-  const declareBar = () => setBar(true);
+  const declareBar = React.useCallback(() => setBar(true), []);
 
-  const mouseMove = ({
+  const tooltipHandler = ({
     event,
     xPoints,
     xScale,
@@ -196,9 +200,11 @@ function ChartArea({
     )(xValue);
   };
 
-  const mouseLeave = () => {
+  const mouseMove = React.useCallback(tooltipHandler, []);
+
+  const mouseLeave = React.useCallback(() => {
     updateTooltip({});
-  };
+  }, []);
 
   const {
     calculatedData,
@@ -263,6 +269,9 @@ function ChartArea({
             <Grid yScale={yScale} width={width} left={margin.left} />
             <LeftAxis {...{ type, orientation, yPoints, height, margin }} />
           </Group>
+          <foreignObject x="0" y="0" width={size.width} height={size.height}>
+            <canvas ref={canvas} style={{ width: width, height: height }} />
+          </foreignObject>
           {recursiveCloneChildren(children, {
             data,
             xScale,
@@ -277,6 +286,7 @@ function ChartArea({
             type,
             orientation,
             mouseMove,
+            canvas: canvas.current,
             mouseLeave,
             xKey,
             yKey,

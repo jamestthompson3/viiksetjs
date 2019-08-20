@@ -777,7 +777,7 @@
 "@viiksetjs/web@file:../packages/web":
   version "0.1.3"
   dependencies:
-    "@viiksetjs/utils" "file:../../../Library/Caches/Yarn/v4/npm-@viiksetjs-web-0.1.3-873895e9-36ea-4588-a5fd-ddecdbd0be4d-1566217091588/node_modules/@viiksetjs/utils"
+    "@viiksetjs/utils" "file:../../../Library/Caches/Yarn/v4/npm-@viiksetjs-web-0.1.3-fef737a1-081d-4e0d-89e7-016e049ce691-1566301373256/node_modules/@viiksetjs/utils"
     "@vx/axis" "^0.0.190"
     "@vx/bounds" "^0.0.189"
     "@vx/curve" "^0.0.189"
@@ -789,6 +789,7 @@
     "@vx/shape" "^0.0.190"
     "@vx/threshold" "^0.0.190"
     d3-scale "^3.0.1"
+    d3-shape "^1.3.5"
     date-fns "^1.30.1"
     lodash "^4.17.15"
     lodash-es "^4.17.15"
@@ -1749,7 +1750,7 @@ d3-scale@^3.0.0, d3-scale@^3.0.1:
     d3-time "1"
     d3-time-format "2"
 
-d3-shape@^1.0.6, d3-shape@^1.2.0:
+d3-shape@^1.0.6, d3-shape@^1.2.0, d3-shape@^1.3.5:
   version "1.3.5"
   resolved "https://registry.yarnpkg.com/d3-shape/-/d3-shape-1.3.5.tgz#e81aea5940f59f0a79cfccac012232a8987c6033"
   integrity sha512-VKazVR3phgD+MUCldapHD7P9kcrvPcexeX/PkMJmkUov4JM8IxsSg1DvbYoYich9AtdTsa5nNk2++ImPiDiSxg==
