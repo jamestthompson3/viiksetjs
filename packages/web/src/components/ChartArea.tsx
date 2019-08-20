@@ -17,7 +17,7 @@ import {
   formatTicks,
   formatXTicks,
   findTooltipX,
-  recursiveCloneChildren,
+  // recursiveCloneChildren,
   biaxial,
   prepChartData,
   InheritedChartProps,
@@ -86,6 +86,8 @@ const defaultTooltip: TooltipProps<GenericData> = {
   styles: { wrapper: {}, content: {} },
 };
 
+export const ChildContext = React.createContext<InheritedChartProps>({});
+
 function ChartArea({
   children,
   determineViewBox,
@@ -114,7 +116,7 @@ function ChartArea({
   });
 
   // Let's get wild....
-  const canvas = React.useRef(null);
+  const canvas = React.useRef<HTMLCanvasElement>(null);
 
   const [bar, setBar] = React.useState(false);
   const Grid = buildGrid(gridStroke, noGrid);
@@ -248,6 +250,10 @@ function ChartArea({
     xPoints,
     yScale,
   } = chartData;
+  if (canvas.current) {
+    const ctx = canvas.current.getContext('2d');
+    ctx && ctx.clearRect(0, 0, width, height);
+  }
   return (
     <div
       style={{ width: size.width, height: size.height }}
@@ -272,27 +278,31 @@ function ChartArea({
           <foreignObject x="0" y="0" width={size.width} height={size.height}>
             <canvas ref={canvas} style={{ width: width, height: height }} />
           </foreignObject>
-          {recursiveCloneChildren(children, {
-            data,
-            xScale,
-            margin,
-            height,
-            noTool,
-            axes,
-            yPoints,
-            xPoints,
-            width,
-            declareBar,
-            type,
-            orientation,
-            mouseMove,
-            canvas: canvas.current,
-            mouseLeave,
-            xKey,
-            yKey,
-            inheritedScale: yScale,
-          } as InheritedChartProps)}
-          {bar || (
+          <ChildContext.Provider
+            value={{
+              data,
+              xScale,
+              margin,
+              height,
+              noTool,
+              axes,
+              yPoints,
+              xPoints,
+              width,
+              declareBar,
+              type,
+              orientation,
+              mouseMove,
+              canvas: canvas.current,
+              mouseLeave,
+              xKey,
+              yKey,
+              inheritedScale: yScale,
+            }}
+          >
+            {children}
+          </ChildContext.Provider>
+          {(bar && true) || (
             <Bar
               width={size.width}
               x={0}

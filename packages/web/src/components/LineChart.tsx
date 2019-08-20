@@ -2,36 +2,47 @@ import * as React from 'react';
 import get from 'lodash/get';
 // import { curveMonotoneX } from '@vx/curve';
 
-import {
-  StyledGradient,
-  //   StyledPatternLines,
-  //   StyledLinePath,
-  //   StyledAreaClosed,
-} from './styledComponents';
+// import {
+//   StyledGradient,
+//   StyledPatternLines,
+//   StyledLinePath,
+//   StyledAreaClosed,
+// } from './styledComponents';
 import { extractX } from '@viiksetjs/utils';
 import { determineYScale, InheritedChartProps } from '@viiksetjs/utils';
 import { GenericData, RenderedChildPassedProps } from '../typedef';
+import { ChildContext } from './ChartArea';
 
 function LineChart({
-  data,
+  // data,
   color,
   dataKey,
-  xScale,
-  xKey,
+  // xScale,
+  // xKey,
   // nofill,
-  height,
-  margin,
+  // height,
+  // margin,
   // nopattern,
-  inheritedScale,
-  axisId,
-  xPoints,
-  type,
-  // areaProps,
-  gradientOpacity,
-  canvas,
-}: // lineProps,
+  // inheritedScale,
+  axisId, // lineProps,
+}: // xPoints,
+// type,
+// areaProps,
+// gradientOpacity,
+// canvas,
 Props) {
   if (!dataKey) throw new Error('LineChart: no data key given');
+  const {
+    data,
+    inheritedScale,
+    type,
+    height,
+    margin,
+    canvas,
+    xPoints,
+    xScale,
+    xKey,
+  } = React.useContext(ChildContext);
   const yData = data.map((item: GenericData) => get(item, dataKey));
 
   const getAxis = () => {
@@ -50,15 +61,17 @@ Props) {
       return type === 'time' ? xScale(xPoints[i]) : xScale(extractX(d)[0]);
     }
   };
-  // const yPointGetter = (d: GenericData) => getAxis()(get(d, dataKey));
-  const gradientKey =
-    typeof dataKey === 'string' ? dataKey.split(' ').join('') : dataKey;
+  // const gradientKey =
+  //   typeof dataKey === 'string' ? dataKey.split(' ').join('') : dataKey;
   // const findFill = (gradient: boolean) =>
   //   gradient ? `url(#gradient${gradientKey})` : `url(#dlines${gradientKey})`;
   if (canvas) {
     const ctx = canvas.getContext('2d');
-    ctx.strokeStyle = 'green';
-    ctx.lineWidth = 1;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 0.5;
+    ctx.save();
+    ctx.translate(-margin.left, height);
+    ctx.scale(1, -1);
     ctx.beginPath();
     const axis = getAxis();
     for (let i = 0; i < data.length; ++i) {
@@ -73,16 +86,17 @@ Props) {
       }
     }
     ctx.stroke();
+    ctx.restore();
   }
-  return (
-    <>
-      <StyledGradient
-        opacity={gradientOpacity}
-        color={color}
-        id={`gradient${gradientKey}`}
-      />
-    </>
-  );
+  return null;
+  // <>
+  //   <StyledGradient
+  //     opacity={gradientOpacity}
+  //     color={color}
+  //     id={`gradient${gradientKey}`}
+  //   />
+  // </>
+  // );
 }
 
 // (
