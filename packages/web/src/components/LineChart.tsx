@@ -23,34 +23,39 @@ const LineChart: React.FunctionComponent<Props> = ({
   margin,
   nopattern,
   inheritedScale,
-  dataPoints,
   axisId,
+  xPoints,
   type,
   areaProps,
   lineProps,
   gradientOpacity,
 }) => {
   if (!dataKey) throw new Error('LineChart: no data key given');
-  const yData = dataPoints[dataKey];
-  // React.useEffect(() => {
-  //   // eslint-disable-next-line
-  //   if (process.env.NODE_ENV !== 'production') {
-  //     if (dataPoints.includes(undefined)) {
-  //       console.warn(`LineChart: No data found with dataKey ${dataKey}`);
-  //     }
-  //   }
-  // }, []);
+  const yDataStart = performance.now();
+  const yData = data.map((item: GenericData) => get(item, dataKey));
+  const yDataEnd = performance.now();
+  console.log('ypoint getter took: ', yDataEnd - yDataStart);
 
-  const getAxis = () => (!axisId ? inheritedScale : yScale);
-  const yScale = determineYScale({
-    type: type || 'linear',
-    yPoints: yData,
-    height,
-    margin,
-  });
-  const xPoints = (d: GenericData) =>
-    xScale(xKey ? get(d, xKey) : extractX(d)[0]);
-  const yPoints = (d: GenericData) => getAxis()(get(d, dataKey));
+  const yScaleStart = performance.now();
+  const getAxis = () => {
+    if (!axisId) {
+      return inheritedScale;
+    }
+    return determineYScale({
+      type: type || 'linear',
+      yPoints: yData,
+      height,
+      margin,
+    });
+  };
+  const yScaleEnd = performance.now();
+  console.log('yscale took: ', yScaleEnd - yScaleStart);
+  const xPointGetter = (d: GenericData, i: number) => {
+    if (xKey) {
+      return type === 'time' ? xScale(xPoints[i]) : xScale(extractX(d)[0]);
+    }
+  };
+  const yPointGetter = (d: GenericData) => getAxis()(get(d, dataKey));
   const gradientKey =
     typeof dataKey === 'string' ? dataKey.split(' ').join('') : dataKey;
   const findFill = (gradient: boolean) =>
@@ -69,16 +74,16 @@ const LineChart: React.FunctionComponent<Props> = ({
       )}
       <StyledLinePath
         {...{ data, color }}
-        y={yPoints}
-        x={xPoints}
+        y={yPointGetter}
+        x={xPointGetter}
         curve={curveMonotoneX}
         {...lineProps}
       />
       {!nofill && (
         <StyledAreaClosed
           {...{ data, color }}
-          y={yPoints}
-          x={xPoints}
+          y={yPointGetter}
+          x={xPointGetter}
           fill={findFill(true)}
           yScale={getAxis()}
           curve={curveMonotoneX}
@@ -89,10 +94,10 @@ const LineChart: React.FunctionComponent<Props> = ({
         (!nofill && (
           <StyledAreaClosed
             {...{ data, color }}
-            y={yPoints}
+            y={yPointGetter}
             yScale={getAxis()}
             fill={findFill(false)}
-            x={xPoints}
+            x={xPointGetter}
             curve={curveMonotoneX}
             {...areaProps}
           />
@@ -111,7 +116,6 @@ LineChart.defaultProps = {
 interface LineChartProps extends RenderedChildPassedProps {
   areaProps: Object;
   lineProps: Object;
-  dataPoints: GenericData;
   gradientOpacity: number[];
   nofill: boolean;
   nopattern: boolean;

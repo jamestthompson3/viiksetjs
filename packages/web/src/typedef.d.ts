@@ -67,6 +67,7 @@ export interface RenderContainerProps {
 
 export interface RenderedChildPassedProps {
   dataKey: string;
+  xPoints: any[];
   axisId: string;
   type: string;
   color: string | ((arg: any) => string);

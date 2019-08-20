@@ -241,7 +241,6 @@ function ChartArea({
     yPoints,
     xPoints,
     yScale,
-    dataPoints,
   } = chartData;
   return (
     <div
@@ -268,7 +267,6 @@ function ChartArea({
             data,
             xScale,
             margin,
-            dataPoints,
             height,
             noTool,
             axes,

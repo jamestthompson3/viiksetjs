@@ -62,6 +62,7 @@ export const determineXScale = ({
       return scaleLinear()
         .domain([0, Math.max(...(xPoints as number[]))])
         .range(range) as ScaleLinear<number, number>;
+    case 'time':
     default:
       return scaleTime()
         .domain([xPoints[0] as Date, xPoints[xPoints.length - 1] as Date])
