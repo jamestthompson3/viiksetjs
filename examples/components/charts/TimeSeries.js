@@ -2,7 +2,7 @@ import * as React from 'react'
 import parse from 'date-fns/parse'
 import format from 'date-fns/format'
 
-import timeSeries from '../../data/bigdata.json'
+import timeSeries from '../../data/timeSeries.json'
 import { GraphContainer, Snippet } from '../styledComponents'
 import { ChartArea, LineChart } from '@viiksetjs/web'
 import { isMobile } from './constants'
@@ -29,7 +29,7 @@ export const TimeSeries = () => (
             numTicks: isMobile ? 2 : 4
           }
         }}
-        yKey="users.peak"
+        yKey="messages"
         xKey="time"
         type="time"
         color="#2189C8"
@@ -38,7 +38,7 @@ export const TimeSeries = () => (
           content: tooltipContent
         }}
       >
-        <LineChart nofill nopattern dataKey="users.peak" color="#2189C8" />
+        <LineChart nofill nopattern dataKey="messages" color="#2189C8" />
       </ChartArea>
     </GraphContainer>
     <Snippet>

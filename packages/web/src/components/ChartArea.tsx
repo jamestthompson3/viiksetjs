@@ -1,5 +1,6 @@
 /// <reference path="../modules.d.ts"/>
 import * as React from 'react';
+import { unstable_trace as trace } from 'scheduler/tracing';
 import { Group } from '@vx/group';
 import { Bar } from '@vx/shape';
 import { bisect } from 'd3-array';
@@ -121,15 +122,17 @@ function ChartArea({
   const [bar, setBar] = React.useState(false);
   const Grid = buildGrid(gridStroke, noGrid);
   React.useEffect(() => {
-    const chartData = prepChartData<any, any>({
-      data,
-      size,
-      xKey,
-      yKey,
-      margin,
-      type,
-      orientation,
-    });
+    const chartData = trace('prepping chart data', performance.now(), () =>
+      prepChartData<any, any>({
+        data,
+        size,
+        xKey,
+        yKey,
+        margin,
+        type,
+        orientation,
+      })
+    );
     setChartData(chartData);
   }, [data, size, type, margin, orientation, xKey, yKey]);
   const [tooltipData, updateTooltip] = React.useState<
@@ -202,7 +205,9 @@ function ChartArea({
     )(xValue);
   };
 
-  const mouseMove = React.useCallback(tooltipHandler, []);
+  const mouseMove = (args: MouseMove) => {
+    trace('tooltip mouse move', performance.now(), () => tooltipHandler(args));
+  };
 
   const mouseLeave = React.useCallback(() => {
     updateTooltip({});
@@ -302,7 +307,7 @@ function ChartArea({
           >
             {children}
           </ChildContext.Provider>
-          {(bar && true) || (
+          {bar || (
             <Bar
               width={size.width}
               x={0}
