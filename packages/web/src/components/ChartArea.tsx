@@ -255,6 +255,7 @@ function ChartArea({
     xPoints,
     yScale,
   } = chartData;
+  const getCanvas = () => canvas.current;
   if (canvas.current) {
     const ctx = canvas.current.getContext('2d');
     ctx && ctx.clearRect(0, 0, width, height);
@@ -298,7 +299,7 @@ function ChartArea({
               type,
               orientation,
               mouseMove,
-              canvas: canvas.current,
+              getCanvas,
               mouseLeave,
               xKey,
               yKey,
