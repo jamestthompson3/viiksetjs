@@ -275,14 +275,14 @@ function ChartArea({
         }
         ref={chart}
       >
+        <foreignObject x="0" y="0" width={size.width} height={size.height}>
+          <canvas ref={canvas} width={width} height={height} />
+        </foreignObject>
         <Group left={biaxialChildren ? 0 : margin.right}>
           <Group left={margin.left}>
             <Grid yScale={yScale} width={width} left={margin.left} />
             <LeftAxis {...{ type, orientation, yPoints, height, margin }} />
           </Group>
-          <foreignObject x="0" y="0" width={size.width} height={size.height}>
-            <canvas ref={canvas} style={{ width: width, height: height }} />
-          </foreignObject>
           <ChildContext.Provider
             value={{
               data,
