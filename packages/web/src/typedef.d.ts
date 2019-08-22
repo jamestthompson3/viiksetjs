@@ -114,6 +114,12 @@ export interface BarChartProps {
 
 type StreamParser = (data: any[], message: any) => any[];
 
+export interface LineProps {
+  strokeDasharray: [number, number];
+  stroke: string;
+  strokeWidth: number;
+}
+
 export interface FromStreamArgs {
   message: any;
   persist: number;

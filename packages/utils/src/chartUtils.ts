@@ -17,12 +17,16 @@ export const determineXScale = ({
   margin,
 }: Partial<ScaleProps>): ScaleFunction<any, any> => {
   if (!xPoints) throw new Error('xPoints not found');
-  const range = [get(margin, 'left', 0), width || 0];
+  const rightBound = (width || 0) - get(margin, 'right', 0);
+  const range = [get(margin, 'left', 0), rightBound];
   switch (type) {
     case 'ordinal':
       return orientation === 'horizontal'
         ? (scaleLinear()
-            .domain([0, Math.max(...(xPoints as number[]))])
+            .domain([
+              Math.min(...(xPoints as number[])),
+              Math.max(...(xPoints as number[])),
+            ])
             .range(range) as ScaleLinear<number, number>)
         : (scaleBand()
             .domain(xPoints as string[])
@@ -30,7 +34,10 @@ export const determineXScale = ({
             .padding(0.1) as ScaleBand<React.ReactText>);
     case 'linear':
       return scaleLinear()
-        .domain([0, Math.max(...(xPoints as number[]))])
+        .domain([
+          Math.min(...(xPoints as number[])),
+          Math.max(...(xPoints as number[])),
+        ])
         .range(range) as ScaleLinear<number, number>;
     case 'time':
     default:

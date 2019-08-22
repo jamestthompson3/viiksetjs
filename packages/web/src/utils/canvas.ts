@@ -2,6 +2,8 @@
 // and his post on splining between points:
 // http://scaledinnovation.com/analytics/splines/aboutSplines.html
 import * as React from 'react';
+
+import { LineProps } from '../typedef';
 export interface Point {
   x: number;
   y: number;
@@ -106,8 +108,12 @@ export function drawLine(
   len: number,
   ctx: CanvasRenderingContext2D,
   getX: PointGetter,
-  getY: PointGetter
+  getY: PointGetter,
+  lineProps: Partial<LineProps> = {}
 ) {
+  if (lineProps.strokeDasharray) {
+    ctx.setLineDash(lineProps.strokeDasharray);
+  }
   ctx.beginPath();
   for (let i = 0; i < len; ++i) {
     const coords = {

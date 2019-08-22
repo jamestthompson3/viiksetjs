@@ -77,7 +77,7 @@ ScatterPlot.defaultProps = {
   color: '#000',
   stroke: '#000',
   opacity: 0.8,
-  radius: 8,
+  radius: 4,
 };
 
 type NumGetter = (arg: GenericData) => number;

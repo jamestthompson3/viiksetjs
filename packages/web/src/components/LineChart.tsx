@@ -9,14 +9,13 @@ import {
   drawLine,
   useCanvasRef,
 } from '../utils/canvas';
-import { GenericData, RenderedChildPassedProps } from '../typedef';
+import { GenericData, LineProps, RenderedChildPassedProps } from '../typedef';
 import { ChildContext } from './common';
 
 const LineChart: React.FunctionComponent<Props> = (
-  { color, dataKey, axisId, bezier }: Props // areaProps,
+  { color, dataKey, axisId, bezier, lineProps }: Props // areaProps,
 ) => {
   // gradientOpacity,
-  // lineProps,
   if (!dataKey) throw new Error('LineChart: no data key given');
   const {
     data,
@@ -44,10 +43,9 @@ const LineChart: React.FunctionComponent<Props> = (
   if (canvas) {
     const ctx = canvas.getContext('2d');
     if (ctx) {
-      // TODO configure via props
       ctx.save();
       ctx.strokeStyle = color;
-      ctx.lineWidth = 2;
+      ctx.lineWidth = lineProps.strokeWidth;
       const axis = getAxis();
 
       const getX = (i: number) => xScale(xPoints[i]);
@@ -67,7 +65,7 @@ const LineChart: React.FunctionComponent<Props> = (
         }
         drawBezierCurve(len, controlPoints, ctx, getX, getY);
       } else {
-        drawLine(len, ctx, getX, getY);
+        drawLine(len, ctx, getX, getY, lineProps);
       }
       ctx.restore();
     }
@@ -80,11 +78,14 @@ LineChart.defaultProps = {
   color: 'rgb(0, 157, 253)',
   nofill: false,
   nopattern: false,
+  lineProps: {
+    strokeWidth: 2,
+  },
 };
 
 interface LineChartProps extends RenderedChildPassedProps {
   areaProps: Object;
-  lineProps: Object;
+  lineProps: LineProps;
   gradientOpacity: number[];
   nofill: boolean;
   canvas: HTMLCanvasElement;

@@ -222,7 +222,6 @@ function ChartArea({
   } = tooltipData;
   // if we haven't set scales, we know it's not ready to render the chart
   if (!chartData.xScale) {
-    console.log('no Scale!', chartData);
     return null;
   }
   const biaxialChildren = biaxial(children);
@@ -278,7 +277,11 @@ function ChartArea({
       >
         <Group left={biaxialChildren ? 0 : margin.right}>
           <Group left={margin.left}>
-            <Grid yScale={yScale} width={width} left={margin.left} />
+            <Grid
+              yScale={yScale}
+              width={width - margin.right}
+              left={margin.left}
+            />
             <LeftAxis {...{ type, orientation, yPoints, height, margin }} />
           </Group>
           <foreignObject x="0" y="0" width={size.width} height={size.height}>
