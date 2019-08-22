@@ -16,13 +16,7 @@ export {
   formatXTicks,
 } from './formatUtils';
 
-export {
-  recursiveCloneChildren,
-  determineXScale,
-  determineYScale,
-  findTooltipX,
-  biaxial,
-} from './chartUtils';
+export { determineXScale, determineYScale, findTooltipX } from './chartUtils';
 
 export {
   ScaleProps,

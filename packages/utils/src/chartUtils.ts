@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {
   scaleLinear,
   scaleTime,
@@ -7,37 +6,8 @@ import {
   ScaleLinear,
   ScaleTime,
 } from 'd3-scale';
-import { ScaleProps, ScaleFunction, InheritedChartProps } from './typedef';
+import { ScaleProps, ScaleFunction } from './typedef';
 import get from 'lodash/get';
-
-interface ChildProps {
-  children: any;
-}
-/**
- * Recursively clones children, passing props down nested DOM structures
- */
-export function recursiveCloneChildren<T extends ChildProps>(
-  children: React.ReactNode,
-  props: T
-) {
-  return React.Children.map(
-    children as React.ReactElement<any>[],
-    (child: React.ReactElement<InheritedChartProps>) => {
-      if (!React.isValidElement(child)) return child;
-
-      if (child.props) {
-        props['children'] = recursiveCloneChildren(child.props.children, props);
-
-        return React.cloneElement(
-          child as React.ReactElement<InheritedChartProps>,
-          props
-        );
-      }
-
-      return child;
-    }
-  );
-}
 
 export const determineXScale = ({
   type,
@@ -118,14 +88,3 @@ export const findTooltipX = ({
 }): number => {
   return xScale(calculatedX);
 };
-
-/**
- * Takes React Chilren and returns true or false if unique axis Id is found
- */
-export const biaxial = (children: React.ReactNode): boolean =>
-  React.Children.map(
-    children,
-    child =>
-      React.isValidElement(child) &&
-      Object.prototype.hasOwnProperty.call(child.props, 'axisId')
-  ).includes(true);

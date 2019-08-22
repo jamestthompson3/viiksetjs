@@ -12,6 +12,7 @@ import {
   Axis,
   AxisProps,
   Margin,
+  InheritedChartProps,
   ScaleFunction,
 } from '@viiksetjs/utils';
 
@@ -34,6 +35,19 @@ export interface BottomAxisRendererProps {
   height: number;
   scale: ScaleFunction;
 }
+
+export const ChildContext = React.createContext<InheritedChartProps>({});
+
+/**
+ * Takes React Children and returns true or false if unique axis Id is found
+ */
+export const biaxial = (children: React.ReactNode): boolean =>
+  React.Children.map(
+    children,
+    child =>
+      React.isValidElement(child) &&
+      Object.prototype.hasOwnProperty.call(child.props, 'axisId')
+  ).includes(true);
 
 export const buildLeftAxis = ({
   y,

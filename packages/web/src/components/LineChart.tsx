@@ -7,18 +7,14 @@ import {
   Point,
   drawBezierCurve,
   drawLine,
+  useCanvasRef,
 } from '../utils/canvas';
 import { GenericData, RenderedChildPassedProps } from '../typedef';
-import { ChildContext } from './ChartArea';
+import { ChildContext } from './common';
 
-//TODO
-// Gradients
-// Doesn't render immediately
-// Bezier curve looks wonky
-
-function LineChart(
+const LineChart: React.FunctionComponent<Props> = (
   { color, dataKey, axisId, bezier }: Props // areaProps,
-) {
+) => {
   // gradientOpacity,
   // lineProps,
   if (!dataKey) throw new Error('LineChart: no data key given');
@@ -33,11 +29,7 @@ function LineChart(
     xScale,
   } = React.useContext(ChildContext);
   const yData = data.map((item: GenericData) => get(item, dataKey));
-  const [canvas, setCanvas] = React.useState<HTMLCanvasElement>();
-  React.useEffect(() => {
-    const parentCanvas = getCanvas();
-    setCanvas(parentCanvas);
-  }, []);
+  const canvas = useCanvasRef(getCanvas);
   const getAxis = () => {
     if (!axisId) {
       return inheritedScale;
@@ -52,11 +44,10 @@ function LineChart(
   if (canvas) {
     const ctx = canvas.getContext('2d');
     if (ctx) {
+      // TODO configure via props
+      ctx.save();
       ctx.strokeStyle = color;
       ctx.lineWidth = 2;
-      ctx.save();
-      ctx.translate(margin.left, height);
-      ctx.scale(1, -1);
       const axis = getAxis();
 
       const getX = (i: number) => xScale(xPoints[i]);
@@ -70,7 +61,7 @@ function LineChart(
               { x: getX(i), y: getY(i) },
               { x: getX(i + 1), y: getY(i + 1) },
               { x: getX(i + 2), y: getY(i + 2) },
-              1 / 5
+              1 / 2
             )
           );
         }
@@ -83,7 +74,7 @@ function LineChart(
   }
 
   return null;
-}
+};
 
 LineChart.defaultProps = {
   color: 'rgb(0, 157, 253)',
@@ -103,4 +94,4 @@ interface LineChartProps extends RenderedChildPassedProps {
 
 type Props = Readonly<InheritedChartProps> & Partial<LineChartProps>;
 
-export default LineChart;
+export default React.memo(LineChart);

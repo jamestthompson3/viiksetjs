@@ -1,6 +1,5 @@
 /// <reference path="../modules.d.ts"/>
 import * as React from 'react';
-import { unstable_trace as trace } from 'scheduler/tracing';
 import { Group } from '@vx/group';
 import { Bar } from '@vx/shape';
 import { bisect } from 'd3-array';
@@ -18,10 +17,7 @@ import {
   formatTicks,
   formatXTicks,
   findTooltipX,
-  // recursiveCloneChildren,
-  biaxial,
   prepChartData,
-  InheritedChartProps,
   Axis,
   Margin,
   State,
@@ -45,6 +41,8 @@ import {
   buildGrid,
   LeftAxisRendererProps,
   BottomAxisRendererProps,
+  biaxial,
+  ChildContext,
 } from './common/index';
 
 const DEFAULT_MARGIN: Margin = { top: 18, right: 15, bottom: 15, left: 30 };
@@ -87,8 +85,6 @@ const defaultTooltip: TooltipProps<GenericData> = {
   styles: { wrapper: {}, content: {} },
 };
 
-export const ChildContext = React.createContext<InheritedChartProps>({});
-
 function ChartArea({
   children,
   determineViewBox,
@@ -118,23 +114,29 @@ function ChartArea({
 
   // Let's get wild....
   const canvas = React.useRef<HTMLCanvasElement>(null);
-
   const [bar, setBar] = React.useState(false);
   const Grid = buildGrid(gridStroke, noGrid);
   React.useEffect(() => {
-    const chartData = trace('prepping chart data', performance.now(), () =>
-      prepChartData<any, any>({
-        data,
-        size,
-        xKey,
-        yKey,
-        margin,
-        type,
-        orientation,
-      })
-    );
+    const chartData = prepChartData<any, any>({
+      data,
+      size,
+      xKey,
+      yKey,
+      margin,
+      type,
+      orientation,
+    });
     setChartData(chartData);
   }, [data, size, type, margin, orientation, xKey, yKey]);
+  React.useEffect(() => {
+    if (canvas.current) {
+      const ctx = canvas.current.getContext('2d');
+      if (ctx) {
+        ctx.translate(-margin.left, height - margin.top);
+        ctx.scale(1, -1);
+      }
+    }
+  }, []);
   const [tooltipData, updateTooltip] = React.useState<
     Partial<TooltipUpdateData>
   >({});
@@ -187,7 +189,7 @@ function ChartArea({
           : bounds.dLeft || bounds.dRight;
       },
       (calculatedData: { [key: string]: any }) => {
-        const calculatedX = head(extractX(calculatedData, xKey));
+        const calculatedX = head(extractX(calculatedData, xKey, type));
         const x: number = findTooltipX({ calculatedX, xScale });
         const yCoords =
           yScales && dataKeys
@@ -205,10 +207,7 @@ function ChartArea({
     )(xValue);
   };
 
-  const mouseMove = (args: MouseMove) => {
-    trace('tooltip mouse move', performance.now(), () => tooltipHandler(args));
-  };
-
+  const mouseMove = (args: MouseMove) => tooltipHandler(args);
   const mouseLeave = React.useCallback(() => {
     updateTooltip({});
   }, []);
@@ -223,6 +222,7 @@ function ChartArea({
   } = tooltipData;
   // if we haven't set scales, we know it's not ready to render the chart
   if (!chartData.xScale) {
+    console.log('no Scale!', chartData);
     return null;
   }
   const biaxialChildren = biaxial(children);
@@ -276,14 +276,14 @@ function ChartArea({
         }
         ref={chart}
       >
-        <foreignObject x="0" y="0" width={size.width} height={size.height}>
-          <canvas ref={canvas} width={width} height={height} />
-        </foreignObject>
         <Group left={biaxialChildren ? 0 : margin.right}>
           <Group left={margin.left}>
             <Grid yScale={yScale} width={width} left={margin.left} />
             <LeftAxis {...{ type, orientation, yPoints, height, margin }} />
           </Group>
+          <foreignObject x="0" y="0" width={size.width} height={size.height}>
+            <canvas ref={canvas} width={width} height={height} />
+          </foreignObject>
           <ChildContext.Provider
             value={{
               data,

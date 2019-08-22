@@ -9,43 +9,39 @@ import {
   determineXScale,
   ScaleFunction,
 } from '@viiksetjs/utils';
+import { ChildContext } from '../common';
 
 import { StyledGradient, StyledBar } from '../styledComponents';
 import { BarChartProps, GenericData, Scales } from 'typedef';
 
 const BarChart: React.FunctionComponent<Props> = ({
-  declareBar,
-  type,
-  margin,
-  height,
-  width,
-  data,
-  xPoints,
-  yPoints: inheritedPoints,
   axisId,
   color,
   dataKey,
-  xKey,
-  noTool,
-  mouseMove,
-  mouseLeave,
   nofill,
   orientation,
   inverted,
   barProps,
 }) => {
+  if (!dataKey) throw new Error('BarChart: no data key given');
+  const {
+    type,
+    margin,
+    height,
+    width,
+    data,
+    xPoints,
+    yPoints: inheritedPoints,
+    xKey,
+    declareBar,
+    noTool,
+    mouseMove,
+    mouseLeave,
+  } = React.useContext(ChildContext);
   const [scales, setScales] = React.useState<Scales>({
     xScale: null,
     yScale: null,
   });
-  React.useEffect(() => {
-    if (process.env.NODE_ENV !== 'production') {
-      if (data.map(item => get(item, dataKey)).includes(undefined)) {
-        // eslint-disable-next-line
-        console.warn(`BarChart: No data found with dataKey ${dataKey}`);
-      }
-    }
-  }, []);
   React.useEffect(() => {
     declareBar();
   }, []);
@@ -90,7 +86,7 @@ const BarChart: React.FunctionComponent<Props> = ({
   }, [type, orientation]);
 
   const { xScale, yScale } = scales;
-  const xPoint = (d: GenericData) => extractX(d, xKey);
+  const xPoint = (d: GenericData) => extractX(d, xKey, type);
   const barHeight = (d: GenericData) => yScale(get(d, dataKey));
   const isHorizontal = orientation === 'horizontal';
   if (!xScale) {
@@ -99,7 +95,7 @@ const BarChart: React.FunctionComponent<Props> = ({
   return (
     <>
       <StyledGradient color={color} id={`gradient${xKey}`} />
-      {data.map(d => (
+      {data.map((d: GenericData) => (
         <Group key={`bar${xPoint(d)}`}>
           <StyledBar
             width={xScale.bandwidth()}
@@ -130,7 +126,6 @@ BarChart.defaultProps = {
 };
 
 interface Props extends BarChartProps {
-  data: GenericData[];
   dataKey: string;
   inheritedScale: ScaleFunction;
   nofill: boolean;

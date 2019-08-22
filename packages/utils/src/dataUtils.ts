@@ -64,9 +64,13 @@ export const extractY = (datum: Object, yKey: string | null = null): any[] =>
 /**
  * Takes a data object and extracts all X values and parse them to date time objects if applicable
  */
-export const extractX = (datum: Object, xKey: string | null = null): any[] =>
+export const extractX = (
+  datum: Object,
+  xKey: string | null = null,
+  type: string
+): any[] =>
   xKey
-    ? [get(datum, xKey)]
+    ? [type === 'time' ? parseIfDate(get(datum, xKey)) : get(datum, xKey)]
     : flatten(
         parseObject<string>(datum, 'string').map((d: string) => parseIfDate(d))
       );
