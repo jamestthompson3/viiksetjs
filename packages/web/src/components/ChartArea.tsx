@@ -130,11 +130,11 @@ function ChartArea({
   }, [data, size, type, margin, orientation, xKey, yKey]);
   React.useEffect(() => {
     if (canvas.current) {
-      const ctx = canvas.current.getContext('2d');
-      if (ctx) {
-        ctx.translate(-margin.left, height - margin.top);
-        ctx.scale(1, -1);
-      }
+      // const ctx = canvas.current.getContext('2d');
+      // if (ctx) {
+      //   ctx.translate(-margin.left, height - margin.top);
+      //   ctx.scale(1, -1);
+      // }
     }
   }, []);
   const [tooltipData, updateTooltip] = React.useState<
@@ -144,17 +144,14 @@ function ChartArea({
   // To prevent tooltips from not showing on bar chart due to minification changing names
   const declareBar = React.useCallback(() => setBar(true), []);
 
-  const tooltipHandler = ({
-    event,
-    xPoints,
-    xScale,
-    yScale,
-    yScales,
-    dataKeys,
-    datum,
-  }: Partial<MouseMove>): void => {
+  const mouseMove = ({ event, datum }: Partial<MouseMove>): void => {
     if (tooltip === null || noTool) return;
 
+    const { xPoints, biaxialChildren, xScale, yScale, dataKeys } = chartData;
+
+    const yScales =
+      biaxialChildren &&
+      createLinearScales(data, dataKeys || [], height, margin);
     const svgPoint = localPoint(chart.current, event);
     const mouseX = get(svgPoint, 'x');
     const mouseY = get(svgPoint, 'y');
@@ -172,7 +169,7 @@ function ChartArea({
       });
     }
 
-    const xValueOffset = biaxial(children) ? 0 : margin.right;
+    const xValueOffset = biaxialChildren ? 0 : margin.right;
     const xValue = xScale.invert(get(svgPoint, 'x') - xValueOffset);
 
     return flow(
@@ -207,7 +204,6 @@ function ChartArea({
     )(xValue);
   };
 
-  const mouseMove = (args: MouseMove) => tooltipHandler(args);
   const mouseLeave = React.useCallback(() => {
     updateTooltip({});
   }, []);
@@ -245,15 +241,7 @@ function ChartArea({
     styles: tooltipStyles,
     content: tooltipContent,
   } = merge({}, defaultTooltip, tooltip);
-  const {
-    xScale,
-    dataKeys,
-    width,
-    height,
-    yPoints,
-    xPoints,
-    yScale,
-  } = chartData;
+  const { xScale, width, height, yPoints, xPoints, yScale } = chartData;
   const getCanvas = () => canvas.current;
   if (canvas.current) {
     const ctx = canvas.current.getContext('2d');
@@ -319,28 +307,10 @@ function ChartArea({
               height={height}
               fill="transparent"
               onMouseMove={(event: React.SyntheticEvent) =>
-                mouseMove({
-                  event,
-                  xPoints,
-                  xScale,
-                  yScale,
-                  yScales:
-                    biaxialChildren &&
-                    createLinearScales(data, dataKeys || [], height, margin),
-                  dataKeys,
-                })
+                mouseMove({ event })
               }
               onTouchMove={(event: React.SyntheticEvent) =>
-                mouseMove({
-                  event,
-                  xPoints,
-                  xScale,
-                  yScale,
-                  yScales:
-                    biaxialChildren &&
-                    createLinearScales(data, dataKeys || [], height, margin),
-                  dataKeys,
-                })
+                mouseMove({ event })
               }
               onTouchEnd={mouseLeave}
               onMouseLeave={mouseLeave}

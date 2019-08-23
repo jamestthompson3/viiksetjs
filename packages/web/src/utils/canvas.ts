@@ -2,6 +2,7 @@
 // and his post on splining between points:
 // http://scaledinnovation.com/analytics/splines/aboutSplines.html
 import * as React from 'react';
+import { rgba } from 'polished';
 
 import { LineProps } from '../typedef';
 export interface Point {
@@ -109,11 +110,71 @@ export function drawLine(
   ctx: CanvasRenderingContext2D,
   getX: PointGetter,
   getY: PointGetter,
-  lineProps: Partial<LineProps> = {}
+  lineProps: Partial<LineProps> = {},
+  nofill: boolean,
+  color: string,
+  height: number,
+  yMax: number
 ) {
+  ctx.save();
   if (lineProps.strokeDasharray) {
     ctx.setLineDash(lineProps.strokeDasharray);
   }
+
+  ctx.beginPath();
+  let max = 0;
+  for (let i = 0; i < len; ++i) {
+    const x = getX(i);
+    const y = getY(i);
+    if (y > max) {
+      max = y;
+    }
+    const coords = {
+      x,
+      y,
+    };
+    if (i === 0) {
+      ctx.moveTo(coords.x, coords.y);
+    } else {
+      ctx.lineTo(coords.x, coords.y);
+    }
+  }
+  if (!nofill) {
+    console.log(yMax, max);
+    ctx.lineTo(getX(len - 1), height);
+    ctx.lineTo(getX(0), height);
+    ctx.stroke();
+    const gradient = ctx.createLinearGradient(0, 0, 0, height);
+    gradient.addColorStop(0, rgba(color, 0));
+    gradient.addColorStop(0.5, rgba(color, 0.5));
+    gradient.addColorStop(1, rgba(color, 1));
+    ctx.fillStyle = gradient;
+    ctx.fill();
+  } else {
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+export function drawGradient(
+  len: number,
+  color: string,
+  ctx: CanvasRenderingContext2D,
+  getX: PointGetter,
+  getY: PointGetter,
+  width: number,
+  height: number,
+  yMax: number
+) {
+  ctx.save();
+  //destination-in closest so far
+  const gradient = ctx.createLinearGradient(0, 0, 0, height);
+  gradient.addColorStop(0, rgba(color, 0));
+  gradient.addColorStop(0.5, rgba(color, 0.5));
+  gradient.addColorStop(1, rgba(color, 1));
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, yMax, width, height);
+  ctx.clip();
   ctx.beginPath();
   for (let i = 0; i < len; ++i) {
     const coords = {
@@ -126,8 +187,7 @@ export function drawLine(
       ctx.lineTo(coords.x, coords.y);
     }
   }
-  ctx.stroke();
-  ctx.closePath();
+  ctx.restore();
 }
 
 type AcquireFn = () => HTMLCanvasElement;
