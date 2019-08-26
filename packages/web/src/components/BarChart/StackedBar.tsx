@@ -36,7 +36,6 @@ function calcScales({
         .map((arr: number[]) => sum(arr))
     )
   );
-
   const scalar = type === 'linear' ? scaleLinear : scaleTime;
 
   if (orientation === 'horizontal') {
@@ -59,7 +58,6 @@ function calcScales({
 }
 
 const StackedBar: React.FunctionComponent<Props> = ({
-  orientation,
   colors,
   keys,
   barProps,
@@ -67,6 +65,7 @@ const StackedBar: React.FunctionComponent<Props> = ({
   const {
     data,
     type,
+    orientation,
     yKey,
     xKey,
     height,
@@ -187,7 +186,6 @@ interface BarWidth {
 interface Props extends BarChartProps {
   colors: string[];
   keys: string[];
-  orientation: string;
 }
 
 export default React.memo(StackedBar);

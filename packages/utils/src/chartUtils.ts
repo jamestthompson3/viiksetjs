@@ -58,28 +58,15 @@ export const determineYScale = ({
   const marginTop = get(margin, 'top', 0) as number;
   const range = [height as number, marginTop];
   const reverseRange = [marginTop, height || 0];
-  switch (type) {
-    case 'linear':
-      return scaleLinear()
-        .domain([0, Math.max(...(yPoints as number[]))])
-        .range(range) as ScaleLinear<number, number>;
-    case 'ordinal':
-      return orientation === 'horizontal'
-        ? (scaleBand()
-            .domain(yPoints as string[])
-            .range([height as number, marginTop])
-            .padding(0.1) as ScaleBand<React.ReactText>)
-        : (scaleLinear()
-            .domain([0, Math.max(...(yPoints as number[]))])
-            .range(invertedRange ? reverseRange : range) as ScaleLinear<
-            number,
-            number
-          >);
-    default:
-      return scaleLinear()
-        .domain([0, Math.max(...(yPoints as number[]))])
-        .range(range) as ScaleLinear<number, number>;
+  if (orientation === 'horizontal') {
+    return scaleBand()
+      .domain(yPoints as string[])
+      .range([height as number, marginTop])
+      .padding(0.1) as ScaleBand<React.ReactText>;
   }
+  return scaleLinear()
+    .domain([0, Math.max(...(yPoints as number[]))])
+    .range(invertedRange ? reverseRange : range) as ScaleLinear<number, number>;
 };
 
 /**

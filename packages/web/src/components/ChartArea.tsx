@@ -128,15 +128,6 @@ function ChartArea({
     });
     setChartData(chartData);
   }, [data, size, type, margin, orientation, xKey, yKey]);
-  React.useEffect(() => {
-    if (canvas.current) {
-      // const ctx = canvas.current.getContext('2d');
-      // if (ctx) {
-      //   ctx.translate(-margin.left, height - margin.top);
-      //   ctx.scale(1, -1);
-      // }
-    }
-  }, []);
   const [tooltipData, updateTooltip] = React.useState<
     Partial<TooltipUpdateData>
   >({});

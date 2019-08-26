@@ -79,18 +79,6 @@ const LineChart: React.FunctionComponent<Props> = (
           yMax
         );
       }
-      // if (!nofill) {
-      //   drawGradient(
-      //     len,
-      //     color,
-      //     ctx,
-      //     getX,
-      //     getY,
-      //     width,
-      //     height + margin.top,
-      //     yMax
-      //   );
-      // }
       ctx.restore();
     }
   }
