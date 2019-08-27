@@ -12,17 +12,21 @@ import {
 import { GenericData, LineProps, RenderedChildPassedProps } from '../typedef';
 import { ChildContext } from './common';
 
-const LineChart: React.FunctionComponent<Props> = (
-  { color, dataKey, axisId, bezier, lineProps, nofill }: Props // areaProps,
-) => {
-  // gradientOpacity,
+const LineChart: React.FunctionComponent<Props> = ({
+  color,
+  dataKey,
+  axisId,
+  bezier,
+  lineProps,
+  nofill,
+  gradientOpacity,
+}: Props) => {
   if (!dataKey) throw new Error('LineChart: no data key given');
   const {
     data,
     inheritedScale,
     type,
     height,
-    //width,
     margin,
     getCanvas,
     xPoints,
@@ -66,7 +70,6 @@ const LineChart: React.FunctionComponent<Props> = (
         }
         drawBezierCurve(len, controlPoints, ctx, getX, getY);
       } else {
-        const yMax = axis(Math.max(...yData));
         drawLine(
           len,
           ctx,
@@ -75,22 +78,10 @@ const LineChart: React.FunctionComponent<Props> = (
           lineProps,
           nofill,
           color,
-          height + margin.top,
-          yMax
+          height,
+          gradientOpacity
         );
       }
-      // if (!nofill) {
-      //   drawGradient(
-      //     len,
-      //     color,
-      //     ctx,
-      //     getX,
-      //     getY,
-      //     width,
-      //     height + margin.top,
-      //     yMax
-      //   );
-      // }
       ctx.restore();
     }
   }
@@ -108,7 +99,6 @@ LineChart.defaultProps = {
 };
 
 interface LineChartProps extends RenderedChildPassedProps {
-  areaProps: Object;
   lineProps: LineProps;
   gradientOpacity: number[];
   nofill: boolean;
