@@ -5,15 +5,12 @@ import { StyledLeftAxis, StyledRightAxis } from './styledComponents';
 import { GenericData, RenderedChildPassedProps } from 'typedef';
 
 import { InheritedChartProps } from '@viiksetjs/utils';
+import { ChildContext } from './common';
 
 const YAxis = ({
-  height,
-  data,
   axisId,
   color,
   position,
-  width,
-  margin,
   label,
   labelProps,
   tickLabels,
@@ -22,14 +19,7 @@ const YAxis = ({
   ...rest
 }: Props): React.ReactElement => {
   if (!axisId) throw new Error('YAxis: no axisId given');
-  React.useEffect(() => {
-    // eslint-disable-next-line
-    if (process.env.NODE_ENV !== 'production') {
-      if (dataPoints.includes(undefined)) {
-        console.warn(`YAxis: No data found with axisId ${axisId}`);
-      }
-    }
-  }, []);
+  const { height, data, width, margin } = React.useContext(ChildContext);
 
   const dataPoints = data.map((item: GenericData) => get(item, axisId));
   const yScale = scaleLinear()
@@ -100,7 +90,6 @@ interface YAxisProps extends RenderedChildPassedProps {
 
 YAxis.defaultProps = {
   labelProps: { fontSize: 12, textAnchor: 'middle', fill: 'black' },
-  data: [],
 };
 
 type Props = Partial<YAxisProps> & Readonly<InheritedChartProps>;

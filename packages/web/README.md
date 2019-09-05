@@ -24,10 +24,13 @@ To build the examples folder, run `yarn build` and open then the `index.html` fi
 ### Interop with vx
 
 Since Viikset is built on top of vx, you can use any vx components with any Viikset components.
-The `ChartArea` component will supply your custom vx components with the following props:
+You can use `React.useContext` to extract out of the `ChildContext` provided by ViiksetJS:
 
 `xScale, yScale (as inheritedScale), data, margin, height, width, type, xKey, yKey, formatY, formatX, numYTicks`
 as well as the `mouseMove` and `mouseLeave` functions for tooltips.
+
+Additionally, you can use the hook, `useCanvasRef` to access a canvas ref if you would prefer to draw your visualizations via HTML5 canvas.
+ViiksetJS uses canvas internally to render line and scatter plots for higher performance.
 
 ### Use with styled-components
 
@@ -143,42 +146,6 @@ The following are common props for both `x` and `y` axes
 | renderer  | \*see tooltip section below for examples | Function | A function that returns a React Component that gets passed the following props: `tooltipData, color, x, mouseX, yCoords`. `tooltipData` contains the calculated data object for current mouse position. `color` is the color passed from `ChartArea`. `x` is the x coordinate of the closest estimated data point to the current mouse position. `mouseX` is the current position of the mouse. `yCoords` is the calculated yCoordinates for the data point at mouse position `x`. |
 | styles    | {}                                       | Object   | An object containing two React style objects, `wrapper` and `content`. `{wrapper: { position: 'absolute'}, content: { color: 'yellow'}}` for quick styling without having to write a complete custom tooltip                                                                                                                                                                                                                                                                       |
 
-## DataContext
-
-The `DataContext` component allows even greater flexibility for working with your data. It takes a set of props needed to create scales,
-and returns these scale values to you which can be used with svg, d3, canvas, or even DOM nodes.
-
-### Props
-
-| Prop        | Defaults                                      | Type                                         | Desc                                                                                           |
-| :---------- | :-------------------------------------------- | :------------------------------------------- | :--------------------------------------------------------------------------------------------- |
-| data        | []                                            | Array                                        | Array of chart data                                                                            |
-| margin      | `{ top: 18, right: 15, bottom: 0, left: 30 }` | Object                                       | An optional object delineating margin values                                                   |
-| orientation | ''                                            | String                                       | An optional string denoting the orientation of the `DataContext`                               |
-| type        | ''                                            | `oneOf(['ordinal', 'linear', 'horizontal'])` | An optional string indicating the type of scale the type should have, defaults to timeseries   |
-| xKey        | null                                          | String                                       | An optional string denoting the data key for x values, supports nesting such as `'some.thing'` |
-| yKey        | null                                          | String                                       | An optional string denoting the data key for y values, supports nesting such as `'some.thing'` |
-
-```js
-<DataContext data={chartdata} margin={margin}>
-  {({
-    xScale,
-    size,
-    dataKeys,
-    biaxialChildren,
-    data,
-    width,
-    height,
-    yPoints,
-    xPoints,
-    yScale,
-    yScales,
-  }) => {
-    /* render children here */
-  }}
-</DataContext>
-```
-
 ## StreamableChart
 
 The `StreamableChart` component takes a `connection` string which is a URL for a WebSocket.
@@ -241,16 +208,15 @@ A `dataKey` prop must be provided in order for the component to know which data 
 
 ### Props
 
-| Prop            | Default | Type    | Desc                                                                                          |
-| :-------------- | :-----: | :------ | :-------------------------------------------------------------------------------------------- |
-| axisId          |   ''    | String  | String denoting which axis the LineChart belongs to, needed only when creating biaxial charts |
-| areaProps       |   {}    | Object  | vx props applied to the area fill                                                             |
-| color           |  #000   | String  | Color string. Supports colors from styled-components' `themeProvider`.                        |
-| dataKey         |   ''    | String  | Key for data to be graphed, supports nested keys such as `'data.users'`                       |
-| gradientOpacity |         | Array   | Array of of two values between 0 and 1 to be applied to the LineChart gradient                |
-| lineProps       |   {}    | Object  | vx props applied to the line path                                                             |
-| nofill          |  false  | Boolean | If `true`, the LineChart will have no fill                                                    |
-| nopattern       |  false  | Boolean | If `true`, the LineChart will have no pattern                                                 |
+| Prop            | Default | Type    | Desc                                                                                             |
+| :-------------- | :-----: | :------ | :----------------------------------------------------------------------------------------------- |
+| axisId          |   ''    | String  | String denoting which axis the LineChart belongs to, needed only when creating biaxial charts    |
+| color           |  #000   | String  | Color string. Supports colors from styled-components' `themeProvider`.                           |
+| dataKey         |   ''    | String  | Key for data to be graphed, supports nested keys such as `'data.users'`                          |
+| gradientOpacity |         | Array   | Array of values between 0 and 1 to be applied to the LineChart gradient (e.g. `[0.25, 0.75, 1]`) |
+| lineProps       |   {}    | Object  | vx props applied to the line path                                                                |
+| nofill          |  false  | Boolean | If `true`, the LineChart will have no fill                                                       |
+| nopattern       |  false  | Boolean | If `true`, the LineChart will have no pattern                                                    |
 
 ```js
 <LineChart dataKey="count_messages" color="rgb(0, 157, 253)" />

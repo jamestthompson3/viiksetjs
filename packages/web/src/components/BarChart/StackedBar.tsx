@@ -14,6 +14,7 @@ import {
   ScaleFunction,
 } from '@viiksetjs/utils';
 
+import { ChildContext } from '../common';
 import { StyledBar } from '../styledComponents';
 import { BarChartProps, GenericData, Scales, ScaleType } from 'typedef';
 
@@ -35,7 +36,6 @@ function calcScales({
         .map((arr: number[]) => sum(arr))
     )
   );
-
   const scalar = type === 'linear' ? scaleLinear : scaleTime;
 
   if (orientation === 'horizontal') {
@@ -58,24 +58,26 @@ function calcScales({
 }
 
 const StackedBar: React.FunctionComponent<Props> = ({
-  data,
-  type,
-  orientation,
   colors,
   keys,
-  yKey,
-  xKey,
-  height,
-  margin,
-  noTool,
-  mouseMove,
-  declareBar,
-  yPoints,
-  xPoints,
-  width,
-  mouseLeave,
   barProps,
 }) => {
+  const {
+    data,
+    type,
+    orientation,
+    yKey,
+    xKey,
+    height,
+    margin,
+    noTool,
+    mouseMove,
+    declareBar,
+    yPoints,
+    xPoints,
+    width,
+    mouseLeave,
+  } = React.useContext(ChildContext);
   React.useEffect(() => {
     declareBar();
   }, []);
@@ -116,7 +118,7 @@ const StackedBar: React.FunctionComponent<Props> = ({
   )(data);
   const bandwidth = isHorizontal ? yScale.bandwidth() : xScale.bandwidth();
   const yPoint = (d: GenericData) => yScale(get(d, yKey));
-  const xPoint = (d: GenericData) => xScale(extractX(d, xKey));
+  const xPoint = (d: GenericData) => xScale(extractX(d, xKey, type));
   return (
     <Group>
       {series &&
@@ -146,7 +148,7 @@ const StackedBar: React.FunctionComponent<Props> = ({
                     const datum = set(
                       {},
                       xKey || 'xValue',
-                      head(extractX(get(d, 'data'), xKey))
+                      head(extractX(get(d, 'data'), xKey, type))
                     );
                     set(datum, key, get(d, `data.${key}`));
                     return noTool || mouseMove({ event, datum });
@@ -182,7 +184,6 @@ interface BarWidth {
 }
 
 interface Props extends BarChartProps {
-  data: GenericData[];
   colors: string[];
   keys: string[];
 }

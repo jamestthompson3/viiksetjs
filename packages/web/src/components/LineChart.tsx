@@ -1,118 +1,110 @@
 import * as React from 'react';
 import get from 'lodash/get';
-import { curveMonotoneX } from '@vx/curve';
 
-import {
-  StyledGradient,
-  StyledPatternLines,
-  StyledLinePath,
-  StyledAreaClosed,
-} from './styledComponents';
-import { extractX } from '@viiksetjs/utils';
 import { determineYScale, InheritedChartProps } from '@viiksetjs/utils';
-import { GenericData, RenderedChildPassedProps } from '../typedef';
+import {
+  getControlPoints,
+  Point,
+  drawBezierCurve,
+  drawLine,
+  useCanvasRef,
+} from '../utils/canvas';
+import { GenericData, LineProps, RenderedChildPassedProps } from '../typedef';
+import { ChildContext } from './common';
 
 const LineChart: React.FunctionComponent<Props> = ({
-  data,
   color,
   dataKey,
-  xScale,
-  xKey,
-  nofill,
-  height,
-  margin,
-  nopattern,
-  inheritedScale,
   axisId,
-  type,
-  areaProps,
+  bezier,
   lineProps,
+  nofill,
   gradientOpacity,
-}) => {
+}: Props) => {
   if (!dataKey) throw new Error('LineChart: no data key given');
-  const dataPoints = data.map((item: GenericData) => get(item, dataKey));
-  React.useEffect(() => {
-    // eslint-disable-next-line
-    if (process.env.NODE_ENV !== 'production') {
-      if (dataPoints.includes(undefined)) {
-        console.warn(`LineChart: No data found with dataKey ${dataKey}`);
-      }
-    }
-  }, []);
-
-  const getAxis = () => (!axisId ? inheritedScale : yScale);
-  const yScale = determineYScale({
-    type: type || 'linear',
-    yPoints: dataPoints,
+  const {
+    data,
+    inheritedScale,
+    type,
     height,
     margin,
-  });
-  const xPoints = (d: GenericData) =>
-    xScale(xKey ? get(d, xKey) : extractX(d)[0]);
-  const yPoints = (d: GenericData) => getAxis()(get(d, dataKey));
-  const gradientKey =
-    typeof dataKey === 'string' ? dataKey.split(' ').join('') : dataKey;
-  const findFill = (gradient: boolean) =>
-    gradient ? `url(#gradient${gradientKey})` : `url(#dlines${gradientKey})`;
-  return (
-    <>
-      {!nofill && (
-        <>
-          <StyledGradient
-            opacity={gradientOpacity}
-            color={color}
-            id={`gradient${gradientKey}`}
-          />
-          <StyledPatternLines color={color} id={`dlines${gradientKey}`} />
-        </>
-      )}
-      <StyledLinePath
-        {...{ data, color }}
-        y={yPoints}
-        x={xPoints}
-        curve={curveMonotoneX}
-        {...lineProps}
-      />
-      {!nofill && (
-        <StyledAreaClosed
-          {...{ data, color }}
-          y={yPoints}
-          x={xPoints}
-          fill={findFill(true)}
-          yScale={getAxis()}
-          curve={curveMonotoneX}
-          {...areaProps}
-        />
-      )}
-      {nopattern ||
-        (!nofill && (
-          <StyledAreaClosed
-            {...{ data, color }}
-            y={yPoints}
-            yScale={getAxis()}
-            fill={findFill(false)}
-            x={xPoints}
-            curve={curveMonotoneX}
-            {...areaProps}
-          />
-        ))}
-    </>
-  );
+    getCanvas,
+    xPoints,
+    xScale,
+  } = React.useContext(ChildContext);
+  const yData = data.map((item: GenericData) => get(item, dataKey));
+  const canvas = useCanvasRef(getCanvas);
+  const getAxis = () => {
+    if (!axisId) {
+      return inheritedScale;
+    }
+    return determineYScale({
+      type: type || 'linear',
+      yPoints: yData,
+      height,
+      margin,
+    });
+  };
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = lineProps.strokeWidth;
+      const axis = getAxis();
+
+      const getX = (i: number) => xScale(xPoints[i]);
+      const getY = (i: number) => axis(yData[i]);
+      let controlPoints: Point[] = [];
+      const len = data.length;
+      if (bezier) {
+        for (let i = 0; i < len - 4; i += 2) {
+          controlPoints = controlPoints.concat(
+            getControlPoints(
+              { x: getX(i), y: getY(i) },
+              { x: getX(i + 1), y: getY(i + 1) },
+              { x: getX(i + 2), y: getY(i + 2) },
+              1 / 2
+            )
+          );
+        }
+        drawBezierCurve(len, controlPoints, ctx, getX, getY);
+      } else {
+        drawLine(
+          len,
+          ctx,
+          getX,
+          getY,
+          lineProps,
+          nofill,
+          color,
+          height,
+          gradientOpacity
+        );
+      }
+      ctx.restore();
+    }
+  }
+
+  return null;
 };
 
 LineChart.defaultProps = {
   color: 'rgb(0, 157, 253)',
   nofill: false,
   nopattern: false,
-  data: [],
+  lineProps: {
+    strokeWidth: 2,
+  },
 };
 
 interface LineChartProps extends RenderedChildPassedProps {
-  areaProps: Object;
-  lineProps: Object;
+  lineProps: LineProps;
   gradientOpacity: number[];
   nofill: boolean;
+  canvas: HTMLCanvasElement;
   nopattern: boolean;
+  bezier: boolean;
 }
 
 type Props = Readonly<InheritedChartProps> & Partial<LineChartProps>;

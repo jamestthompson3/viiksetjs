@@ -35,9 +35,11 @@ export function parseObject<T>(
 /**
  * Takes an array of objects and a datakey and returns an array of x-value points
  */
-export const getX = (data: Object[], xKey?: string): any[] =>
+export const getX = (data: Object[], xKey?: string, type?: string): any[] =>
   xKey
-    ? data.map(datum => get(datum, xKey))
+    ? data.map(datum =>
+        type === 'time' ? parseIfDate(get(datum, xKey)) : get(datum, xKey)
+      )
     : flatten(
         data.map(datum =>
           parseObject<string>(datum, 'string').map((d: string) =>
@@ -62,9 +64,13 @@ export const extractY = (datum: Object, yKey: string | null = null): any[] =>
 /**
  * Takes a data object and extracts all X values and parse them to date time objects if applicable
  */
-export const extractX = (datum: Object, xKey: string | null = null): any[] =>
+export const extractX = (
+  datum: Object,
+  xKey: string | null = null,
+  type: string
+): any[] =>
   xKey
-    ? [get(datum, xKey)]
+    ? [type === 'time' ? parseIfDate(get(datum, xKey)) : get(datum, xKey)]
     : flatten(
         parseObject<string>(datum, 'string').map((d: string) => parseIfDate(d))
       );

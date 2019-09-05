@@ -29,13 +29,16 @@ export const TimeSeries = () => (
             numTicks: isMobile ? 2 : 4
           }
         }}
+        yKey="messages"
+        xKey="time"
+        type="time"
         color="#2189C8"
         stroke="grey"
         tooltip={{
           content: tooltipContent
         }}
       >
-        <LineChart dataKey="messages" color="#2189C8" />
+        <LineChart nopattern dataKey="messages" color="#2189C8" />
       </ChartArea>
     </GraphContainer>
     <Snippet>

@@ -22,7 +22,8 @@
   },
   "dependencies": {
     "@babel/preset-env": "^7.5.5",
-    "@viiksetjs/web": "^0.1.1",
+    "@viiksetjs/utils": "file:../packages/utils",
+    "@viiksetjs/web": "file:../packages/web",
     "@vx/bounds": "^0.0.189",
     "@vx/shape": "^0.0.190",
     "date-fns": "^1.30.1",

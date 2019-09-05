@@ -17,10 +17,7 @@ import {
   formatTicks,
   formatXTicks,
   findTooltipX,
-  recursiveCloneChildren,
-  biaxial,
   prepChartData,
-  InheritedChartProps,
   Axis,
   Margin,
   State,
@@ -44,6 +41,8 @@ import {
   buildGrid,
   LeftAxisRendererProps,
   BottomAxisRendererProps,
+  biaxial,
+  ChildContext,
 } from './common/index';
 
 const DEFAULT_MARGIN: Margin = { top: 18, right: 15, bottom: 15, left: 30 };
@@ -112,6 +111,9 @@ function ChartArea({
     yPoints: [],
     xPoints: [],
   });
+
+  // Let's get wild....
+  const canvas = React.useRef<HTMLCanvasElement>(null);
   const [bar, setBar] = React.useState(false);
   const Grid = buildGrid(gridStroke, noGrid);
   React.useEffect(() => {
@@ -131,19 +133,16 @@ function ChartArea({
   >({});
 
   // To prevent tooltips from not showing on bar chart due to minification changing names
-  const declareBar = () => setBar(true);
+  const declareBar = React.useCallback(() => setBar(true), []);
 
-  const mouseMove = ({
-    event,
-    xPoints,
-    xScale,
-    yScale,
-    yScales,
-    dataKeys,
-    datum,
-  }: Partial<MouseMove>): void => {
+  const mouseMove = ({ event, datum }: Partial<MouseMove>): void => {
     if (tooltip === null || noTool) return;
 
+    const { xPoints, biaxialChildren, xScale, yScale, dataKeys } = chartData;
+
+    const yScales =
+      biaxialChildren &&
+      createLinearScales(data, dataKeys || [], height, margin);
     const svgPoint = localPoint(chart.current, event);
     const mouseX = get(svgPoint, 'x');
     const mouseY = get(svgPoint, 'y');
@@ -161,7 +160,7 @@ function ChartArea({
       });
     }
 
-    const xValueOffset = biaxial(children) ? 0 : margin.right;
+    const xValueOffset = biaxialChildren ? 0 : margin.right;
     const xValue = xScale.invert(get(svgPoint, 'x') - xValueOffset);
 
     return flow(
@@ -178,7 +177,7 @@ function ChartArea({
           : bounds.dLeft || bounds.dRight;
       },
       (calculatedData: { [key: string]: any }) => {
-        const calculatedX = head(extractX(calculatedData, xKey));
+        const calculatedX = head(extractX(calculatedData, xKey, type));
         const x: number = findTooltipX({ calculatedX, xScale });
         const yCoords =
           yScales && dataKeys
@@ -196,9 +195,9 @@ function ChartArea({
     )(xValue);
   };
 
-  const mouseLeave = () => {
+  const mouseLeave = React.useCallback(() => {
     updateTooltip({});
-  };
+  }, []);
 
   const {
     calculatedData,
@@ -233,15 +232,12 @@ function ChartArea({
     styles: tooltipStyles,
     content: tooltipContent,
   } = merge({}, defaultTooltip, tooltip);
-  const {
-    xScale,
-    dataKeys,
-    width,
-    height,
-    yPoints,
-    xPoints,
-    yScale,
-  } = chartData;
+  const { xScale, width, height, yPoints, xPoints, yScale } = chartData;
+  const getCanvas = () => canvas.current;
+  if (canvas.current) {
+    const ctx = canvas.current.getContext('2d');
+    ctx && ctx.clearRect(0, 0, width, height);
+  }
   return (
     <div
       style={{ width: size.width, height: size.height }}
@@ -260,28 +256,40 @@ function ChartArea({
       >
         <Group left={biaxialChildren ? 0 : margin.right}>
           <Group left={margin.left}>
-            <Grid yScale={yScale} width={width} left={margin.left} />
+            <Grid
+              yScale={yScale}
+              width={width - margin.right}
+              left={margin.left}
+            />
             <LeftAxis {...{ type, orientation, yPoints, height, margin }} />
           </Group>
-          {recursiveCloneChildren(children, {
-            data,
-            xScale,
-            margin,
-            height,
-            noTool,
-            axes,
-            yPoints,
-            xPoints,
-            width,
-            declareBar,
-            type,
-            orientation,
-            mouseMove,
-            mouseLeave,
-            xKey,
-            yKey,
-            inheritedScale: yScale,
-          } as InheritedChartProps)}
+          <foreignObject x="0" y="0" width={size.width} height={size.height}>
+            <canvas ref={canvas} width={width} height={height} />
+          </foreignObject>
+          <ChildContext.Provider
+            value={{
+              data,
+              xScale,
+              margin,
+              height,
+              noTool,
+              axes,
+              yPoints,
+              xPoints,
+              width,
+              declareBar,
+              type,
+              orientation,
+              mouseMove,
+              getCanvas,
+              mouseLeave,
+              xKey,
+              yKey,
+              inheritedScale: yScale,
+            }}
+          >
+            {children}
+          </ChildContext.Provider>
           {bar || (
             <Bar
               width={size.width}
@@ -290,28 +298,10 @@ function ChartArea({
               height={height}
               fill="transparent"
               onMouseMove={(event: React.SyntheticEvent) =>
-                mouseMove({
-                  event,
-                  xPoints,
-                  xScale,
-                  yScale,
-                  yScales:
-                    biaxialChildren &&
-                    createLinearScales(data, dataKeys || [], height, margin),
-                  dataKeys,
-                })
+                mouseMove({ event })
               }
               onTouchMove={(event: React.SyntheticEvent) =>
-                mouseMove({
-                  event,
-                  xPoints,
-                  xScale,
-                  yScale,
-                  yScales:
-                    biaxialChildren &&
-                    createLinearScales(data, dataKeys || [], height, margin),
-                  dataKeys,
-                })
+                mouseMove({ event })
               }
               onTouchEnd={mouseLeave}
               onMouseLeave={mouseLeave}

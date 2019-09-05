@@ -67,6 +67,7 @@ export interface RenderContainerProps {
 
 export interface RenderedChildPassedProps {
   dataKey: string;
+  xPoints: any[];
   axisId: string;
   type: string;
   color: string | ((arg: any) => string);
@@ -112,6 +113,12 @@ export interface BarChartProps {
 }
 
 type StreamParser = (data: any[], message: any) => any[];
+
+export interface LineProps {
+  strokeDasharray: [number, number];
+  stroke: string;
+  strokeWidth: number;
+}
 
 export interface FromStreamArgs {
   message: any;

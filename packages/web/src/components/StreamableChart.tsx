@@ -6,12 +6,9 @@ import {
   formatTicks,
   ScaleFunction,
   formatXTicks,
-  biaxial,
   State,
   prepChartData,
   Axis,
-  recursiveCloneChildren,
-  InheritedChartProps,
 } from '@viiksetjs/utils';
 import { RenderContainerProps, FromStreamArgs, GenericData } from '../typedef';
 import {
@@ -19,6 +16,8 @@ import {
   BottomAxisRendererProps,
   buildAxis,
   buildGrid,
+  biaxial,
+  ChildContext,
 } from './common/index';
 import withParentSize from './Responsive/withParentSize';
 import { withStream } from './withStream';
@@ -91,6 +90,7 @@ const StreamableChart: React.FunctionComponent<Props> = ({
     xPoints: [],
   });
   const chart = React.useRef(null);
+  const canvas = React.useRef<HTMLCanvasElement>(null);
   React.useEffect(() => {
     const chartData = prepChartData({
       data,
@@ -127,7 +127,7 @@ const StreamableChart: React.FunctionComponent<Props> = ({
 
   if (isEmpty(data)) return <Loading />;
 
-  const { width, height, yPoints, yScale, xScale } = chartData;
+  const { width, xPoints, height, yPoints, yScale, xScale } = chartData;
   if (!yScale) {
     return null;
   }
@@ -147,6 +147,11 @@ const StreamableChart: React.FunctionComponent<Props> = ({
     color
   ) as React.FunctionComponent<BottomAxisRendererProps>;
   const Grid = buildGrid(gridStroke, noGrid);
+  const getCanvas = () => canvas.current;
+  if (canvas.current) {
+    const ctx = canvas.current.getContext('2d');
+    ctx && ctx.clearRect(0, 0, width, height);
+  }
   return (
     <svg
       width={size.width}
@@ -163,17 +168,26 @@ const StreamableChart: React.FunctionComponent<Props> = ({
         <Grid yScale={yScale} width={width} left={margin.left} />
         <LeftAxis {...{ type, orientation, color, yPoints, height, margin }} />
       </Group>
-      {recursiveCloneChildren<InheritedChartProps>(children, {
-        data,
-        xScale,
-        margin,
-        height,
-        noTool: true,
-        yPoints,
-        width,
-        xKey,
-        inheritedScale: yScale,
-      })}
+      <foreignObject x="0" y="0" width={size.width} height={size.height}>
+        <canvas ref={canvas} width={width} height={height} />
+      </foreignObject>
+      <ChildContext.Provider
+        value={{
+          data,
+          xScale,
+          margin,
+          height,
+          noTool: true,
+          yPoints,
+          width,
+          xKey,
+          xPoints,
+          getCanvas,
+          inheritedScale: yScale,
+        }}
+      >
+        {children}
+      </ChildContext.Provider>
 
       <BottomAxis scale={xScale} height={height} margin={margin} />
     </svg>

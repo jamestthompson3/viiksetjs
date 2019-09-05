@@ -1,19 +1,12 @@
 import isEmpty from 'lodash/isEmpty';
-import memoize from 'lodash/memoize';
 
-import { getX, getY, extractLabels } from './dataUtils';
+import { extractLabels, getX, getY } from './dataUtils';
 import { determineXScale, determineYScale } from './chartUtils';
 import { Margin, ScaleFunction, Size } from './typedef';
 
 const DEFAULT_MARGIN = { top: 18, right: 15, bottom: 15, left: 30 };
 
-export function prepChartData<Range, Output>(
-  args: Props
-): State<Range, Output> {
-  return memoize(prep)(args) as State<Range, Output>;
-}
-
-function prep<R, O>({
+export function prepChartData<R, O>({
   size,
   xKey,
   yKey,
@@ -26,14 +19,15 @@ function prep<R, O>({
     // eslint-disable-next-line
     process.env.NODE_ENV !== 'production' &&
       console.warn('Data is empty, cannot calculate chart');
-    return {};
+    return {} as State<R, O>;
   }
 
+  const start = performance.now();
   const dataKeys = extractLabels(data[0]);
   const width = size.width - margin.left - margin.right;
   const height =
     size.height === 0 ? 300 : size.height - margin.top - margin.bottom;
-  const xPoints = getX(data, xKey);
+  const xPoints = getX(data, xKey, type);
   const yPoints = getY(data, yKey);
   const yScale = determineYScale({
     type,
@@ -53,6 +47,10 @@ function prep<R, O>({
     dataKeys,
   };
 
+  const end = performance.now();
+  const diff = end - start;
+
+  console.log('perpared chart data in: ', diff);
   return chartData;
 }
 

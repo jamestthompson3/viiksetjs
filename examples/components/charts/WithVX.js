@@ -2,28 +2,31 @@ import * as React from 'react'
 
 import timeSeries from '../../data/timeSeries.json'
 import { GraphContainer, Snippet } from '../styledComponents'
-import { ChartArea, LineChart } from '@viiksetjs/web'
+import { ChartArea, LineChart, ChildContext } from '@viiksetjs/web'
 import { Line } from '@vx/shape'
 import { isMobile } from './constants'
 
-const ThresholdLine = ({ inheritedScale, margin, width }) => (
-  <g id="notes">
-    <Line
-      to={{ x: margin.left, y: inheritedScale(4500) }}
-      from={{ x: width - margin.right, y: inheritedScale(4500) }}
-      strokeWidth={2}
-      stroke="#000"
-      strokeDasharray={(5, 10)}
-    />
-    <text
-      style={{
-        transform: `translate( ${margin.left + 5}px,${inheritedScale(4600)}px)`
-      }}
-    >
-      all time max
-    </text>
-  </g>
-)
+const ThresholdLine = () => {
+  const { inheritedScale, margin, width } = React.useContext(ChildContext)
+  return (
+    <g id="notes">
+      <Line
+        to={{ x: margin.left, y: inheritedScale(4500) }}
+        from={{ x: width - margin.right, y: inheritedScale(4500) }}
+        strokeWidth={2}
+        stroke="#000"
+        strokeDasharray={(5, 10)}
+      />
+      <text
+        style={{
+          transform: `translate( ${margin.left + 5}px,${inheritedScale(4600)}px)`
+        }}
+      >
+        all time max
+      </text>
+    </g>
+  )
+}
 
 export const WithVX = () => (
   <>
