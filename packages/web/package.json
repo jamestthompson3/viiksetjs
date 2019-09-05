@@ -1,6 +1,6 @@
 {
   "name": "@viiksetjs/web",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "main": "dist/index.js",
   "module": "dist/web.esm.js",
   "typings": "dist/index.d.ts",
@@ -56,7 +56,7 @@
     "typescript": "^3.5.3"
   },
   "dependencies": {
-    "@viiksetjs/utils": "file:../utils",
+    "@viiksetjs/utils": "^0.1.3",
     "@vx/axis": "^0.0.190",
     "@vx/bounds": "^0.0.189",
     "@vx/curve": "^0.0.189",
