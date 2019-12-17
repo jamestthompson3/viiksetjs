@@ -19,7 +19,7 @@ describe('Chart Utilities', () => {
         new Date('2017-10-06T00:00:00.000Z'),
         new Date('2017-11-06T00:06:00.000Z'),
       ]);
-      expect(result.range()).toEqual([10, 400]);
+      expect(result.range()).toEqual([10, 390]);
     });
     it('creates a linear y scale given numeric data', () => {
       const yPoints = [0, 355, 1, 34, 433, 3];
@@ -35,7 +35,6 @@ describe('Chart Utilities', () => {
       const yPoints = ['cats', 'dogs', 'horses'];
       const result = chart.determineYScale({
         yPoints,
-        type: 'ordinal',
         orientation: 'horizontal',
         height: 400,
         margin: { top: 10, bottom: 10, left: 10, right: 10 },
@@ -47,7 +46,6 @@ describe('Chart Utilities', () => {
       const yPoints = [0, 45, 234, 553, 3];
       const result = chart.determineYScale({
         yPoints,
-        type: 'ordinal',
         height: 400,
         margin: { top: 10, bottom: 10, left: 10, right: 10 },
       });
@@ -75,7 +73,7 @@ describe('Chart Utilities', () => {
         margin: { top: 10, bottom: 10, left: 10, right: 10 },
       });
       expect(result.domain()).toEqual([0, 553]);
-      expect(result.range()).toEqual([10, 400]);
+      expect(result.range()).toEqual([10, 390]);
     });
   });
   describe('finds tooltip points', () => {
@@ -89,7 +87,22 @@ describe('Chart Utilities', () => {
         margin: { top: 10, bottom: 10, left: 10, right: 10 },
       }) as ScaleLinear<number, number>;
       const ttValue = chart.findTooltipX({ calculatedX: 100, xScale: scale });
-      expect(ttValue).toEqual(80.5244122965642);
+      expect(ttValue).toEqual(78.71609403254973);
+    });
+  });
+  describe('color interpolation', () => {
+    it('should lerp between two colors', () => {
+      const color1 = '#ffffff';
+      const color2 = '#000000';
+      expect(chart.interpolateColors(color1, color2, 0)).toEqual('#fff');
+      expect(chart.interpolateColors(color1, color2, 0.5)).toEqual('#808080');
+      expect(chart.interpolateColors(color1, color2, 1)).toEqual('#000');
+    });
+    it('should protect against out of bound ranges', () => {
+      const color1 = '#ffffff';
+      const color2 = '#000000';
+      expect(chart.interpolateColors(color1, color2, -1)).toEqual('#fff');
+      expect(chart.interpolateColors(color1, color2, 2)).toEqual('#000');
     });
   });
 });

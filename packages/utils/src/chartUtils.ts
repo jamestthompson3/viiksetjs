@@ -6,6 +6,7 @@ import {
   ScaleLinear,
   ScaleTime,
 } from 'd3-scale';
+import { parseToRgb, rgb } from 'polished';
 import { ScaleProps, ScaleFunction } from './typedef';
 import get from 'lodash/get';
 
@@ -48,7 +49,6 @@ export const determineXScale = ({
 };
 
 export const determineYScale = ({
-  type,
   orientation,
   yPoints,
   height,
@@ -81,4 +81,28 @@ export const findTooltipX = ({
   xScale(num: number): number;
 }): number => {
   return xScale(calculatedX);
+};
+
+const clamp01 = (x: number): number => {
+  return Math.min(Math.max(x, 0), 1);
+};
+
+/**
+ * Interpolates between two rgb colors to find the given fraction.
+ * @param a The first color.
+ * @param b The second color.
+ * @param amount The fraction to find. (0.0 - 1.0)
+ */
+export const interpolateColors = (
+  a: string,
+  b: string,
+  amount: number
+): string => {
+  const c1 = parseToRgb(a);
+  const c2 = parseToRgb(b);
+  return rgb(
+    Math.round(c1.red + clamp01(amount) * (c2.red - c1.red)),
+    Math.round(c1.green + clamp01(amount) * (c2.green - c1.green)),
+    Math.round(c1.blue + clamp01(amount) * (c2.blue - c1.blue))
+  );
 };

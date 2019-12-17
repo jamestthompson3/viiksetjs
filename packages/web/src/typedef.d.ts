@@ -70,7 +70,7 @@ export interface RenderedChildPassedProps {
   xPoints: any[];
   axisId: string;
   type: string;
-  color: string | ((arg: any) => string);
+  color: string | ((arg: any) => string) | string[];
   xKey: string;
 }
 

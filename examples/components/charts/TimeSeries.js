@@ -38,7 +38,7 @@ export const TimeSeries = () => (
           content: tooltipContent
         }}
       >
-        <LineChart nopattern dataKey="messages" color="#2189C8" />
+        <LineChart nopattern dataKey="messages" color={['#2189C8', '#00adee']} />
       </ChartArea>
     </GraphContainer>
     <Snippet>

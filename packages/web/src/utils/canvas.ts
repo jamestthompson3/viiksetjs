@@ -10,6 +10,23 @@ export interface Point {
   y: number;
 }
 
+// function convertRgbToValue(val: string): number[] {
+//   return rgb(val)
+//     .replace(/[rgb\(\)]/g, '')
+//     .split(',')
+//     .map((str: string) => parseInt(str, 16));
+// }
+
+// function lerpColors(a: string, b: string, amount: number): string {
+//   const c1 = convertRgbToValue(a);
+//   const c2 = convertRgbToValue(b);
+//   return rgb(
+//     c1[0] + amount * (c2[0] - c1[0]),
+//     c1[1] + amount * (c2[1] - c1[1]),
+//     c1[2] + amount * (c2[2] - c1[2])
+//   );
+// }
+
 // Calculate control points between three given points
 export function getControlPoints(
   previous: Point,
@@ -112,7 +129,7 @@ export function drawLine(
   getY: PointGetter,
   lineProps: Partial<LineProps> = {},
   nofill: boolean,
-  color: string,
+  color: string | string[],
   height: number,
   gradientOpacity?: number[]
 ) {
@@ -133,20 +150,42 @@ export function drawLine(
       ctx.lineTo(coords.x, coords.y);
     }
   }
+
   if (!nofill) {
     ctx.lineTo(getX(len - 1), height);
     ctx.lineTo(getX(0), height);
     ctx.stroke();
     const gradient = ctx.createLinearGradient(0, 0, 0, height);
-    if (gradientOpacity) {
-      gradientOpacity.forEach(grad => {
-        gradient.addColorStop(grad, rgba(color, grad));
+
+    if (typeof color === 'string') {
+      console.warn('Is string');
+      let gradients = [0, 0.5, 1];
+      if (gradientOpacity && gradientOpacity.length > 0) {
+        gradients = gradientOpacity.slice();
+      }
+      gradients.forEach((grad, i) => {
+        gradient.addColorStop(i / gradients.length, rgba(color, grad));
       });
     } else {
-      gradient.addColorStop(0, rgba(color, 0));
-      gradient.addColorStop(0.5, rgba(color, 0.5));
-      gradient.addColorStop(1, rgba(color, 1));
+      console.warn('Is an array');
+      const stops = color.length;
+      if (gradientOpacity) {
+        if (gradientOpacity.length !== stops) {
+          throw new Error(
+            'Amount of custom gradient color stops must match amount of custom gradient opacity stops.'
+          );
+        }
+        gradientOpacity.forEach((grad, i) => {
+          gradient.addColorStop(i / stops, rgba(color[i], grad));
+        });
+      } else {
+        color.forEach((color, i) => {
+          console.log('adding default color stop:', color, i / stops);
+          gradient.addColorStop(i / stops, rgba(color, i / stops));
+        });
+      }
     }
+
     ctx.fillStyle = gradient;
     ctx.fill();
   } else {
