@@ -208,15 +208,15 @@ A `dataKey` prop must be provided in order for the component to know which data 
 
 ### Props
 
-| Prop            | Default | Type    | Desc                                                                                             |
-| :-------------- | :-----: | :------ | :----------------------------------------------------------------------------------------------- |
-| axisId          |   ''    | String  | String denoting which axis the LineChart belongs to, needed only when creating biaxial charts    |
-| color           |  #000   | String  | Color string. Supports colors from styled-components' `themeProvider`.                           |
-| dataKey         |   ''    | String  | Key for data to be graphed, supports nested keys such as `'data.users'`                          |
-| gradientOpacity |         | Array   | Array of values between 0 and 1 to be applied to the LineChart gradient (e.g. `[0.25, 0.75, 1]`) |
-| lineProps       |   {}    | Object  | vx props applied to the line path                                                                |
-| nofill          |  false  | Boolean | If `true`, the LineChart will have no fill                                                       |
-| nopattern       |  false  | Boolean | If `true`, the LineChart will have no pattern                                                    |
+| Prop            | Default | Type              | Desc                                                                                                    |
+| :-------------- | :-----: | :---------------- | :------------------------------------------------------------------------------------------------------ |
+| axisId          |   ''    | String            | String denoting which axis the LineChart belongs to, needed only when creating biaxial charts           |
+| color           |  #000   | String / String[] | Color string. Supports colors from styled-components' `themeProvider`. Supports an array for gradients. |
+| dataKey         |   ''    | String            | Key for data to be graphed, supports nested keys such as `'data.users'`                                 |
+| gradientOpacity |         | Array             | Array of values between 0 and 1 to be applied to the LineChart gradient (e.g. `[0.25, 0.75, 1]`)        |
+| lineProps       |   {}    | Object            | vx props applied to the line path                                                                       |
+| nofill          |  false  | Boolean           | If `true`, the LineChart will have no fill                                                              |
+| nopattern       |  false  | Boolean           | If `true`, the LineChart will have no pattern                                                           |
 
 ```js
 <LineChart dataKey="count_messages" color="rgb(0, 157, 253)" />

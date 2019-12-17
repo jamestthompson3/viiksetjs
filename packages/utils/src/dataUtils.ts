@@ -67,7 +67,7 @@ export const extractY = (datum: Object, yKey: string | null = null): any[] =>
 export const extractX = (
   datum: Object,
   xKey: string | null = null,
-  type: string
+  type?: string
 ): any[] =>
   xKey
     ? [type === 'time' ? parseIfDate(get(datum, xKey)) : get(datum, xKey)]

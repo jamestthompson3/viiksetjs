@@ -112,7 +112,7 @@ export function drawLine(
   getY: PointGetter,
   lineProps: Partial<LineProps> = {},
   nofill: boolean,
-  color: string,
+  color: string | string[],
   height: number,
   gradientOpacity?: number[]
 ) {
@@ -133,20 +133,39 @@ export function drawLine(
       ctx.lineTo(coords.x, coords.y);
     }
   }
+
   if (!nofill) {
     ctx.lineTo(getX(len - 1), height);
     ctx.lineTo(getX(0), height);
     ctx.stroke();
     const gradient = ctx.createLinearGradient(0, 0, 0, height);
-    if (gradientOpacity) {
-      gradientOpacity.forEach(grad => {
-        gradient.addColorStop(grad, rgba(color, grad));
+
+    if (typeof color === 'string') {
+      let gradients = [0, 0.5, 1];
+      if (gradientOpacity && gradientOpacity.length > 0) {
+        gradients = gradientOpacity.slice();
+      }
+      gradients.forEach((grad, i) => {
+        gradient.addColorStop(i / gradients.length, rgba(color, grad));
       });
     } else {
-      gradient.addColorStop(0, rgba(color, 0));
-      gradient.addColorStop(0.5, rgba(color, 0.5));
-      gradient.addColorStop(1, rgba(color, 1));
+      const stops = color.length;
+      if (gradientOpacity) {
+        if (gradientOpacity.length !== stops) {
+          throw new Error(
+            'Amount of custom gradient color stops must match amount of custom gradient opacity stops.'
+          );
+        }
+        gradientOpacity.forEach((grad, i) => {
+          gradient.addColorStop(i / stops, rgba(color[i], grad));
+        });
+      } else {
+        color.forEach((color, i) => {
+          gradient.addColorStop(i / stops, rgba(color, i / stops));
+        });
+      }
     }
+
     ctx.fillStyle = gradient;
     ctx.fill();
   } else {

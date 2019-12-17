@@ -74,7 +74,11 @@ describe('Data Utilties', () => {
     });
     it('takes a data object and extracts all X values', () => {
       expect(
-        data.extractX({ users: 2231, time: '2017-11-06T02:00:00.000+02' })
+        data.extractX(
+          { users: 2231, time: '2017-11-06T02:00:00.000+02' },
+          null,
+          'time'
+        )
       ).toEqual([new Date('2017-11-06T00:00:00.000Z')]);
       expect(data.extractX({ x: 2231, y: 14 }, 'x')).toEqual([2231]);
     });

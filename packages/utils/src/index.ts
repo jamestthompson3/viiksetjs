@@ -16,7 +16,12 @@ export {
   formatXTicks,
 } from './formatUtils';
 
-export { determineXScale, determineYScale, findTooltipX } from './chartUtils';
+export {
+  determineXScale,
+  determineYScale,
+  findTooltipX,
+  interpolateColors,
+} from './chartUtils';
 
 export {
   ScaleProps,
