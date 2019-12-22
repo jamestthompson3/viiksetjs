@@ -117,7 +117,7 @@ function ChartArea({
   const [bar, setBar] = React.useState(false);
   const Grid = buildGrid(gridStroke, noGrid);
   React.useEffect(() => {
-    const chartData = prepChartData<any, any>({
+    prepChartData<any, any>({
       data,
       size,
       xKey,
@@ -125,8 +125,7 @@ function ChartArea({
       margin,
       type,
       orientation,
-    });
-    setChartData(chartData);
+    }).then(chartData => setChartData(chartData));
   }, [data, size, type, margin, orientation, xKey, yKey]);
   const [tooltipData, updateTooltip] = React.useState<
     Partial<TooltipUpdateData>

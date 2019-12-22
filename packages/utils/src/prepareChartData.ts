@@ -14,44 +14,41 @@ export function prepChartData<R, O>({
   margin = DEFAULT_MARGIN,
   data,
   orientation,
-}: Props) {
-  if (isEmpty(data)) {
-    // eslint-disable-next-line
-    process.env.NODE_ENV !== 'production' &&
-      console.warn('Data is empty, cannot calculate chart');
-    return {} as State<R, O>;
-  }
+}: Props): Promise<State<R, O>> {
+  return new Promise(res => {
+    if (isEmpty(data)) {
+      // eslint-disable-next-line
+      process.env.NODE_ENV !== 'production' &&
+        console.warn('Data is empty, cannot calculate chart');
+      return res({} as State<R, O>);
+    }
 
-  const start = performance.now();
-  const dataKeys = extractLabels(data[0]);
-  const width = size.width - margin.left - margin.right;
-  const height =
-    size.height === 0 ? 300 : size.height - margin.top - margin.bottom;
-  const xPoints = getX(data, xKey, type);
-  const yPoints = getY(data, yKey);
-  const yScale = determineYScale({
-    type,
-    yPoints,
-    height,
-    margin,
-    orientation,
+    const dataKeys = extractLabels(data[0]);
+    const width = size.width - margin.left - margin.right;
+    const height =
+      size.height === 0 ? 300 : size.height - margin.top - margin.bottom;
+    const xPoints = getX(data, xKey, type);
+    const yPoints = getY(data, yKey);
+    const yScale = determineYScale({
+      type,
+      yPoints,
+      height,
+      margin,
+      orientation,
+    });
+    const xScale = determineXScale({ type, width, xPoints, margin });
+    const chartData: State<R, O> = {
+      width,
+      height,
+      xPoints,
+      xScale,
+      yScale,
+      yPoints,
+      dataKeys,
+    };
+
+    return res(chartData);
   });
-  const xScale = determineXScale({ type, width, xPoints, margin });
-  const chartData: State<R, O> = {
-    width,
-    height,
-    xPoints,
-    xScale,
-    yScale,
-    yPoints,
-    dataKeys,
-  };
-
-  const end = performance.now();
-  const diff = end - start;
-
-  console.log('perpared chart data in: ', diff);
-  return chartData;
 }
 
 export interface State<Range, Output> {
