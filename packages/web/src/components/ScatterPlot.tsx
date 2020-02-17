@@ -23,7 +23,8 @@ const ScatterPlot: React.FunctionComponent<Props> = (
     color = genericGetter,
     opacity = genericGetter,
     radius = genericGetter,
-    //stroke,
+    stroke = genericGetter,
+    borderWidth = genericGetter,
     dataKey,
   } //pointProps,
 ) => {
@@ -64,6 +65,8 @@ const ScatterPlot: React.FunctionComponent<Props> = (
           getX(i),
           getY(i),
           getStaticOrAccessor(color, data[i]),
+          getStaticOrAccessor(stroke, data[i]),
+          getStaticOrAccessor(borderWidth, data[i]),
           getStaticOrAccessor(opacity, data[i]),
           getStaticOrAccessor(radius, data[i])
         );
@@ -78,6 +81,7 @@ ScatterPlot.defaultProps = {
   stroke: '#000',
   opacity: 0.8,
   radius: 4,
+  borderWidth: 1,
 };
 
 type NumGetter = (arg: GenericData) => number;
@@ -86,7 +90,8 @@ type StringGetter = (arg: GenericData) => string;
 interface ScatterPlotProps extends RenderedChildPassedProps {
   radius: NumGetter | GenericGetter | number;
   color: StringGetter | GenericGetter | string;
-  stroke: string;
+  stroke: StringGetter | GenericGetter | string;
+  borderWidth: NumGetter | GenericGetter | number;
   pointProps: number;
   opacity: NumGetter | GenericGetter | number;
 }

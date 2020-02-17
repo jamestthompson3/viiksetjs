@@ -32,7 +32,7 @@ export const Scatterplot = () => (
           indicator: Indicator
         }}
       >
-        <ScatterPlot dataKey="y" color="#42f4c2" />
+        <ScatterPlot dataKey="y" color="#42f4c2" stroke="grey" borderWidth={3} opacity={1} />
       </ChartArea>
     </GraphContainer>
     <Snippet>
