@@ -42,12 +42,15 @@ export function drawPoint(
   px: number,
   py: number,
   color: string,
+  stroke: string,
+  borderWidth: number,
   opacity: number,
   radius: number
 ) {
   ctx.save();
   ctx.beginPath();
-  ctx.lineWidth = 1;
+  ctx.lineWidth = borderWidth;
+  ctx.strokeStyle = stroke;
   ctx.fillStyle = color;
   ctx.globalAlpha = opacity;
   ctx.arc(px, py, radius, 0.0, 2 * Math.PI, false);
@@ -76,7 +79,7 @@ export function drawBezierCurve(
     ctx.bezierCurveTo(cp1.x, cp1.y, cp2.x, cp2.y, x, y);
     ctx.stroke();
     ctx.closePath();
-    drawPoint(ctx, cp1.x, cp1.y, 'red', 3, 0.75);
+    drawPoint(ctx, cp1.x, cp1.y, 'red', 'red', 1, 3, 0.75);
   }
   // Draw first and last curve
   ctx.beginPath();
