@@ -127,11 +127,11 @@ BarChart.defaultProps = {
 
 interface Props extends BarChartProps {
   dataKey: string;
-  inheritedScale: ScaleFunction;
-  nofill: boolean;
-  axisId: string;
-  inverted: boolean;
-  color: string;
+  inheritedScale?: ScaleFunction;
+  nofill?: boolean;
+  axisId?: string;
+  inverted?: boolean;
+  color?: string;
 }
 
 export default React.memo(BarChart);

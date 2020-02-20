@@ -13,6 +13,9 @@
     "dist"
   ],
   "scripts": {
+    "storybook": "start-storybook",
+    "storybook:build": "build-storybook -c .storybook -o .storybook-build",
+    "examples:publish": "yarn storybook:build && git subtree push --prefix .storybook_build origin gh-pages",
     "start": "tsdx watch",
     "build": "tsdx build",
     "test": "tsdx test --env=jsdom"
@@ -33,6 +36,15 @@
     "trailingComma": "es5"
   },
   "devDependencies": {
+    "@babel/core": "^7.8.4",
+    "@babel/preset-react": "^7.8.3",
+    "@babel/preset-typescript": "^7.8.3",
+    "@storybook/addon-docs": "^5.3.13",
+    "@storybook/addon-knobs": "^5.3.13",
+    "@storybook/addons": "^5.3.13",
+    "@storybook/preset-typescript": "^1.2.0",
+    "@storybook/react": "^5.3.13",
+    "@storybook/theming": "^5.3.13",
     "@testing-library/jest-dom": "^4.0.0",
     "@testing-library/react": "^9.1.0",
     "@types/d3-array": "^2.0.0",
@@ -42,15 +54,20 @@
     "@types/lodash": "^4.14.136",
     "@types/react": "^16.8.23",
     "@types/react-dom": "^16.8.4",
+    "@types/react-native": "^0.61.15",
     "@types/scheduler": "^0.12.1",
     "@types/styled-components": "^4.1.18",
+    "babel-loader": "^8.0.6",
     "husky": "^3.0.1",
     "prettier": "^1.18.2",
     "pretty-quick": "^1.11.1",
-    "react": "^16.9.0",
+    "react": "^16.12.0",
+    "react-docgen-typescript-loader": "^3.6.0",
     "react-dom": "^16.9.0",
+    "react-is": "^16.12.0",
     "scheduler": "^0.15.0",
     "styled-components": "^4.3.2",
+    "ts-loader": "^6.2.1",
     "tsdx": "^0.7.2",
     "tslib": "^1.10.0",
     "typescript": "^3.5.3"

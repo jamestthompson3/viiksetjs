@@ -95,21 +95,21 @@ export interface Tooltip<T> {
 }
 
 export interface BarChartProps {
-  type: string;
-  orientation: string;
-  yPoints: any[];
-  margin: Margin;
-  xKey: string;
+  type?: string;
+  orientation?: string;
+  yPoints?: any[];
+  margin?: Margin;
+  xKey?: string;
   declareBar(): void;
   mouseMove(args: any): void;
-  noTool: boolean;
-  height: number;
-  nofill: boolean;
+  noTool?: boolean;
+  height?: number;
+  nofill?: boolean;
   mouseLeave(): void;
-  yKey: string;
-  width: number;
-  barProps: Object;
-  xPoints: any[];
+  yKey?: string;
+  width?: number;
+  barProps?: Object;
+  xPoints?: any[];
 }
 
 type StreamParser = (data: any[], message: any) => any[];

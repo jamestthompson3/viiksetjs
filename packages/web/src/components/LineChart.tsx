@@ -103,7 +103,6 @@ interface LineChartProps extends RenderedChildPassedProps {
   gradientOpacity: number[];
   nofill: boolean;
   canvas: HTMLCanvasElement;
-  nopattern: boolean;
   bezier: boolean;
 }
 
