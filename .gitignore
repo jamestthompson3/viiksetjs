@@ -5,7 +5,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .DS_Store
+.storybook-build/
 
+*.stories.d.ts
 # Runtime data
 pids
 *.pid
@@ -43,6 +45,7 @@ typings/
 
 # Optional npm cache directory
 .npm
+
 
 # Parcel stuff
 .cache
