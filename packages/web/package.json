@@ -1,6 +1,6 @@
 {
   "name": "@viiksetjs/web",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "main": "dist/index.js",
   "module": "dist/web.esm.js",
   "typings": "dist/index.d.ts",
