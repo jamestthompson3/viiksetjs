@@ -1,12 +1,15 @@
 import * as React from 'react';
-import { storiesOf } from '@storybook/react';
 
 import PieChart from '../PieChart';
 
 import { GraphContainer } from './styledComponents';
 import categoricalSeries from './data/categoricalSeries.json';
 
-storiesOf('PieChart', module).add('Pie Example', () => (
+export default {
+  title: 'PieChart',
+};
+
+export const Example = () => (
   <GraphContainer>
     <PieChart
       dataKey="score"
@@ -17,4 +20,4 @@ storiesOf('PieChart', module).add('Pie Example', () => (
       innerRadius={80}
     />
   </GraphContainer>
-));
+);

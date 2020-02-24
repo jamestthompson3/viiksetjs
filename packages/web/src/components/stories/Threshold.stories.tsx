@@ -13,7 +13,7 @@ export default {
   component: Threshold,
 };
 
-export const example = () => (
+export const Example = () => (
   <GraphContainer>
     <ChartArea
       data={thresholdSeries.data}

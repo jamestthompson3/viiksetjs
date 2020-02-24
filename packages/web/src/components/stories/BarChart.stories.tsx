@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { storiesOf } from '@storybook/react';
 
 import categoricalSeries from './data/categoricalSeries.json';
 import { GraphContainer } from './styledComponents';
@@ -7,7 +6,11 @@ import ChartArea from '../ChartArea';
 import BarChart from '../BarChart/Bar';
 import { isMobile } from './constants';
 
-storiesOf('BarChart', module).add('Categorical Series', () => (
+export default {
+  title: 'BarChart',
+};
+
+export const Example = () => (
   <GraphContainer>
     <ChartArea
       data={categoricalSeries.data}
@@ -28,4 +31,4 @@ storiesOf('BarChart', module).add('Categorical Series', () => (
       <BarChart dataKey="score" color="#dc7d5b" />
     </ChartArea>
   </GraphContainer>
-));
+);

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { storiesOf } from '@storybook/react';
 
 import numericSeries from './data/numericSeries.json';
 import { GraphContainer, Indicator, LinearTooltip } from './styledComponents';
@@ -8,7 +7,11 @@ import ChartArea from '../ChartArea';
 import ScatterPlot from '../ScatterPlot';
 import { isMobile } from './constants';
 
-storiesOf('ScatterPlot', module).add('Example', () => (
+export default {
+  title: 'ScatterPlot',
+};
+
+export const Example = () => (
   <GraphContainer>
     <ChartArea
       data={numericSeries.data}
@@ -42,4 +45,4 @@ storiesOf('ScatterPlot', module).add('Example', () => (
       />
     </ChartArea>
   </GraphContainer>
-));
+);

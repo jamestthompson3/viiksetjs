@@ -23,7 +23,7 @@ export default {
   component: StreamableChart,
 };
 
-export const example = () => {
+export const Example = () => {
   const streamParser = (message: GenericData) => JSON.parse(message.data);
 
   enum DataType {

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { storiesOf } from '@storybook/react';
 import styled from 'styled-components';
 
 import parse from 'date-fns/parse';
@@ -21,26 +20,27 @@ const GraphContainer = styled.div`
   margin: 5rem auto 0;
 `;
 
-export const tooltipContent = ({
-  tooltipData,
-}: {
-  tooltipData: GenericData;
-}) => (
-  <>
-    <p>
-      messages: <span style={{ color: '#00adee' }}>{tooltipData.messages}</span>
-    </p>
-    <p>
-      time:{' '}
-      <span style={{ color: '#00adee' }}>
-        {format(parse(tooltipData.time), 'MMM Do HH:mm')}
-      </span>
-    </p>
-  </>
-);
+export default {
+  title: 'LineChart',
+};
 
-storiesOf('LineChart', module)
-  .add('Time Series', () => (
+export const TimeSeries = () => {
+  const tooltipContent = ({ tooltipData }: { tooltipData: GenericData }) => (
+    <>
+      <p>
+        messages:{' '}
+        <span style={{ color: '#00adee' }}>{tooltipData.messages}</span>
+      </p>
+      <p>
+        time:{' '}
+        <span style={{ color: '#00adee' }}>
+          {format(parse(tooltipData.time), 'MMM Do HH:mm')}
+        </span>
+      </p>
+    </>
+  );
+
+  return (
     <GraphContainer>
       <ChartArea
         data={timeSeries.data}
@@ -65,70 +65,72 @@ storiesOf('LineChart', module)
         />
       </ChartArea>
     </GraphContainer>
-  ))
-  .add('Biaxial Line', () => (
-    <GraphContainer>
-      <ChartArea
-        data={biaxialSeries.data}
+  );
+};
+
+export const BiaxialSeries = () => (
+  <GraphContainer>
+    <ChartArea
+      data={biaxialSeries.data}
+      color="rgb(238, 66, 244)"
+      stroke="rgba(109, 109, 109, 0.25)"
+      tooltip={{
+        renderer: BiaxialTooltip,
+      }}
+      axes={{
+        x: {
+          numTicks: 4,
+        },
+      }}
+      determineViewBox={({ size, margin }: { size: Size; margin: Margin }) =>
+        `-10 0 ${size.width + margin.left + margin.right} ${size.height}`
+      }
+    >
+      <LineChart
         color="rgb(238, 66, 244)"
-        stroke="rgba(109, 109, 109, 0.25)"
-        tooltip={{
-          renderer: BiaxialTooltip,
+        gradientOpacity={[0, 0.25]}
+        dataKey="users"
+        axisId="users"
+      />
+      <LineChart
+        color="rgb(244, 196, 65)"
+        gradientOpacity={[0, 0.25]}
+        dataKey="posts"
+        axisId="posts"
+      />
+      <YAxis
+        color="rgb(244, 196, 65)"
+        axisId="posts"
+        position="right"
+        label="posts"
+        tickFormat={(d: number) => d / 1000 + 'k'}
+        tickLabelProps={() => ({
+          dx: 8,
+          fontSize: '12px',
+          textAnchor: 'middle',
+        })}
+        labelProps={{
+          y: -20,
+          dx: 10,
+          textAnchor: 'start',
+          fill: 'rgb(244, 196, 65)',
+          fontSize: '12px',
         }}
-        axes={{
-          x: {
-            numTicks: 4,
-          },
+      />
+      <YAxis
+        color="rgb(238, 66, 244)"
+        axisId="users"
+        position="left"
+        label="users"
+        tickFormat={(d: number) => d / 1000 + 'k'}
+        labelProps={{
+          y: -20,
+          dx: -12,
+          textAnchor: 'end',
+          fill: 'rgb(238, 66, 244)',
+          fontSize: '12px',
         }}
-        determineViewBox={({ size, margin }: { size: Size; margin: Margin }) =>
-          `-10 0 ${size.width + margin.left + margin.right} ${size.height}`
-        }
-      >
-        <LineChart
-          color="rgb(238, 66, 244)"
-          gradientOpacity={[0, 0.25]}
-          dataKey="users"
-          axisId="users"
-        />
-        <LineChart
-          color="rgb(244, 196, 65)"
-          gradientOpacity={[0, 0.25]}
-          dataKey="posts"
-          axisId="posts"
-        />
-        <YAxis
-          color="rgb(244, 196, 65)"
-          axisId="posts"
-          position="right"
-          label="posts"
-          tickFormat={(d: number) => d / 1000 + 'k'}
-          tickLabelProps={() => ({
-            dx: 8,
-            fontSize: '12px',
-            textAnchor: 'middle',
-          })}
-          labelProps={{
-            y: -20,
-            dx: 10,
-            textAnchor: 'start',
-            fill: 'rgb(244, 196, 65)',
-            fontSize: '12px',
-          }}
-        />
-        <YAxis
-          color="rgb(238, 66, 244)"
-          axisId="users"
-          position="left"
-          label="users"
-          tickFormat={(d: number) => d / 1000 + 'k'}
-          labelProps={{
-            y: -20,
-            dx: -12,
-            textAnchor: 'end',
-            fill: 'rgb(238, 66, 244)',
-            fontSize: '12px',
-          }}
-        />
-      </ChartArea>
-    </GraphContainer>
-  ));
+      />
+    </ChartArea>
+  </GraphContainer>
+);

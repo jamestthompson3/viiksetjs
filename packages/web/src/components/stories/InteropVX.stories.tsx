@@ -14,7 +14,7 @@ export default {
   title: 'Interop with VX',
 };
 
-export const WithVX = () => {
+export const Example = () => {
   const ThresholdLine = () => {
     const { inheritedScale, margin, width } = React.useContext(ChildContext);
     return (
