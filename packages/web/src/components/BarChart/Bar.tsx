@@ -125,7 +125,7 @@ BarChart.defaultProps = {
   inverted: false,
 };
 
-interface Props extends BarChartProps {
+interface Props extends Partial<BarChartProps> {
   dataKey: string;
   inheritedScale?: ScaleFunction;
   nofill?: boolean;

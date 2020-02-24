@@ -183,7 +183,7 @@ interface BarWidth {
   yScale: ScaleType;
 }
 
-interface Props extends BarChartProps {
+interface Props extends Partial<BarChartProps> {
   colors: string[];
   keys: string[];
 }
