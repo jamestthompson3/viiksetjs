@@ -42,12 +42,14 @@ export const ChildContext = React.createContext<InheritedChartProps>({});
  * Takes React Children and returns true or false if unique axis Id is found
  */
 export const biaxial = (children: React.ReactNode): boolean =>
-  React.Children.map(
-    children,
-    child =>
-      React.isValidElement(child) &&
-      Object.prototype.hasOwnProperty.call(child.props, 'axisId')
-  ).includes(true);
+  (React.Children as any)
+    .map(
+      children,
+      (child: React.ReactElement) =>
+        React.isValidElement(child) &&
+        Object.prototype.hasOwnProperty.call(child.props, 'axisId')
+    )
+    .includes(true);
 
 export const buildLeftAxis = ({
   y,

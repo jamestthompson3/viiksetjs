@@ -1,0 +1,32 @@
+{
+  "data": [
+    {
+      "company": "Chocolarder",
+      "beanName": "Dominican Republic",
+      "cocoa": 0.8,
+      "score": 2.5,
+      "origin": "Dominican Republic"
+    },
+    {
+      "company": "Chocola'te",
+      "beanName": "Madagascar",
+      "cocoa": 0.7,
+      "score": 3.75,
+      "origin": "Madagascar"
+    },
+    {
+      "company": "Chocovic",
+      "beanName": "Bolivar, Guaranda",
+      "cocoa": 0.71,
+      "score": 2.5,
+      "origin": "Ecuador"
+    },
+    {
+      "company": "Duffy's",
+      "beanName": "Rio Dulce, Xoco",
+      "cocoa": 0.7,
+      "score": 4,
+      "origin": "Guatemala"
+    }
+  ]
+}

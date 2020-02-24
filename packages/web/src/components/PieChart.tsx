@@ -66,9 +66,17 @@ const TooltipContainer = styled.div.attrs((p: TooltipContainerProps): any => ({
   pointer-events: none;
 `;
 
-const defaultPieTooltip: React.FunctionComponent<
-  Partial<TooltipRendererProps>
-> = ({ tooltipData, height, width, mouseX, mouseY, color, tooltipContent }) => (
+const defaultPieTooltip: React.FunctionComponent<Partial<
+  TooltipRendererProps
+>> = ({
+  tooltipData,
+  height,
+  width,
+  mouseX,
+  mouseY,
+  color,
+  tooltipContent,
+}) => (
   <TooltipContainer {...{ mouseX, height, width, mouseY, color }}>
     {tooltipContent && tooltipContent({ tooltipData })}
   </TooltipContainer>
@@ -131,7 +139,7 @@ const PieBody = React.memo(function Pie({
   );
 });
 
-const PieChart: React.FunctionComponent<Props> = ({
+export const PieChart: React.FunctionComponent<Props> = ({
   color,
   data,
   dataKey,
