@@ -8,7 +8,7 @@ import { GenericData, RenderedChildPassedProps } from '../typedef';
 import { InheritedChartProps } from '@viiksetjs/utils';
 import { ChildContext } from './common';
 
-const Threshold: React.FunctionComponent<Props> = ({
+export const Threshold: React.FunctionComponent<Props> = ({
   y0,
   y1,
   clipAboveTo,

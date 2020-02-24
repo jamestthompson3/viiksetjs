@@ -6,7 +6,9 @@ import clone from 'lodash/clone';
 import parse from 'date-fns/parse';
 import format from 'date-fns/format';
 
-import StreamableChart from '../StreamableChart';
+import StreamableChart, {
+  StreamableChart as Component,
+} from '../StreamableChart';
 import LineChart from '../LineChart';
 
 import {
@@ -20,7 +22,7 @@ import { GenericData } from 'typedef';
 
 export default {
   title: 'StreamableChart',
-  component: StreamableChart,
+  component: Component,
 };
 
 export const Example = () => {

@@ -4,11 +4,12 @@ import numericSeries from './data/numericSeries.json';
 import { GraphContainer, Indicator, LinearTooltip } from './styledComponents';
 
 import ChartArea from '../ChartArea';
-import ScatterPlot from '../ScatterPlot';
+import ScatterPlot, { ScatterPlot as Component } from '../ScatterPlot';
 import { isMobile } from './constants';
 
 export default {
   title: 'ScatterPlot',
+  component: Component,
 };
 
 export const Example = () => (

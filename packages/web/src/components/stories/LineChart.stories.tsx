@@ -1,5 +1,4 @@
 import * as React from 'react';
-import styled from 'styled-components';
 
 import parse from 'date-fns/parse';
 import format from 'date-fns/format';
@@ -9,19 +8,14 @@ import timeSeries from './data/timeSeries.json';
 import biaxialSeries from './data/biaxialSeries.json';
 
 import ChartArea from '../ChartArea';
-import LineChart from '../LineChart';
+import LineChart, { LineChart as Component } from '../LineChart';
 import YAxis from '../YAxis';
-import { BiaxialTooltip } from './styledComponents';
+import { BiaxialTooltip, GraphContainer } from './styledComponents';
 import { GenericData } from 'typedef';
-
-const GraphContainer = styled.div`
-  width: 90%;
-  height: 20rem;
-  margin: 5rem auto 0;
-`;
 
 export default {
   title: 'LineChart',
+  component: Component,
 };
 
 export const TimeSeries = () => {

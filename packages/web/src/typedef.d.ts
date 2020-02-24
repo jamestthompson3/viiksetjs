@@ -100,12 +100,12 @@ export interface BarChartProps {
   yPoints?: any[];
   margin?: Margin;
   xKey?: string;
-  declareBar(): void;
-  mouseMove(args: any): void;
+  declareBar?(): void;
+  mouseMove?(args: any): void;
   noTool?: boolean;
   height?: number;
   nofill?: boolean;
-  mouseLeave(): void;
+  mouseLeave?(): void;
   yKey?: string;
   width?: number;
   barProps?: Object;

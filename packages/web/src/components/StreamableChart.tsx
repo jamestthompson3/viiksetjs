@@ -62,7 +62,7 @@ const defaultAxes: Axis = {
   },
 };
 
-const StreamableChart: React.FunctionComponent<Props> = ({
+export const StreamableChart: React.FunctionComponent<Props> = ({
   connection,
   mapStream,
   persist,
@@ -92,7 +92,7 @@ const StreamableChart: React.FunctionComponent<Props> = ({
   const chart = React.useRef(null);
   const canvas = React.useRef<HTMLCanvasElement>(null);
   React.useEffect(() => {
-    const chartData = prepChartData({
+    prepChartData({
       data,
       size,
       xKey,
@@ -100,8 +100,7 @@ const StreamableChart: React.FunctionComponent<Props> = ({
       margin,
       type,
       orientation,
-    });
-    setChartData(chartData);
+    }).then(chartData => setChartData(chartData));
   }, [data, size, type, margin, orientation, xKey, yKey]);
 
   React.useEffect(() => {

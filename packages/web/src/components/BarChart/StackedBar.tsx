@@ -57,7 +57,7 @@ function calcScales({
   }
 }
 
-const StackedBar: React.FunctionComponent<Props> = ({
+export const StackedBar: React.FunctionComponent<Props> = ({
   colors,
   keys,
   barProps,

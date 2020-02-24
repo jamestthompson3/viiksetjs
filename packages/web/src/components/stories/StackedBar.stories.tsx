@@ -2,7 +2,7 @@ import * as React from 'react';
 import { withKnobs, select } from '@storybook/addon-knobs';
 
 import ChartArea from '../ChartArea';
-import StackedBar from '../BarChart/StackedBar';
+import StackedBar, { StackedBar as Component } from '../BarChart/StackedBar';
 
 import stackedData from './data/stackedData.json';
 import { GraphContainer } from './styledComponents';
@@ -11,6 +11,7 @@ import { isMobile } from './constants';
 export default {
   title: 'StackedBar',
   decorators: [withKnobs],
+  component: Component,
 };
 
 export const Example = () => {

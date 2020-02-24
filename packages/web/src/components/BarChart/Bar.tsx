@@ -14,7 +14,7 @@ import { ChildContext } from '../common';
 import { StyledGradient, StyledBar } from '../styledComponents';
 import { BarChartProps, GenericData, Scales } from 'typedef';
 
-const BarChart: React.FunctionComponent<Props> = ({
+export const BarChart: React.FunctionComponent<Props> = ({
   axisId,
   color,
   dataKey,

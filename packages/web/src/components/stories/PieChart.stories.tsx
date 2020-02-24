@@ -1,12 +1,13 @@
 import * as React from 'react';
 
-import PieChart from '../PieChart';
+import PieChart, { PieChart as Component } from '../PieChart';
 
 import { GraphContainer } from './styledComponents';
 import categoricalSeries from './data/categoricalSeries.json';
 
 export default {
   title: 'PieChart',
+  component: Component,
 };
 
 export const Example = () => (

@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import ChartArea from '../ChartArea';
-import Threshold from '../Threshold';
+import Threshold, { Threshold as Component } from '../Threshold';
 import LineChart from '../LineChart';
 
 import thresholdSeries from './data/thresholdSeries.json';
@@ -10,7 +10,7 @@ import { isMobile } from './constants';
 
 export default {
   title: 'Threshold',
-  component: Threshold,
+  component: Component,
 };
 
 export const Example = () => (

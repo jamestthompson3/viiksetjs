@@ -12,7 +12,7 @@ import {
 import { GenericData, LineProps, RenderedChildPassedProps } from '../typedef';
 import { ChildContext } from './common';
 
-const LineChart: React.FunctionComponent<Props> = ({
+export const LineChart: React.FunctionComponent<Props> = ({
   color,
   dataKey,
   axisId,
@@ -20,7 +20,7 @@ const LineChart: React.FunctionComponent<Props> = ({
   lineProps,
   nofill,
   gradientOpacity,
-}: Props) => {
+}) => {
   if (!dataKey) throw new Error('LineChart: no data key given');
   const {
     data,
@@ -106,6 +106,6 @@ interface LineChartProps extends RenderedChildPassedProps {
   bezier: boolean;
 }
 
-type Props = Readonly<InheritedChartProps> & Partial<LineChartProps>;
+type Props = LineChartProps & InheritedChartProps;
 
 export default React.memo(LineChart);
