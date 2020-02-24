@@ -14,7 +14,7 @@ import { ChildContext } from '../common';
 import { StyledGradient, StyledBar } from '../styledComponents';
 import { BarChartProps, GenericData, Scales } from 'typedef';
 
-const BarChart: React.FunctionComponent<Props> = ({
+export const BarChart: React.FunctionComponent<Props> = ({
   axisId,
   color,
   dataKey,
@@ -125,13 +125,13 @@ BarChart.defaultProps = {
   inverted: false,
 };
 
-interface Props extends BarChartProps {
+interface Props extends Partial<BarChartProps> {
   dataKey: string;
-  inheritedScale: ScaleFunction;
-  nofill: boolean;
-  axisId: string;
-  inverted: boolean;
-  color: string;
+  inheritedScale?: ScaleFunction;
+  nofill?: boolean;
+  axisId?: string;
+  inverted?: boolean;
+  color?: string;
 }
 
 export default React.memo(BarChart);

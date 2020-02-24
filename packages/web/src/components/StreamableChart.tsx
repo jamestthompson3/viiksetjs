@@ -62,7 +62,7 @@ const defaultAxes: Axis = {
   },
 };
 
-const StreamableChart: React.FunctionComponent<Props> = ({
+export const StreamableChart: React.FunctionComponent<Props> = ({
   connection,
   mapStream,
   persist,

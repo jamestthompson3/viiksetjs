@@ -1,8 +1,9 @@
-import * as React from 'react'
-import styled from 'styled-components'
-import { withBoundingRects } from '@vx/bounds'
-import get from 'lodash/get'
-import { Line } from '@vx/shape'
+import * as React from 'react';
+import styled from 'styled-components';
+import { withBoundingRects } from '@vx/bounds';
+import get from 'lodash/get';
+import { Line } from '@vx/shape';
+import { ToolTipData, GenericData } from 'typedef';
 
 export const PageWrapper = styled.div`
   width: 100%;
@@ -19,7 +20,7 @@ export const PageWrapper = styled.div`
     color: #fff;
   }
   overflow-y: auto;
-`
+`;
 
 export const Wrapper = styled.div`
   margin: auto;
@@ -35,9 +36,9 @@ export const Wrapper = styled.div`
     padding-left: 0;
     padding-right: 0;
   }
-`
+`;
 
-export const Selector = styled.h4`
+export const Selector = styled.h4<{ active?: boolean }>`
   background: ${p => p.active && '#00395e'};
   padding: 10px;
   border-radius: 3px;
@@ -46,7 +47,7 @@ export const Selector = styled.h4`
   text-align: center;
   color: ${p => (p.active ? '#fff' : '#000')};
   box-shadow: ${p => p.active && '0px 0px 0px 1px #49484f'};
-`
+`;
 export const FilterBox = styled.div`
   margin-top: 2rem;
   margin-bottom: 1rem;
@@ -56,7 +57,7 @@ export const FilterBox = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-`
+`;
 
 export const ChartBox = styled.div`
   flex: 2 0 80%;
@@ -65,13 +66,13 @@ export const ChartBox = styled.div`
     width: 100%;
     max-width: 100%;
   }
-`
+`;
 
 export const GraphContainer = styled.div`
   width: 90%;
   height: 20rem;
   margin: auto;
-`
+`;
 
 export const Header = styled.div`
   background: #00395e;
@@ -82,7 +83,7 @@ export const Header = styled.div`
   flex-direction: column;
   box-shadow: 6px 6px 27px -12px rgba(0, 0, 0, 0.75);
   border-bottom: 3px solid #00adee;
-`
+`;
 
 const Code = styled.pre`
   background: #1b1b1b;
@@ -102,55 +103,63 @@ const Code = styled.pre`
     padding: 1rem;
     overflow-y: auto;
   }
-`
+`;
 
 const CodeContainer = styled.div`
   width: 90%;
   padding: 10px;
-`
+`;
 
-export const Snippet = ({ children }) => (
+export const Snippet = ({ children }: { children: React.ReactChildren }) => (
   <CodeContainer>
     <Code>{children}</Code>
   </CodeContainer>
-)
+);
 
-const TooltipContainer = styled.span.attrs(p => ({
+// TypeScript pls
+type NotWorthIt = any;
+const TooltipContainer = styled.span.attrs((p: NotWorthIt) => ({
   style: {
     left: `${p.rect ? p.left + p.rect.width : p.left}px`,
-    top: `${p.parentRect ? -(p.parentRect.height - p.yCoord + p.rect.height) : p.yCoord}px`
-  }
+    top: `${
+      p.parentRect
+        ? -(p.parentRect.height - p.yCoord + p.rect.height)
+        : p.yCoord
+    }px`,
+  },
 }))`
   position: relative;
   pointer-events: none;
-`
+`;
 
 export const LabelContainer = styled.div`
   display: flex;
   justify-content: space-around;
   width: 85%;
   margin: auto;
-`
+`;
 export const LabelBlock = styled.span`
   width: 10px;
   height: 10px;
   border-radius: 3px;
   margin-right: 3px;
   background: ${p => p.color};
-`
+`;
 
 export const Label = styled.p`
   display: flex;
   align-items: center;
   justify-content: space-between;
   color: ${p => p.color};
-`
+`;
 
-const Container = styled.div.attrs(p => ({
+const Container = styled.div.attrs((p: NotWorthIt) => ({
   style: {
     left: `${p.rect ? p.left - p.rect.width / 3 : p.left}px`,
-    top: `${p.parentRect ? -(p.parentRect.height + p.rect.height) : p.yCoord}px`
-  }
+    top: `${
+      p.parentRect ? -(p.parentRect.height + p.rect.height) : p.yCoord
+    }px`,
+  },
 }))`
   display: flex;
   flex-direction: column;
@@ -163,10 +172,16 @@ const Container = styled.div.attrs(p => ({
   width: 100px;
   background: cornflowerblue;
   border-radius: 3px;
-`
-const BoundedContainer = withBoundingRects(Container)
+`;
+const BoundedContainer = withBoundingRects(Container);
 
-export const Indicator = ({ x, color, yCoords, height }) => (
+interface IndicatorProps {
+  x: number;
+  color: string;
+  yCoords: number[];
+  height: number;
+}
+export const Indicator = ({ x, color, yCoords, height }: IndicatorProps) => (
   <Line
     from={{ x: x, y: height }}
     to={{ x: x, y: yCoords[1] + 8 }}
@@ -175,22 +190,31 @@ export const Indicator = ({ x, color, yCoords, height }) => (
     strokeOpacity={1.5}
     style={{ pointerEvents: 'none' }}
   />
-)
+);
 
-const BoundedTooltip = withBoundingRects(TooltipContainer)
+const BoundedTooltip = withBoundingRects(TooltipContainer);
 
-export const LinearTooltip = ({ tooltipData, x, yCoords }) => (
+interface TooltipProps {
+  tooltipData: ToolTipData;
+  x: number;
+  yCoords: number[];
+}
+export const LinearTooltip = ({ tooltipData, x, yCoords }: TooltipProps) => (
   <BoundedTooltip left={x} yCoord={get(yCoords, '[1]', 0) - 15}>
-    {tooltipData.y < 300 ? <span role="img">❄️</span> : <span role="img">🔥</span>}
+    {(tooltipData as GenericData).y < 300 ? (
+      <span role="img">❄️</span>
+    ) : (
+      <span role="img">🔥</span>
+    )}
   </BoundedTooltip>
-)
-export const BiaxialTooltip = ({ tooltipData, x, yCoords }) => (
+);
+export const BiaxialTooltip = ({ tooltipData, x, yCoords }: TooltipProps) => (
   <BoundedContainer left={x - 30} yCoord={get(yCoords, '[1]', 0)}>
     <p>
-      <span role="img">👩‍💻</span>: {tooltipData.users}
+      <span role="img">👩‍💻</span>: {(tooltipData as GenericData).users}
     </p>
     <p>
-      <span role="img">📝</span>: {tooltipData.posts}
+      <span role="img">📝</span>: {(tooltipData as GenericData).posts}
     </p>
   </BoundedContainer>
-)
+);

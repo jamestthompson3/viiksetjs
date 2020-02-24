@@ -18,7 +18,7 @@ const getStaticOrAccessor = (prop: any, data: GenericData) => {
   return prop;
 };
 
-const ScatterPlot: React.FunctionComponent<Props> = (
+export const ScatterPlot: React.FunctionComponent<Props> = (
   {
     color = genericGetter,
     opacity = genericGetter,

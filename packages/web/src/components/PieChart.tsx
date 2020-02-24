@@ -131,7 +131,7 @@ const PieBody = React.memo(function Pie({
   );
 });
 
-const PieChart: React.FunctionComponent<Props> = ({
+export const PieChart: React.FunctionComponent<Props> = ({
   color,
   data,
   dataKey,

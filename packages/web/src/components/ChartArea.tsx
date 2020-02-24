@@ -85,7 +85,7 @@ const defaultTooltip: TooltipProps<GenericData> = {
   styles: { wrapper: {}, content: {} },
 };
 
-function ChartArea({
+export function ChartArea({
   children,
   determineViewBox,
   data,
