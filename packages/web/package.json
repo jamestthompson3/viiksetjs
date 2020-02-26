@@ -1,6 +1,6 @@
 {
   "name": "@viiksetjs/web",
-  "version": "0.1.8",
+  "version": "0.2.0-alpha.1",
   "main": "dist/index.js",
   "module": "dist/web.esm.js",
   "typings": "dist/index.d.ts",
@@ -73,7 +73,7 @@
     "typescript": "^3.5.3"
   },
   "dependencies": {
-    "@viiksetjs/utils": "1.1.5",
+    "@viiksetjs/utils": "^1.1.6-alpha.0",
     "@vx/axis": "^0.0.190",
     "@vx/bounds": "^0.0.189",
     "@vx/curve": "^0.0.189",
@@ -90,6 +90,6 @@
     "lodash": "^4.17.15",
     "lodash-es": "^4.17.15",
     "polished": "^3.4.1",
-    "react-sizeme": "^2.6.7"
+    "react-sizeme": "^2.6.12"
   }
 }

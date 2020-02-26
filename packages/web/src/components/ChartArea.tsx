@@ -125,7 +125,9 @@ export function ChartArea({
       margin,
       type,
       orientation,
-    }).then(chartData => setChartData(chartData));
+    }).then(chartData => {
+      setChartData(chartData);
+    });
   }, [data, size, type, margin, orientation, xKey, yKey]);
   const [tooltipData, updateTooltip] = React.useState<
     Partial<TooltipUpdateData>

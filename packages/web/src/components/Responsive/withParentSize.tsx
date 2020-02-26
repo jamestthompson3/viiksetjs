@@ -21,7 +21,7 @@ export default function withParentSize(
   const WrappedComponent: React.FunctionComponent<any> = (props: any) => {
     const { x } = props;
     return (
-      <SizeMe monitorHeight refreshMode="debounce" refreshRate={100}>
+      <SizeMe monitorHeight refreshMode="debounce">
         {({ size }) => (
           <Container x={x}>
             <BaseComponent {...{ ...props, size }} />

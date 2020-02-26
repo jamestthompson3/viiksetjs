@@ -24,9 +24,18 @@ export function prepChartData<R, O>({
     }
 
     const dataKeys = extractLabels(data[0]);
-    const width = size.width - margin.left - margin.right;
-    const height =
-      size.height === 0 ? 300 : size.height - margin.top - margin.bottom;
+    let width;
+    let height;
+    if (!size.height) {
+      height = 300;
+    } else {
+      height = size.height - margin.top - margin.bottom;
+    }
+    if (!size.width) {
+      width = 300;
+    } else {
+      width = size.width - margin.left - margin.right;
+    }
     const xPoints = getX(data, xKey, type);
     const yPoints = getY(data, yKey);
     const yScale = determineYScale({
