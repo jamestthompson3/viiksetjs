@@ -245,13 +245,13 @@ export function ChartArea({
       id="viiksetjsWrapperDiv"
     >
       <svg
-        width={size.width}
-        height={size.height}
+        width={size.width || 300}
+        height={size.height || 300}
         preserveAspectRatio="none"
         viewBox={
           determineViewBox
             ? determineViewBox({ size, margin })
-            : `-10 0 ${size.width} ${size.height}`
+            : `-10 0 ${size.width || 300} ${size.height || 300}`
         }
         ref={chart}
       >
@@ -298,12 +298,13 @@ export function ChartArea({
               y={0}
               height={height}
               fill="transparent"
-              onMouseMove={(event: React.SyntheticEvent) =>
-                mouseMove({ event })
-              }
-              onTouchMove={(event: React.SyntheticEvent) =>
-                mouseMove({ event })
-              }
+              onMouseMove={(event: React.SyntheticEvent) => {
+                console.log('MOUSE MOVING');
+                mouseMove({ event });
+              }}
+              onTouchMove={(event: React.SyntheticEvent) => {
+                mouseMove({ event });
+              }}
               onTouchEnd={mouseLeave}
               onMouseLeave={mouseLeave}
             />
