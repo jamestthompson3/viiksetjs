@@ -85,7 +85,6 @@ export const LineChart: React.FunctionComponent<Props> = ({
       ctx.restore();
     }
   }
-
   return null;
 };
 

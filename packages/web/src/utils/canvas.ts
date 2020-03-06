@@ -182,8 +182,9 @@ type AcquireFn = () => HTMLCanvasElement;
 export function useCanvasRef(acquireRef: AcquireFn) {
   const [canvas, setCanvas] = React.useState<HTMLCanvasElement>();
   React.useEffect(() => {
+    console.count('ACQUIRING CANVAS REF');
     const parentCanvas = acquireRef();
     setCanvas(parentCanvas);
-  });
+  }, [acquireRef]);
   return canvas;
 }
