@@ -184,6 +184,6 @@ export function useCanvasRef(acquireRef: AcquireFn) {
   React.useEffect(() => {
     const parentCanvas = acquireRef();
     setCanvas(parentCanvas);
-  });
+  }, [acquireRef]);
   return canvas;
 }

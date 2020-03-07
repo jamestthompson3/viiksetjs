@@ -8,7 +8,7 @@ import {
   RenderedChildPassedProps,
 } from '../typedef';
 import { ChildContext } from './common';
-import { useCanvasRef, drawPoint } from '../utils/canvas';
+import { drawPoint, useCanvasRef } from '../utils/canvas';
 
 const genericGetter: GenericGetter = d => d;
 const getStaticOrAccessor = (prop: any, data: GenericData) => {
