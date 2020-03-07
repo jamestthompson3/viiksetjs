@@ -209,7 +209,7 @@ export function ChartArea({
     showTooltip,
   } = tooltipData;
 
-  const getCanvas = React.useMemo(() => canvas.current, [canvas]);
+  const getCanvas = React.useCallback(() => canvas.current, [canvas]);
   // if we haven't set scales, we know it's not ready to render the chart
   if (!chartData.xScale) {
     return null;
