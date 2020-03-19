@@ -208,6 +208,8 @@ export function ChartArea({
     mouseY,
     showTooltip,
   } = tooltipData;
+
+  const getCanvas = React.useCallback(() => canvas.current, [canvas]);
   // if we haven't set scales, we know it's not ready to render the chart
   if (!chartData.xScale) {
     return null;
@@ -234,7 +236,6 @@ export function ChartArea({
     content: tooltipContent,
   } = merge({}, defaultTooltip, tooltip);
   const { xScale, width, height, yPoints, xPoints, yScale } = chartData;
-  const getCanvas = () => canvas.current;
   if (canvas.current) {
     const ctx = canvas.current.getContext('2d');
     ctx && ctx.clearRect(0, 0, width, height);
@@ -304,13 +305,12 @@ export function ChartArea({
           </ChildContext.Provider>
           {bar || (
             <Bar
-              width={size.width}
+              width={size.width || 300}
               x={0}
               y={0}
               height={height}
               fill="transparent"
               onMouseMove={(event: React.SyntheticEvent) => {
-                console.log('MOUSE MOVING');
                 mouseMove({ event });
               }}
               onTouchMove={(event: React.SyntheticEvent) => {
