@@ -239,6 +239,12 @@ export function ChartArea({
     const ctx = canvas.current.getContext('2d');
     ctx && ctx.clearRect(0, 0, width, height);
   }
+  // Webkit bug related to foreignObject:
+  // https://bugs.webkit.org/show_bug.cgi?id=71819
+  let foreignObjectOffset = 0;
+  if (typeof window.webkitConvertPointFromNodeToPage === 'function') {
+    foreignObjectOffset = biaxialChildren ? 0 : margin.left + margin.right;
+  }
   return (
     <div
       style={{ width: size.width, height: size.height }}
@@ -264,7 +270,12 @@ export function ChartArea({
             />
             <LeftAxis {...{ type, orientation, yPoints, height, margin }} />
           </Group>
-          <foreignObject x="0" y="0" width={size.width} height={size.height}>
+          <foreignObject
+            x={foreignObjectOffset}
+            y="0"
+            width={size.width}
+            height={size.height}
+          >
             <canvas ref={canvas} width={width} height={height} />
           </foreignObject>
           <ChildContext.Provider
